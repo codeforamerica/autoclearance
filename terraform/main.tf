@@ -16,9 +16,18 @@ provider "aws" {
 # Create a VPC to launch our instances into
 resource "aws_vpc" "default" {
   cidr_block = "10.0.0.0/16"
-  
+
   tags {
     Name = "application_vpc"
+  }
+}
+
+# Create a public subnet for our bastion
+resource "aws_subnet" "public" {
+  vpc_id = "${aws_vpc.default.id}"
+  cidr_block = "10.0.0.0/24"
+  tags {
+    Name = "public"
   }
 }
 
@@ -27,139 +36,250 @@ resource "aws_internet_gateway" "default" {
   vpc_id = "${aws_vpc.default.id}"
 }
 
-# Create a public subnet for our bastion
-resource "aws_subnet" "public" {
-  vpc_id                  = "${aws_vpc.default.id}"
-  cidr_block              = "10.0.0.0/24"
+resource "aws_route_table" "internet_access" {
+  vpc_id = "${aws_vpc.default.id}"
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = "${aws_internet_gateway.default.id}"
+  }
 }
 
-#############
+resource "aws_route_table_association" "subnet_route_table" {
+  subnet_id = "${aws_subnet.public.id}"
+  route_table_id = "${aws_route_table.internet_access.id}"
+}
 
-//# Grant the VPC internet access on its main route table
-//resource "aws_route" "internet_access" {
-//  route_table_id         = "${aws_vpc.default.main_route_table_id}"
-//  destination_cidr_block = "0.0.0.0/0"
-//  gateway_id             = "${aws_internet_gateway.default.id}"
-//}
+resource "aws_network_acl" "default" {
+  vpc_id = "${aws_vpc.default.id}"
+  subnet_ids = [
+    "${aws_subnet.public.id}"
+  ]
+  egress {
+    protocol = "-1"
+    rule_no = 100
+    action = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port = 0
+    to_port = 0
+  }
 
+  ingress {
+    protocol = "tcp"
+    rule_no = 100
+    action = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port = 22
+    to_port = 22
+  }
 
-//# Create a private subnet to launch our instances into
-//resource "aws_subnet" "private" {
-//  vpc_id                  = "${aws_vpc.default.id}"
-//  cidr_block              = "10.0.0.0/24"
-//}
-//
-//
-//# A security group for the ELB so it is accessible via the web
-//resource "aws_security_group" "elb" {
-//  name        = "terraform_example_elb"
-//  description = "Used in the terraform"
-//  vpc_id      = "${aws_vpc.default.id}"
-//
-//  # HTTP access from anywhere
-//  ingress {
-//    from_port   = 80
-//    to_port     = 80
-//    protocol    = "tcp"
-//    cidr_blocks = ["0.0.0.0/0"]
-//  }
-//
-//  # outbound internet access
-//  egress {
-//    from_port   = 0
-//    to_port     = 0
-//    protocol    = "-1"
-//    cidr_blocks = ["0.0.0.0/0"]
-//  }
-//}
-//
-//# Our default security group to access
-//# the instances over SSH and HTTP
-//resource "aws_security_group" "default" {
-//  name        = "terraform_example"
-//  description = "Used in the terraform"
-//  vpc_id      = "${aws_vpc.default.id}"
-//
-//  # SSH access from anywhere
-//  ingress {
-//    from_port   = 22
-//    to_port     = 22
-//    protocol    = "tcp"
-//    cidr_blocks = ["0.0.0.0/0"]
-//  }
-//
-//  # HTTP access from the VPC
-//  ingress {
-//    from_port   = 80
-//    to_port     = 80
-//    protocol    = "tcp"
-//    cidr_blocks = ["10.0.0.0/16"]
-//  }
-//
-//  # outbound internet access
-//  egress {
-//    from_port   = 0
-//    to_port     = 0
-//    protocol    = "-1"
-//    cidr_blocks = ["0.0.0.0/0"]
-//  }
-//}
-//
-//resource "aws_elb" "web" {
-//  name = "terraform-example-elb"
-//
-//  subnets         = ["${aws_subnet.default.id}"]
-//  security_groups = ["${aws_security_group.elb.id}"]
-//  instances       = ["${aws_instance.web.id}"]
-//
-//  listener {
-//    instance_port     = 80
-//    instance_protocol = "http"
-//    lb_port           = 80
-//    lb_protocol       = "http"
-//  }
-//}
-//
-//resource "aws_key_pair" "auth" {
-//  key_name   = "${var.key_name}"
-//  public_key = "${file(var.public_key_path)}"
-//}
-//
-//resource "aws_instance" "web" {
-//  # The connection block tells our provisioner how to
-//  # communicate with the resource (instance)
-//  connection {
-//    # The default username for our AMI
-//    user = "ubuntu"
-//
-//    # The connection will use the local SSH agent for authentication.
-//  }
-//
-//  instance_type = "t2.micro"
-//
-//  # Lookup the correct AMI based on the region
-//  # we specified
-//  ami = "${lookup(var.aws_amis, var.aws_region)}"
-//
-//  # The name of our SSH keypair we created above.
-//  key_name = "${aws_key_pair.auth.id}"
-//
-//  # Our Security group to allow HTTP and SSH access
-//  vpc_security_group_ids = ["${aws_security_group.default.id}"]
-//
-//  # We're going to launch into the same subnet as our ELB. In a production
-//  # environment it's more common to have a separate private subnet for
-//  # backend instances.
-//  subnet_id = "${aws_subnet.default.id}"
-//
-//  # We run a remote provisioner on the instance after creating it.
-//  # In this case, we just install nginx and start it. By default,
-//  # this should be on port 80
-//  provisioner "remote-exec" {
-//    inline = [
-//      "sudo apt-get -y update",
-//      "sudo apt-get -y install nginx",
-//      "sudo service nginx start",
-//    ]
-//  }
-//}
+  tags {
+    Name = "public"
+  }
+}
+
+# Create a private subnet for our EC2 instance
+resource "aws_subnet" "private" {
+  vpc_id = "${aws_vpc.default.id}"
+  cidr_block = "10.0.2.0/24"
+
+  tags {
+    Name = "private"
+  }
+}
+
+resource "aws_eip" "eip" {
+  vpc = true
+  depends_on = [
+    "aws_internet_gateway.default"]
+}
+
+resource "aws_nat_gateway" "gw" {
+  allocation_id = "${aws_eip.eip.id}"
+  subnet_id = "${aws_subnet.public.id}"
+
+  depends_on = [
+    "aws_internet_gateway.default"]
+
+  tags {
+    Name = "NAT"
+  }
+}
+
+resource "aws_route_table" "private" {
+  vpc_id = "${aws_vpc.default.id}"
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    nat_gateway_id = "${aws_nat_gateway.gw.id}"
+  }
+}
+
+resource "aws_route_table_association" "private_route_table" {
+  subnet_id = "${aws_subnet.private.id}"
+  route_table_id = "${aws_route_table.private.id}"
+}
+
+resource "aws_network_acl" "private" {
+  vpc_id = "${aws_vpc.default.id}"
+  subnet_ids = [
+    "${aws_subnet.private.id}"
+  ]
+  egress {
+    protocol = "-1"
+    rule_no = 100
+    action = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port = 0
+    to_port = 0
+  }
+
+  ingress {
+    protocol = "tcp"
+    rule_no = 100
+    action = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port = 22
+    to_port = 22
+  }
+
+  tags {
+    Name = "private"
+  }
+}
+
+resource "aws_s3_bucket" "rap_sheet_inputs" {
+  bucket = "autoclearance-rap-sheet-inputs"
+
+  tags {
+    Name = "Rap sheet inputs"
+  }
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
+}
+
+resource "aws_s3_bucket" "autoclearance_outputs" {
+  bucket = "autoclearance-outputs"
+
+  tags {
+    Name = "Autoclearance Outputs"
+  }
+
+  versioning {
+    enabled = true
+  }
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
+}
+
+resource "aws_iam_user" "application_user" {
+  name = "application"
+}
+
+resource "aws_iam_policy" "s3_read_write" {
+  name = "s3_read_write"
+  description = "Interact with S3 for application inputs and outputs"
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "s3:DeleteObject",
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:ListBucket",
+        "s3:GetObjectAcl",
+        "s3:GetBucketPolicy",
+        "s3:GetBucketAcl"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+          "${aws_s3_bucket.autoclearance_outputs.arn}",
+          "${aws_s3_bucket.rap_sheet_inputs.arn}"
+      ]
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_group" "staff" {
+  name = "staff"
+}
+
+resource "aws_iam_group_policy_attachment" "s3_read_write_for_staff" {
+  group = "${aws_iam_group.staff.name}"
+  policy_arn = "${aws_iam_policy.s3_read_write.arn}"
+}
+
+resource "aws_iam_user_policy_attachment" "application_policy_attachment" {
+  user = "${aws_iam_user.application_user.name}"
+  policy_arn = "${aws_iam_policy.s3_read_write.arn}"
+}
+
+resource "aws_key_pair" "auth" {
+  key_name = "${var.key_name}"
+  public_key = "${var.public_key}"
+}
+
+resource "aws_security_group" "bastion_security" {
+  name = "bastion_security"
+  vpc_id = "${aws_vpc.default.id}"
+
+  # SSH access from anywhere
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = [
+      "0.0.0.0/0"
+    ]
+  }
+
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = [
+      "0.0.0.0/0"
+    ]
+  }
+}
+
+resource "aws_instance" "bastion" {
+  # The connection block tells our provisioner how to
+  # communicate with the resource (instance)
+  connection {
+    # The default username for our AMI
+    user = "ec2_user"
+
+    # The connection will use the local SSH agent for authentication.
+  }
+
+  tags {
+    Name = "bastion"
+  }
+
+  instance_type = "t2.micro"
+  ami = "ami-b2d056d3"
+  # Amazon Linux AMI 2017.03.1 (HVM), SSD Volume Type
+  key_name = "${aws_key_pair.auth.id}"
+  vpc_security_group_ids = [
+    "${aws_security_group.bastion_security.id}"
+  ]
+  subnet_id = "${aws_subnet.public.id}"
+  associate_public_ip_address = true
+}
