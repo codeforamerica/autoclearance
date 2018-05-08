@@ -73,6 +73,24 @@ resource "aws_network_acl" "default" {
     to_port = 22
   }
 
+  ingress {
+    protocol = "tcp"
+    rule_no = 200
+    action = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port = 1024
+    to_port = 65535
+  }
+  
+  ingress {
+    protocol = "tcp"
+    rule_no = 300
+    action = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port = 80
+    to_port = 80
+  }
+
   tags {
     Name = "public"
   }
@@ -141,6 +159,15 @@ resource "aws_network_acl" "private" {
     cidr_block = "0.0.0.0/0"
     from_port = 22
     to_port = 22
+  }
+
+  ingress {
+    protocol = "tcp"
+    rule_no = 200
+    action = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port = 1024
+    to_port = 65535
   }
 
   tags {
@@ -259,6 +286,48 @@ resource "aws_security_group" "bastion_security" {
   }
 }
 
+resource "aws_security_group" "application_security" {
+  name = "application_security"
+  vpc_id = "${aws_vpc.default.id}"
+
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = [
+      "0.0.0.0/0"
+    ]
+  }
+
+  # HTTP access from the VPC
+  ingress {
+    from_port = 80
+    to_port = 80
+    protocol = "tcp"
+    cidr_blocks = [
+      "${aws_vpc.default.cidr_block}"
+    ]
+  }
+
+  egress {
+    from_port = 123
+    to_port = 123
+    protocol = "udp"
+    cidr_blocks = [
+      "0.0.0.0/0"
+    ]
+  }
+
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = [
+      "0.0.0.0/0"
+    ]
+  }
+}
+
 resource "aws_instance" "bastion" {
   # The connection block tells our provisioner how to
   # communicate with the resource (instance)
@@ -282,4 +351,139 @@ resource "aws_instance" "bastion" {
   ]
   subnet_id = "${aws_subnet.public.id}"
   associate_public_ip_address = true
+}
+
+//# A security group for the ELB so it is accessible via the web
+//resource "aws_security_group" "elb" {
+//  name = "application_elb"
+//  vpc_id = "${aws_vpc.default.id}"
+//
+//  # HTTP access from anywhere
+//  ingress {
+//    from_port = 80
+//    to_port = 80
+//    protocol = "tcp"
+//    cidr_blocks = [
+//      "0.0.0.0/0"
+//    ]
+//  }
+//
+//  # outbound internet access
+//  egress {
+//    from_port = 0
+//    to_port = 0
+//    protocol = "-1"
+//    cidr_blocks = [
+//      "0.0.0.0/0"
+//    ]
+//  }
+//}
+
+# Beanstalk Application
+resource "aws_elastic_beanstalk_application" "ng_beanstalk_application" {
+  name = "Autoclearance"
+}
+
+resource "aws_iam_role" "instance_role" {
+  name = "instance_role"
+
+  assume_role_policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "",
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "elasticbeanstalk.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole",
+        "Condition": {
+          "StringEquals": {
+            "sts:ExternalId": "elasticbeanstalk"
+          }
+        }
+      }
+    ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "eb_enhanced_health" {
+  role = "${aws_iam_role.instance_role.name}"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkEnhancedHealth"
+}
+
+resource "aws_iam_role_policy_attachment" "eb_service" {
+  role = "${aws_iam_role.instance_role.name}"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkService"
+}
+
+resource "aws_iam_instance_profile" "instance_profile" {
+  name = "instance_profile"
+  role = "${aws_iam_role.instance_role.name}"
+}
+
+# Beanstalk Environment
+resource "aws_elastic_beanstalk_environment" "beanstalk_application_environment" {
+  name = "autoclearance-prod"
+  application = "${aws_elastic_beanstalk_application.ng_beanstalk_application.name}"
+  solution_stack_name = "64bit Amazon Linux 2017.09 v2.7.2 running Ruby 2.5 (Puma)"
+  tier = "WebServer"
+
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name = "InstanceType"
+    value = "t2.small"
+  }
+
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name = "IamInstanceProfile"
+    value = "${aws_iam_instance_profile.instance_profile.name}"
+  }
+
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name = "EC2KeyName"
+    value = "${aws_key_pair.auth.id}"
+  }
+
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name = "ImageId"
+
+    # Amazon Linux AMI 2017.03.1 (HVM), SSD Volume Type
+    value = "ami-b2d056d3"
+  }
+
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name = "SecurityGroups"
+    value = "${aws_security_group.application_security.id}"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:environment"
+    name = "ServiceRole"
+    value = "${aws_iam_instance_profile.instance_profile.name}"
+  }
+
+  setting {
+    namespace = "aws:ec2:vpc"
+    name = "VPCid"
+    value = "${aws_vpc.default.id}"
+  }
+
+  setting {
+    namespace = "aws:ec2:vpc"
+    name = "Subnets"
+    value = "${aws_subnet.private.id}"
+  }
+
+  setting {
+    namespace = "aws:ec2:vpc"
+    name = "ELBSubnets"
+    value = "${aws_subnet.public.id}"
+  }
 }

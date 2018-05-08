@@ -3,6 +3,16 @@ variable "aws_region" {
   default = "us-gov-west-1"
 }
 
+variable "aws_az1" {
+  description = "AWS availability zone 1"
+  default = "us-gov-west-1a"
+}
+
+variable "aws_az2" {
+  description = "AWS availability zone 2"
+  default = "us-gov-west-1b"
+}
+
 variable "aws_access_key" {}
 variable "aws_secret_key" {}
 variable "key_name" {
