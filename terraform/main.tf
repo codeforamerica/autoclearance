@@ -527,4 +527,10 @@ resource "aws_elastic_beanstalk_environment" "beanstalk_application_environment"
     name = "ELBSubnets"
     value = "${aws_subnet.public.id}"
   }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name = "SECRET_KEY_BASE"
+    value = "${var.rails_secret_key_base}"
+  }
 }
