@@ -64,6 +64,7 @@ resource "aws_network_acl" "default" {
     to_port = 0
   }
 
+  # SSH
   ingress {
     protocol = "tcp"
     rule_no = 100
@@ -73,6 +74,7 @@ resource "aws_network_acl" "default" {
     to_port = 22
   }
 
+  # Ephemeral ports for response packets
   ingress {
     protocol = "tcp"
     rule_no = 200
@@ -82,6 +84,7 @@ resource "aws_network_acl" "default" {
     to_port = 65535
   }
 
+  # HTTP
   ingress {
     protocol = "tcp"
     rule_no = 300
@@ -91,6 +94,7 @@ resource "aws_network_acl" "default" {
     to_port = 80
   }
 
+  # HTTPS
   ingress {
     protocol = "tcp"
     rule_no = 400
@@ -118,7 +122,8 @@ resource "aws_subnet" "private" {
 resource "aws_eip" "eip" {
   vpc = true
   depends_on = [
-    "aws_internet_gateway.default"]
+    "aws_internet_gateway.default"
+  ]
 }
 
 resource "aws_nat_gateway" "gw" {
@@ -126,7 +131,8 @@ resource "aws_nat_gateway" "gw" {
   subnet_id = "${aws_subnet.public.id}"
 
   depends_on = [
-    "aws_internet_gateway.default"]
+    "aws_internet_gateway.default"
+  ]
 
   tags {
     Name = "NAT"
@@ -336,6 +342,7 @@ resource "aws_security_group" "application_security" {
     ]
   }
 
+  # Elastic Beanstalk clock sync
   egress {
     from_port = 123
     to_port = 123
