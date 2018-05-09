@@ -39,4 +39,4 @@ Set your Elastic Beanstalk environment by running:
 `eb use <environment name> --profile autoclearance`
 
 Deploy code to environment by running from the repository root:
-`eb deploy --profile autoclearance`
+`eb deploy`

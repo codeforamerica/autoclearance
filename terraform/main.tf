@@ -244,10 +244,6 @@ resource "aws_s3_bucket" "autoclearance_outputs" {
   }
 }
 
-resource "aws_iam_user" "application_user" {
-  name = "application"
-}
-
 resource "aws_iam_policy" "s3_read_write" {
   name = "s3_read_write"
   description = "Interact with S3 for application inputs and outputs"
@@ -268,7 +264,9 @@ resource "aws_iam_policy" "s3_read_write" {
       "Effect": "Allow",
       "Resource": [
           "${aws_s3_bucket.autoclearance_outputs.arn}",
-          "${aws_s3_bucket.rap_sheet_inputs.arn}"
+          "${aws_s3_bucket.rap_sheet_inputs.arn}",
+          "${aws_s3_bucket.autoclearance_outputs.arn}/*",
+          "${aws_s3_bucket.rap_sheet_inputs.arn}/*"
       ]
     }
   ]
@@ -282,11 +280,6 @@ resource "aws_iam_group" "staff" {
 
 resource "aws_iam_group_policy_attachment" "s3_read_write_for_staff" {
   group = "${aws_iam_group.staff.name}"
-  policy_arn = "${aws_iam_policy.s3_read_write.arn}"
-}
-
-resource "aws_iam_user_policy_attachment" "application_policy_attachment" {
-  user = "${aws_iam_user.application_user.name}"
   policy_arn = "${aws_iam_policy.s3_read_write.arn}"
 }
 
@@ -458,6 +451,11 @@ resource "aws_iam_role_policy_attachment" "container" {
 resource "aws_iam_role_policy_attachment" "web_tier" {
   role = "${aws_iam_role.instance_role.name}"
   policy_arn = "arn:aws-us-gov:iam::aws:policy/AWSElasticBeanstalkWebTier"
+}
+
+resource "aws_iam_role_policy_attachment" "s3_read_write" {
+  role = "${aws_iam_role.instance_role.name}"
+  policy_arn = "${aws_iam_policy.s3_read_write.arn}"
 }
 
 resource "aws_iam_instance_profile" "instance_profile" {
