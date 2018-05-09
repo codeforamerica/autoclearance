@@ -81,7 +81,7 @@ resource "aws_network_acl" "default" {
     from_port = 1024
     to_port = 65535
   }
-  
+
   ingress {
     protocol = "tcp"
     rule_no = 300
@@ -89,6 +89,15 @@ resource "aws_network_acl" "default" {
     cidr_block = "0.0.0.0/0"
     from_port = 80
     to_port = 80
+  }
+
+  ingress {
+    protocol = "tcp"
+    rule_no = 400
+    action = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port = 443
+    to_port = 443
   }
 
   tags {
@@ -168,6 +177,24 @@ resource "aws_network_acl" "private" {
     cidr_block = "0.0.0.0/0"
     from_port = 1024
     to_port = 65535
+  }
+
+  ingress {
+    protocol = "tcp"
+    rule_no = 300
+    action = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port = 80
+    to_port = 80
+  }
+
+  ingress {
+    protocol = "tcp"
+    rule_no = 400
+    action = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port = 443
+    to_port = 443
   }
 
   tags {
@@ -353,32 +380,6 @@ resource "aws_instance" "bastion" {
   associate_public_ip_address = true
 }
 
-//# A security group for the ELB so it is accessible via the web
-//resource "aws_security_group" "elb" {
-//  name = "application_elb"
-//  vpc_id = "${aws_vpc.default.id}"
-//
-//  # HTTP access from anywhere
-//  ingress {
-//    from_port = 80
-//    to_port = 80
-//    protocol = "tcp"
-//    cidr_blocks = [
-//      "0.0.0.0/0"
-//    ]
-//  }
-//
-//  # outbound internet access
-//  egress {
-//    from_port = 0
-//    to_port = 0
-//    protocol = "-1"
-//    cidr_blocks = [
-//      "0.0.0.0/0"
-//    ]
-//  }
-//}
-
 # Beanstalk Application
 resource "aws_elastic_beanstalk_application" "ng_beanstalk_application" {
   name = "Autoclearance"
@@ -389,34 +390,67 @@ resource "aws_iam_role" "instance_role" {
 
   assume_role_policy = <<EOF
 {
-    "Version": "2012-10-17",
-    "Statement": [
-      {
-        "Sid": "",
-        "Effect": "Allow",
-        "Principal": {
-          "Service": "elasticbeanstalk.amazonaws.com"
-        },
-        "Action": "sts:AssumeRole",
-        "Condition": {
-          "StringEquals": {
-            "sts:ExternalId": "elasticbeanstalk"
-          }
+  "Version": "2008-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role" "beanstalk_role" {
+  name = "beanstalk_role"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "elasticbeanstalk.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole",
+      "Condition": {
+        "StringEquals": {
+          "sts:ExternalId": "elasticbeanstalk"
         }
       }
-    ]
+    }
+  ]
 }
 EOF
 }
 
 resource "aws_iam_role_policy_attachment" "eb_enhanced_health" {
-  role = "${aws_iam_role.instance_role.name}"
+  role = "${aws_iam_role.beanstalk_role.name}"
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkEnhancedHealth"
 }
 
 resource "aws_iam_role_policy_attachment" "eb_service" {
-  role = "${aws_iam_role.instance_role.name}"
+  role = "${aws_iam_role.beanstalk_role.name}"
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkService"
+}
+
+resource "aws_iam_role_policy_attachment" "worker_tier" {
+  role = "${aws_iam_role.instance_role.name}"
+  policy_arn = "arn:aws-us-gov:iam::aws:policy/AWSElasticBeanstalkWorkerTier"
+}
+
+resource "aws_iam_role_policy_attachment" "container" {
+  role = "${aws_iam_role.instance_role.name}"
+  policy_arn = "arn:aws-us-gov:iam::aws:policy/AWSElasticBeanstalkMulticontainerDocker"
+}
+
+resource "aws_iam_role_policy_attachment" "web_tier" {
+  role = "${aws_iam_role.instance_role.name}"
+  policy_arn = "arn:aws-us-gov:iam::aws:policy/AWSElasticBeanstalkWebTier"
 }
 
 resource "aws_iam_instance_profile" "instance_profile" {
@@ -466,12 +500,12 @@ resource "aws_elastic_beanstalk_environment" "beanstalk_application_environment"
   setting {
     namespace = "aws:elasticbeanstalk:environment"
     name = "ServiceRole"
-    value = "${aws_iam_instance_profile.instance_profile.name}"
+    value = "${aws_iam_role.beanstalk_role.name}"
   }
 
   setting {
     namespace = "aws:ec2:vpc"
-    name = "VPCid"
+    name = "VPCId"
     value = "${aws_vpc.default.id}"
   }
 

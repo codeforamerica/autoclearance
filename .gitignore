@@ -57,3 +57,10 @@ terraform/backend-config
 *.tfstate.backup
 
 .idea/
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
+
+.venv
