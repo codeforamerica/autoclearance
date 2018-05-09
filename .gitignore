@@ -64,3 +64,5 @@ terraform/backend-config
 !.elasticbeanstalk/*.global.yml
 
 .venv
+
+test_data/

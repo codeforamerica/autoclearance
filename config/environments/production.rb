@@ -88,4 +88,10 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+  config.fog_params = {
+    provider: 'aws',
+    aws_access_key_id: ENV['AWS_ACCESS_KEY_ID'],
+    aws_secret_access_key: ENV['AWS_SECRET_KEY']
+  }
 end
