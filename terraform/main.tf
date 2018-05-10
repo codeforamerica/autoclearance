@@ -278,9 +278,18 @@ resource "aws_iam_group" "staff" {
   name = "staff"
 }
 
+resource "aws_iam_group" "developers" {
+  name = "developers"
+}
+
 resource "aws_iam_group_policy_attachment" "s3_read_write_for_staff" {
   group = "${aws_iam_group.staff.name}"
   policy_arn = "${aws_iam_policy.s3_read_write.arn}"
+}
+
+resource "aws_iam_group_policy_attachment" "admin_access" {
+  group = "${aws_iam_group.developers.name}"
+  policy_arn = "arn:aws-us-gov:iam::aws:policy/AdministratorAccess"
 }
 
 resource "aws_key_pair" "auth" {
