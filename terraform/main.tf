@@ -25,6 +25,7 @@ resource "aws_vpc" "default" {
 resource "aws_subnet" "public" {
   vpc_id = "${aws_vpc.default.id}"
   cidr_block = "10.0.0.0/24"
+  availability_zone = "${var.aws_az1}"
   tags {
     Name = "public"
   }
@@ -112,7 +113,7 @@ resource "aws_network_acl" "default" {
 resource "aws_subnet" "private" {
   vpc_id = "${aws_vpc.default.id}"
   cidr_block = "10.0.2.0/24"
-
+  availability_zone = "${var.aws_az1}"
   tags {
     Name = "private"
   }
@@ -528,6 +529,12 @@ resource "aws_elastic_beanstalk_environment" "beanstalk_application_environment"
     namespace = "aws:ec2:vpc"
     name = "ELBSubnets"
     value = "${aws_subnet.public.id}"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:healthreporting:system"
+    name = "SystemType"
+    value = "enhanced"
   }
 
   setting {
