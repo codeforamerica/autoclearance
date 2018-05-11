@@ -3,3 +3,4 @@ aws_secret_key =
 key_name =
 public_key =
 rails_secret_key_base =
+environment =

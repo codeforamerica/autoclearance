@@ -22,10 +22,12 @@ region=us-gov-west-1
 
 ## Deploying
 Create two files: `backend-config` and `varfile` to supply Amazon credentials. Examples are located at `backend-config.example` and `varfile.example`
-To deploy using Terraform, cd to the terraform directory and run `terraform init -backend-config config_file
+To deploy using Terraform, cd to the terraform directory and run `terraform init -backend-config config_file`
 
 Create a new keypair through the AWS console for SSH access to the bastion. Safely store the keyfile.
 Generate a publickey for your `varfile` by running `ssh-keygen -y -f /path/to/private_key.pem`.
+
+To apply Terraform settings, run: `terraform apply -var-file varfile`
 
 To push a new revision to Beanstalk:
 First, you must have activated your virtualenv and initialized the EB CLI:
@@ -40,3 +42,9 @@ Set your Elastic Beanstalk environment by running:
 
 Deploy code to environment by running from the repository root:
 `eb deploy`
+
+
+## To SSH to the EC2 instance via the bastion host
+Add the Bastion credentials to your local SSH agent by running: `ssh-add <key>`
+SSH to the instance by proxying through the Bastion by running:
+`ssh -o ProxyCommand='ssh -W %h:%p ec2-user@<bastion public ip>' ec2-user@<instance private ip>`

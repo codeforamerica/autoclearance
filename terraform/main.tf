@@ -1,6 +1,5 @@
 terraform {
   backend "s3" {
-    bucket = "terraform-autoclearance-prod"
     key = "terraform_state"
     region = "us-gov-west-1"
   }
@@ -209,7 +208,7 @@ resource "aws_network_acl" "private" {
 }
 
 resource "aws_s3_bucket" "rap_sheet_inputs" {
-  bucket = "autoclearance-rap-sheet-inputs"
+  bucket = "autoclearance-rap-sheet-inputs-${var.environment}"
 
   tags {
     Name = "Rap sheet inputs"
@@ -225,7 +224,7 @@ resource "aws_s3_bucket" "rap_sheet_inputs" {
 }
 
 resource "aws_s3_bucket" "autoclearance_outputs" {
-  bucket = "autoclearance-outputs"
+  bucket = "autoclearance-outputs-${var.environment}"
 
   tags {
     Name = "Autoclearance Outputs"
@@ -268,6 +267,11 @@ resource "aws_iam_policy" "s3_read_write" {
           "${aws_s3_bucket.autoclearance_outputs.arn}/*",
           "${aws_s3_bucket.rap_sheet_inputs.arn}/*"
       ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": "s3:ListAllMyBuckets",
+      "Resource": "*"
     }
   ]
 }
@@ -278,18 +282,9 @@ resource "aws_iam_group" "staff" {
   name = "staff"
 }
 
-resource "aws_iam_group" "developers" {
-  name = "developers"
-}
-
 resource "aws_iam_group_policy_attachment" "s3_read_write_for_staff" {
   group = "${aws_iam_group.staff.name}"
   policy_arn = "${aws_iam_policy.s3_read_write.arn}"
-}
-
-resource "aws_iam_group_policy_attachment" "admin_access" {
-  group = "${aws_iam_group.developers.name}"
-  policy_arn = "arn:aws-us-gov:iam::aws:policy/AdministratorAccess"
 }
 
 resource "aws_key_pair" "auth" {
