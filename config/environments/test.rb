@@ -44,4 +44,7 @@ Rails.application.configure do
     provider: 'Local',
     local_root: '/tmp'
   }
+
+  config.input_bucket = 'autoclearance-rap-sheet-inputs'
+  config.output_bucket = 'autoclearance-outputs'
 end

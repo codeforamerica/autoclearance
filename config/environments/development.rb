@@ -56,4 +56,7 @@ Rails.application.configure do
     provider: 'Local',
     local_root: './test_data'
   }
+
+  config.input_bucket = 'autoclearance-rap-sheet-inputs'
+  config.output_bucket = 'autoclearance-outputs'
 end

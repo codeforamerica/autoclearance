@@ -93,4 +93,7 @@ Rails.application.configure do
     provider: 'aws',
     use_iam_profile: true
   }
+
+  config.input_bucket = 'autoclearance-rap-sheet-inputs-prod'
+  config.output_bucket = 'autoclearance-outputs-prod'
 end
