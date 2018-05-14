@@ -645,3 +645,13 @@ resource "aws_iam_role_policy_attachment" "config-attach" {
   role = "${aws_iam_role.config.name}"
   policy_arn = "${aws_iam_policy.manage_config_bucket.arn}"
 }
+
+resource "aws_iam_policy" "mfa_policy" {
+  name = "mfa"
+  policy = "${file("policies/mfa_policy.json")}"
+}
+
+resource "aws_iam_group_policy_attachment" "mfa_staff" {
+  group = "${aws_iam_group.staff.name}"
+  policy_arn = "${aws_iam_policy.mfa_policy.arn}"
+}

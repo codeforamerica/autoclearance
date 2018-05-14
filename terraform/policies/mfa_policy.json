@@ -1,0 +1,108 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowAllUsersToListAccounts",
+      "Effect": "Allow",
+      "Action": [
+        "iam:ListAccountAliases",
+        "iam:ListUsers",
+        "iam:ListVirtualMFADevices",
+        "iam:GetAccountPasswordPolicy",
+        "iam:GetAccountSummary"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "AllowIndividualUserToSeeAndManageOnlyTheirOwnAccountInformation",
+      "Effect": "Allow",
+      "Action": [
+        "iam:ChangePassword",
+        "iam:CreateAccessKey",
+        "iam:CreateLoginProfile",
+        "iam:DeleteAccessKey",
+        "iam:DeleteLoginProfile",
+        "iam:GetLoginProfile",
+        "iam:ListAccessKeys",
+        "iam:UpdateAccessKey",
+        "iam:UpdateLoginProfile",
+        "iam:ListSigningCertificates",
+        "iam:DeleteSigningCertificate",
+        "iam:UpdateSigningCertificate",
+        "iam:UploadSigningCertificate",
+        "iam:ListSSHPublicKeys",
+        "iam:GetSSHPublicKey",
+        "iam:DeleteSSHPublicKey",
+        "iam:UpdateSSHPublicKey",
+        "iam:UploadSSHPublicKey"
+      ],
+      "Resource": "arn:aws-us-gov:iam::*:user/${aws:username}"
+    },
+    {
+      "Sid": "AllowIndividualUserToListOnlyTheirOwnMFA",
+      "Effect": "Allow",
+      "Action": [
+        "iam:ListMFADevices"
+      ],
+      "Resource": [
+        "arn:aws-us-gov:iam::*:mfa/*",
+        "arn:aws-us-gov:iam::*:user/${aws:username}"
+      ]
+    },
+    {
+      "Sid": "AllowIndividualUserToManageTheirOwnMFA",
+      "Effect": "Allow",
+      "Action": [
+        "iam:CreateVirtualMFADevice",
+        "iam:DeleteVirtualMFADevice",
+        "iam:EnableMFADevice",
+        "iam:ResyncMFADevice"
+      ],
+      "Resource": [
+        "arn:aws-us-gov:iam::*:mfa/${aws:username}",
+        "arn:aws-us-gov:iam::*:user/${aws:username}"
+      ]
+    },
+    {
+      "Sid": "AllowIndividualUserToDeactivateOnlyTheirOwnMFAOnlyWhenUsingMFA",
+      "Effect": "Allow",
+      "Action": [
+        "iam:DeactivateMFADevice"
+      ],
+      "Resource": [
+        "arn:aws-us-gov:iam::*:mfa/${aws:username}",
+        "arn:aws-us-gov:iam::*:user/${aws:username}"
+      ],
+      "Condition": {
+        "Bool": {
+          "aws:MultiFactorAuthPresent": "true"
+        }
+      }
+    },
+    {
+      "Sid": "BlockMostAccessUnlessSignedInWithMFA",
+      "Effect": "Deny",
+      "NotAction": [
+        "iam:CreateVirtualMFADevice",
+        "iam:DeleteVirtualMFADevice",
+        "iam:ListVirtualMFADevices",
+        "iam:EnableMFADevice",
+        "iam:ResyncMFADevice",
+        "iam:ListAccountAliases",
+        "iam:ListUsers",
+        "iam:ListSSHPublicKeys",
+        "iam:ListAccessKeys",
+        "iam:ListServiceSpecificCredentials",
+        "iam:ListMFADevices",
+        "iam:GetAccountSummary",
+        "sts:GetSessionToken"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "BoolIfExists": {
+          "aws:MultiFactorAuthPresent": "false"
+        }
+      }
+    }
+  ]
+}
