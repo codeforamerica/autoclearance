@@ -544,32 +544,6 @@ resource "aws_elastic_beanstalk_environment" "beanstalk_application_environment"
   }
 }
 
-resource "aws_config_config_rule" "r" {
-  name = "iam-password-policy"
-  description = "Checks whether the account password policy for IAM users meets the specified requirements."
-
-  source {
-    owner = "AWS"
-    source_identifier = "IAM_PASSWORD_POLICY"
-  }
-
-  input_parameters = <<PARAMS
-{
-  "RequireUppercaseCharacters": "true",
-  "RequireLowercaseCharacters": "true",
-  "RequireSymbols": "true",
-  "RequireNumbers": "true",
-  "MinimumPasswordLength": "14",
-  "PasswordReusePrevention": "24",
-  "MaxPasswordAge": "90"
-}
-PARAMS
-
-  depends_on = [
-    "aws_config_configuration_recorder.default"
-  ]
-}
-
 resource "aws_config_configuration_recorder_status" "status" {
   name = "${aws_config_configuration_recorder.default.name}"
   is_enabled = true
