@@ -543,3 +543,105 @@ resource "aws_elastic_beanstalk_environment" "beanstalk_application_environment"
     value = "${var.rails_secret_key_base}"
   }
 }
+
+resource "aws_config_config_rule" "r" {
+  name = "iam-password-policy"
+  description = "Checks whether the account password policy for IAM users meets the specified requirements."
+
+  source {
+    owner = "AWS"
+    source_identifier = "IAM_PASSWORD_POLICY"
+  }
+
+  input_parameters = <<PARAMS
+{
+  "RequireUppercaseCharacters": "true",
+  "RequireLowercaseCharacters": "true",
+  "RequireSymbols": "true",
+  "RequireNumbers": "true",
+  "MinimumPasswordLength": "14",
+  "PasswordReusePrevention": "24",
+  "MaxPasswordAge": "90"
+}
+PARAMS
+
+  depends_on = [
+    "aws_config_configuration_recorder.default"
+  ]
+}
+
+resource "aws_config_configuration_recorder_status" "status" {
+  name = "${aws_config_configuration_recorder.default.name}"
+  is_enabled = true
+  depends_on = [
+    "aws_config_delivery_channel.channel"
+  ]
+}
+
+resource "aws_iam_role_policy_attachment" "a" {
+  role = "${aws_iam_role.config.name}"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSConfigRole"
+}
+
+resource "aws_s3_bucket" "config" {
+  bucket = "awsconfig-example"
+  force_destroy = true
+}
+
+resource "aws_config_delivery_channel" "channel" {
+  name = "example"
+  s3_bucket_name = "${aws_s3_bucket.config.bucket}"
+  depends_on = [
+    "aws_config_configuration_recorder.default"
+  ]
+}
+
+resource "aws_config_configuration_recorder" "default" {
+  role_arn = "${aws_iam_role.config.arn}"
+}
+
+resource "aws_iam_role" "config" {
+  name = "awsconfig"
+
+  assume_role_policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "config.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+POLICY
+}
+
+resource "aws_iam_policy" "manage_config_bucket" {
+  name = "manage_config_bucket"
+  policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "s3:*"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "${aws_s3_bucket.config.arn}",
+        "${aws_s3_bucket.config.arn}/*"
+      ]
+    }
+  ]
+}
+POLICY
+}
+
+resource "aws_iam_role_policy_attachment" "config-attach" {
+  role = "${aws_iam_role.config.name}"
+  policy_arn = "${aws_iam_policy.manage_config_bucket.arn}"
+}
