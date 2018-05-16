@@ -669,7 +669,8 @@ resource "aws_iam_policy" "cloudwatch_s3_policy" {
         "logs:PutLogEvents"
       ],
       "Resource": [
-        "${aws_cloudwatch_log_group.s3_logs.arn}:*"
+        "${aws_cloudwatch_log_group.s3_logs.arn}:*",
+        "${aws_cloudwatch_log_group.log_access_logs.arn}:*"
       ]
     }
   ]
@@ -695,6 +696,28 @@ resource "aws_cloudtrail" "s3_logs" {
       values = [
         "${aws_s3_bucket.autoclearance_outputs.arn}/",
         "${aws_s3_bucket.rap_sheet_inputs.arn}/"
+      ]
+    }
+  }
+}
+
+resource "aws_cloudtrail" "log_access_logs" {
+  name = "log-access-logs"
+  s3_bucket_name = "${aws_s3_bucket.cloudtrail_log_access_logs.id}"
+  include_global_service_events = false
+  enable_log_file_validation = true
+
+  cloud_watch_logs_group_arn = "${aws_cloudwatch_log_group.log_access_logs.arn}"
+  cloud_watch_logs_role_arn = "${aws_iam_role.cloudwatch_logs_role.arn}"
+
+  event_selector {
+    read_write_type = "All"
+    include_management_events = false
+
+    data_resource {
+      type = "AWS::S3::Object"
+      values = [
+        "${aws_s3_bucket.cloudtrail_s3_logs.arn}/"
       ]
     }
   }
@@ -734,6 +757,44 @@ resource "aws_s3_bucket" "cloudtrail_s3_logs" {
 POLICY
 }
 
+resource "aws_s3_bucket" "cloudtrail_log_access_logs" {
+  bucket = "cloudtrail-log-access-logs"
+  policy = <<POLICY
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AWSCloudTrailAclCheck",
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "cloudtrail.amazonaws.com"
+            },
+            "Action": "s3:GetBucketAcl",
+            "Resource": "arn:aws-us-gov:s3:::cloudtrail-log-access-logs"
+        },
+        {
+            "Sid": "AWSCloudTrailWrite",
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "cloudtrail.amazonaws.com"
+            },
+            "Action": "s3:PutObject",
+            "Resource": "arn:aws-us-gov:s3:::cloudtrail-log-access-logs/*",
+            "Condition": {
+                "StringEquals": {
+                    "s3:x-amz-acl": "bucket-owner-full-control"
+                }
+            }
+        }
+    ]
+}
+POLICY
+}
+
 resource "aws_cloudwatch_log_group" "s3_logs" {
   name = "s3_logs"
+}
+
+resource "aws_cloudwatch_log_group" "log_access_logs" {
+  name = "log_access_logs"
 }
