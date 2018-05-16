@@ -208,6 +208,10 @@ resource "aws_network_acl" "private" {
   }
 }
 
+resource "aws_kms_key" "k" {
+  description = "autoclearance"
+}
+
 resource "aws_s3_bucket" "rap_sheet_inputs" {
   bucket = "autoclearance-rap-sheet-inputs-${var.environment}"
 
@@ -218,7 +222,8 @@ resource "aws_s3_bucket" "rap_sheet_inputs" {
   server_side_encryption_configuration {
     rule {
       apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
+        kms_master_key_id = "${aws_kms_key.k.arn}"
+        sse_algorithm     = "aws:kms"
       }
     }
   }
@@ -238,7 +243,8 @@ resource "aws_s3_bucket" "autoclearance_outputs" {
   server_side_encryption_configuration {
     rule {
       apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
+        kms_master_key_id = "${aws_kms_key.k.arn}"
+        sse_algorithm     = "aws:kms"
       }
     }
   }
@@ -735,7 +741,6 @@ resource "aws_cloudtrail" "management_logs" {
   cloud_watch_logs_role_arn = "${aws_iam_role.cloudwatch_logs_role.arn}"
 
   event_selector {
-    read_write_type = "All"
     include_management_events = true
   }
 }
