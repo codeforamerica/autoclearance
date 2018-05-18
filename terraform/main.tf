@@ -248,7 +248,7 @@ resource "aws_s3_bucket" "rap_sheet_inputs" {
             "Resource": "arn:aws-us-gov:s3:::autoclearance-rap-sheet-inputs-${var.environment}/*",
             "Condition": {
                 "Bool": {
-                    "aws:SecureTransport": false
+                    "aws:SecureTransport": "false"
                 }
             }
         }
@@ -292,7 +292,7 @@ resource "aws_s3_bucket" "autoclearance_outputs" {
             "Resource": "arn:aws-us-gov:s3:::autoclearance-outputs-${var.environment}/*",
             "Condition": {
                 "Bool": {
-                    "aws:SecureTransport": false
+                    "aws:SecureTransport": "false"
                 }
             }
         }
@@ -691,7 +691,7 @@ resource "aws_s3_bucket" "config" {
       "Resource": "arn:aws-us-gov:s3:::awsconfig-example/*",
       "Condition": {
         "Bool": {
-          "aws:SecureTransport": false
+          "aws:SecureTransport": "false"
         }
       }
     }
@@ -916,7 +916,7 @@ resource "aws_s3_bucket" "cloudtrail_s3_logs" {
             "Resource": "arn:aws-us-gov:s3:::cloudtrail-s3-logs/*",
             "Condition": {
                 "Bool": {
-                   "aws:SecureTransport": false
+                   "aws:SecureTransport": "false"
                 }
             }
         }
@@ -964,7 +964,7 @@ resource "aws_s3_bucket" "cloudtrail_log_access_logs" {
             "Resource": "arn:aws-us-gov:s3:::cloudtrail-log-access-logs/*",
             "Condition": {
                 "Bool": {
-                    "aws:SecureTransport": false
+                    "aws:SecureTransport": "false"
                 }
             }
         }
@@ -1012,7 +1012,7 @@ resource "aws_s3_bucket" "cloudtrail_management_logs" {
             "Resource": "arn:aws-us-gov:s3:::cloudtrail-management-logs/*",
             "Condition": {
                 "Bool": {
-                    "aws:SecureTransport": false
+                    "aws:SecureTransport": "false"
                 }
             }
         }
