@@ -48,3 +48,22 @@ Deploy code to environment by running from the repository root:
 Add the Bastion credentials to your local SSH agent by running: `ssh-add <key>`
 SSH to the instance by proxying through the Bastion by running:
 `ssh -o ProxyCommand='ssh -W %h:%p ec2-user@<bastion public ip>' ec2-user@<instance private ip>`
+
+## Notes
+In order for the config rule "s3-bucket-ssl-requests-only" to be in compliance, you will need to deny HTTP access for the bucket created by Elastic Beanstalk to store application artifacts. To do this, add this policy excerpt to the created bucket.
+```
+{
+      "Sid": "DenyUnSecureCommunications",
+      "Effect": "Deny",
+      "Principal": {
+        "AWS": "*"
+      },
+      "Action": "s3:*",
+      "Resource": "arn:aws-us-gov:s3:::{bucket_name}/*",
+      "Condition": {
+        "Bool": {
+          "aws:SecureTransport": false
+        }
+      }
+}
+```

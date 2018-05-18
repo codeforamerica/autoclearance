@@ -212,6 +212,11 @@ resource "aws_kms_key" "k" {
   description = "autoclearance"
 }
 
+resource "aws_kms_alias" "k" {
+  name = "alias/autoclearance"
+  target_key_id = "${aws_kms_key.k.key_id}"
+}
+
 resource "aws_s3_bucket" "rap_sheet_inputs" {
   bucket = "autoclearance-rap-sheet-inputs-${var.environment}"
 
@@ -223,10 +228,33 @@ resource "aws_s3_bucket" "rap_sheet_inputs" {
     rule {
       apply_server_side_encryption_by_default {
         kms_master_key_id = "${aws_kms_key.k.arn}"
-        sse_algorithm     = "aws:kms"
+        sse_algorithm = "aws:kms"
       }
     }
   }
+
+  policy = <<POLICY
+{
+    "Version": "2008-10-17",
+    "Id": "Policy5",
+    "Statement": [
+        {
+            "Sid": "DenyUnSecureCommunications",
+            "Effect": "Deny",
+            "Principal": {
+                "AWS": "*"
+            },
+            "Action": "s3:*",
+            "Resource": "arn:aws-us-gov:s3:::autoclearance-rap-sheet-inputs-${var.environment}/*",
+            "Condition": {
+                "Bool": {
+                    "aws:SecureTransport": false
+                }
+            }
+        }
+    ]
+}
+POLICY
 }
 
 resource "aws_s3_bucket" "autoclearance_outputs" {
@@ -244,10 +272,33 @@ resource "aws_s3_bucket" "autoclearance_outputs" {
     rule {
       apply_server_side_encryption_by_default {
         kms_master_key_id = "${aws_kms_key.k.arn}"
-        sse_algorithm     = "aws:kms"
+        sse_algorithm = "aws:kms"
       }
     }
   }
+
+  policy = <<POLICY
+{
+    "Version": "2008-10-17",
+    "Id": "Policy-GENERATED-ID",
+    "Statement": [
+        {
+            "Sid": "DenyUnSecureCommunications",
+            "Effect": "Deny",
+            "Principal": {
+                "AWS": "*"
+            },
+            "Action": "s3:*",
+            "Resource": "arn:aws-us-gov:s3:::autoclearance-outputs-${var.environment}/*",
+            "Condition": {
+                "Bool": {
+                    "aws:SecureTransport": false
+                }
+            }
+        }
+    ]
+}
+POLICY
 }
 
 resource "aws_iam_policy" "s3_read_write" {
@@ -550,6 +601,32 @@ resource "aws_elastic_beanstalk_environment" "beanstalk_application_environment"
   }
 }
 
+resource "aws_config_config_rule" "r" {
+  name = "s3-bucket-ssl-requests-only"
+
+  source {
+    owner = "AWS"
+    source_identifier = "S3_BUCKET_SSL_REQUESTS_ONLY"
+  }
+
+  depends_on = [
+    "aws_config_configuration_recorder.default"
+  ]
+}
+
+resource "aws_config_config_rule" "rds" {
+  name = "rds-storage-encrypted"
+
+  source {
+    owner = "AWS"
+    source_identifier = "RDS_STORAGE_ENCRYPTED"
+  }
+
+  depends_on = [
+    "aws_config_configuration_recorder.default"
+  ]
+}
+
 resource "aws_config_configuration_recorder_status" "status" {
   name = "${aws_config_configuration_recorder.default.name}"
   is_enabled = true
@@ -566,6 +643,28 @@ resource "aws_iam_role_policy_attachment" "a" {
 resource "aws_s3_bucket" "config" {
   bucket = "awsconfig-example"
   force_destroy = true
+  policy = <<POLICY
+{
+  "Version": "2008-10-17",
+  "Id": "Policy5",
+  "Statement": [
+    {
+      "Sid": "DenyUnSecureCommunications",
+      "Effect": "Deny",
+      "Principal": {
+        "AWS": "*"
+      },
+      "Action": "s3:*",
+      "Resource": "arn:aws-us-gov:s3:::awsconfig-example/*",
+      "Condition": {
+        "Bool": {
+          "aws:SecureTransport": false
+        }
+      }
+    }
+  ]
+}
+POLICY
 }
 
 resource "aws_config_delivery_channel" "channel" {
@@ -773,6 +872,20 @@ resource "aws_s3_bucket" "cloudtrail_s3_logs" {
                     "s3:x-amz-acl": "bucket-owner-full-control"
                 }
             }
+        },
+        {
+            "Sid": "DenyUnSecureCommunications",
+            "Effect": "Deny",
+            "Principal": {
+                "AWS": "*"
+            },
+            "Action": "s3:*",
+            "Resource": "arn:aws-us-gov:s3:::cloudtrail-s3-logs/*",
+            "Condition": {
+                "Bool": {
+                   "aws:SecureTransport": false
+                }
+            }
         }
     ]
 }
@@ -807,6 +920,20 @@ resource "aws_s3_bucket" "cloudtrail_log_access_logs" {
                     "s3:x-amz-acl": "bucket-owner-full-control"
                 }
             }
+        },
+        {
+            "Sid": "DenyUnSecureCommunications",
+            "Effect": "Deny",
+            "Principal": {
+              "AWS": "*"
+            },
+            "Action": "s3:*",
+            "Resource": "arn:aws-us-gov:s3:::cloudtrail-log-access-logs/*",
+            "Condition": {
+                "Bool": {
+                    "aws:SecureTransport": false
+                }
+            }
         }
     ]
 }
@@ -839,6 +966,20 @@ resource "aws_s3_bucket" "cloudtrail_management_logs" {
             "Condition": {
                 "StringEquals": {
                     "s3:x-amz-acl": "bucket-owner-full-control"
+                }
+            }
+        },
+        {
+            "Sid": "DenyUnSecureCommunications",
+            "Effect": "Deny",
+            "Principal": {
+                "AWS": "*"
+            },
+            "Action": "s3:*",
+            "Resource": "arn:aws-us-gov:s3:::cloudtrail-management-logs/*",
+            "Condition": {
+                "Bool": {
+                    "aws:SecureTransport": false
                 }
             }
         }
