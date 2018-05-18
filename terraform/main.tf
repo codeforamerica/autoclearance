@@ -330,6 +330,39 @@ resource "aws_iam_policy" "s3_read_write" {
       "Effect": "Allow",
       "Action": "s3:ListAllMyBuckets",
       "Resource": "*"
+    },
+    {
+      "Sid": "KMSPermissionsForAutoclearanceKey",
+      "Effect": "Allow",
+      "Action": [
+        "kms:Decrypt",
+        "kms:ListKeyPolicies",
+        "kms:ListRetirableGrants",
+        "kms:GetKeyPolicy",
+        "kms:GenerateDataKeyWithoutPlaintext",
+        "kms:ListResourceTags",
+        "kms:ListGrants",
+        "kms:GetParametersForImport",
+        "kms:Encrypt",
+        "kms:GetKeyRotationStatus",
+        "kms:DescribeKey"
+      ],
+      "Resource": [
+        "${aws_kms_key.k.arn}"
+      ]
+    },
+    {
+      "Sid": "GlobalKMSPermissions",
+      "Effect": "Allow",
+      "Action": [
+        "kms:ListKeys",
+        "kms:GenerateRandom",
+        "kms:ListAliases",
+        "kms:ReEncryptTo",
+        "kms:GenerateDataKey",
+        "kms:ReEncryptFrom"
+      ],
+      "Resource": "*"
     }
   ]
 }
