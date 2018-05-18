@@ -525,12 +525,12 @@ EOF
 
 resource "aws_iam_role_policy_attachment" "eb_enhanced_health" {
   role = "${aws_iam_role.beanstalk_role.name}"
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkEnhancedHealth"
+  policy_arn = "arn:aws-us-gov:iam::aws:policy/service-role/AWSElasticBeanstalkEnhancedHealth"
 }
 
 resource "aws_iam_role_policy_attachment" "eb_service" {
   role = "${aws_iam_role.beanstalk_role.name}"
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkService"
+  policy_arn = "arn:aws-us-gov:iam::aws:policy/service-role/AWSElasticBeanstalkService"
 }
 
 resource "aws_iam_role_policy_attachment" "worker_tier" {
@@ -670,7 +670,7 @@ resource "aws_config_configuration_recorder_status" "status" {
 
 resource "aws_iam_role_policy_attachment" "a" {
   role = "${aws_iam_role.config.name}"
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSConfigRole"
+  policy_arn = "arn:aws-us-gov:iam::aws:policy/service-role/AWSConfigRole"
 }
 
 resource "aws_s3_bucket" "config" {
@@ -871,10 +871,6 @@ resource "aws_cloudtrail" "management_logs" {
 
   cloud_watch_logs_group_arn = "${aws_cloudwatch_log_group.management_logs.arn}"
   cloud_watch_logs_role_arn = "${aws_iam_role.cloudwatch_logs_role.arn}"
-
-  event_selector {
-    include_management_events = true
-  }
 }
 
 resource "aws_s3_bucket" "cloudtrail_s3_logs" {
