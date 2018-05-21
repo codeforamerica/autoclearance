@@ -548,6 +548,11 @@ resource "aws_iam_role_policy_attachment" "web_tier" {
   policy_arn = "arn:aws-us-gov:iam::aws:policy/AWSElasticBeanstalkWebTier"
 }
 
+resource "aws_iam_role_policy_attachment" "logs_to_cloudwatch" {
+  role = "${aws_iam_role.instance_role.name}"
+  policy_arn = "arn:aws-us-gov:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+}
+
 resource "aws_iam_role_policy_attachment" "s3_read_write" {
   role = "${aws_iam_role.instance_role.name}"
   policy_arn = "${aws_iam_policy.s3_read_write.arn}"
