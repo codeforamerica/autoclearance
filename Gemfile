@@ -42,6 +42,7 @@ group :development, :test do
   gem 'selenium-webdriver'
   gem 'fog-local'
   gem 'rspec-rails'
+  gem 'bundler-audit'
 end
 
 group :development do
