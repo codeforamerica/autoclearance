@@ -387,13 +387,13 @@ resource "aws_security_group" "bastion_security" {
   name = "bastion_security"
   vpc_id = "${aws_vpc.default.id}"
 
-  # SSH access from anywhere
+  # SSH access from CfA
   ingress {
     from_port = 22
     to_port = 22
     protocol = "tcp"
     cidr_blocks = [
-      "0.0.0.0/0"
+      "69.12.169.82/32"
     ]
   }
 
@@ -416,7 +416,7 @@ resource "aws_security_group" "application_security" {
     to_port = 22
     protocol = "tcp"
     cidr_blocks = [
-      "0.0.0.0/0"
+      "${aws_vpc.default.cidr_block}"
     ]
   }
 
@@ -663,6 +663,19 @@ resource "aws_config_config_rule" "r" {
   source {
     owner = "AWS"
     source_identifier = "S3_BUCKET_SSL_REQUESTS_ONLY"
+  }
+
+  depends_on = [
+    "aws_config_configuration_recorder.default"
+  ]
+}
+
+resource "aws_config_config_rule" "ssh" {
+  name = "restricted-ssh"
+
+  source {
+    owner = "AWS"
+    source_identifier = "INCOMING_SSH_DISABLED"
   }
 
   depends_on = [
