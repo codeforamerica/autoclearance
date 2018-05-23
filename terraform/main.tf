@@ -584,12 +584,6 @@ resource "aws_elastic_beanstalk_environment" "beanstalk_application_environment"
 
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
-    name = "EC2KeyName"
-    value = "${aws_key_pair.auth.id}"
-  }
-
-  setting {
-    namespace = "aws:autoscaling:launchconfiguration"
     name = "ImageId"
 
     # Amazon Linux AMI 2017.03.1 (HVM), SSD Volume Type
