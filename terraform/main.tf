@@ -637,6 +637,30 @@ resource "aws_elastic_beanstalk_environment" "beanstalk_application_environment"
     name = "SECRET_KEY_BASE"
     value = "${var.rails_secret_key_base}"
   }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:managedactions"
+    name = "ManagedActionsEnabled"
+    value = "true"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:managedactions"
+    name = "PreferredStartTime"
+    value = "Tue:16:00"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:managedactions:platformupdate"
+    name = "UpdateLevel"
+    value = "minor"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:managedactions:platformupdate"
+    name = "InstanceRefreshEnabled"
+    value = "true"
+  }
 }
 
 resource "aws_config_config_rule" "r" {
