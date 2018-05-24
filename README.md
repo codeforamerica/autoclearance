@@ -27,6 +27,10 @@ To deploy using Terraform, cd to the terraform directory and run `terraform init
 Create a new keypair through the AWS console for SSH access to the bastion. Safely store the keyfile.
 Generate a publickey for your `varfile` by running `ssh-keygen -y -f /path/to/private_key.pem`.
 
+When the bastion is initially created, you will need to use these credentials to run the bastion setup script
+with: `./bastion_setup.sh <ip address>`,
+which creates individual user accounts and sets up logging to CloudWatch from the bastion.
+
 To apply Terraform settings, run: `terraform apply -var-file varfile`
 
 To push a new revision to Beanstalk:
@@ -45,9 +49,9 @@ Deploy code to environment by running from the repository root:
 
 
 ## To SSH to the EC2 instance via the bastion host
-Add the Bastion credentials to your local SSH agent by running: `ssh-add <key>`
+Add your credentials to your local SSH agent by running: `ssh-add <key>`
 SSH to the instance by proxying through the Bastion by running:
-`ssh -o ProxyCommand='ssh -W %h:%p ec2-user@<bastion public ip>' ec2-user@<instance private ip>`
+`ssh -o ProxyCommand='ssh -W %h:%p <username>@<bastion public ip>' <username>@<instance private ip>`
 
 ## Notes
 In order for the config rule "s3-bucket-ssl-requests-only" to be in compliance, you will need to deny HTTP access for the bucket created by Elastic Beanstalk to store application artifacts. To do this, add this policy excerpt to the created bucket.
