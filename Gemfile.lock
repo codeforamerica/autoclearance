@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com/codeforamerica/rap_sheet_parser
+  revision: e046a93d19f75d0bbe204f8fdb87d9f111e3dadd
+  specs:
+    rap_sheet_parser (0.1.0)
+      activesupport
+      treetop
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -126,6 +134,7 @@ GEM
       hashery (~> 2.0)
       ruby-rc4
       ttfunk
+    polyglot (0.3.5)
     public_suffix (3.0.2)
     puma (3.11.4)
     rack (2.0.5)
@@ -208,6 +217,8 @@ GEM
     thor (0.20.0)
     thread_safe (0.3.6)
     tilt (2.0.8)
+    treetop (1.6.10)
+      polyglot (~> 0.3)
     ttfunk (1.5.1)
     turbolinks (5.1.1)
       turbolinks-source (~> 5.1)
@@ -242,6 +253,7 @@ DEPENDENCIES
   pdf-reader
   puma (~> 3.7)
   rails (~> 5.1.6)
+  rap_sheet_parser!
   rspec-rails
   sass-rails (~> 5.0)
   selenium-webdriver

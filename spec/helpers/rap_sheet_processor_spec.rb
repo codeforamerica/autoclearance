@@ -12,16 +12,27 @@ describe RapSheetProcessor do
       FileUtils.rm Dir.glob('/tmp/autoclearance-outputs/*')
     end
 
-    it 'extracts rap sheet text from files in the input bucket and saves to output bucket' do
+    it 'reads rap sheets from input bucket and saves conviction data to output bucket' do
       FileUtils.cp('spec/fixtures/skywalker_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/')
 
       described_class.run
 
       expect(Dir['/tmp/autoclearance-rap-sheet-inputs/skywalker_rap_sheet.pdf']).to eq []
-      expect(Dir['/tmp/autoclearance-outputs/*']).to eq ['/tmp/autoclearance-outputs/skywalker_rap_sheet.txt']
+      expect(Dir['/tmp/autoclearance-outputs/*']).to eq ['/tmp/autoclearance-outputs/skywalker_rap_sheet.csv']
+
+      expected_text = File.read('spec/fixtures/skywalker_rap_sheet.csv')
+      actual_text = File.read('/tmp/autoclearance-outputs/skywalker_rap_sheet.csv')
+
+      expect(actual_text).to eq(expected_text)
+    end
+  end
+
+  describe '.get_pdf_text' do
+    it 'extracts the RAP sheet text from the PDF' do
+      reader = PDF::Reader.new('spec/fixtures/skywalker_rap_sheet.pdf')
 
       expected_text = File.read('spec/fixtures/skywalker_rap_sheet.txt')
-      actual_text = File.read('/tmp/autoclearance-outputs/skywalker_rap_sheet.txt')
+      actual_text = described_class.get_pdf_text(reader)
 
       expect(strip_whitespace(actual_text)).to eq(strip_whitespace(expected_text))
     end

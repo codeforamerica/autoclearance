@@ -33,8 +33,9 @@ gem 'jbuilder', '~> 2.5'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 gem 'fog-aws'
-
 gem 'pdf-reader'
+gem 'rap_sheet_parser', :git => 'https://github.com/codeforamerica/rap_sheet_parser'
+#gem 'rap_sheet_parser', :path => '../rap_sheet_parser'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
