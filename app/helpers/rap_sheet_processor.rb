@@ -8,13 +8,19 @@ class RapSheetProcessor
     output_directory = connection.directories.new(key: Rails.configuration.output_bucket)
 
     input_directory.files.each do |input_file|
-      reader = PDF::Reader.new(StringIO.new(input_file.body))
-
-      output_directory.files.create(
-        key: input_file.key.gsub('.pdf', '.csv'),
-        body: self.generate_output_file_contents(reader)
-      )
-      input_file.destroy
+      begin
+        reader = PDF::Reader.new(StringIO.new(input_file.body))
+        output_directory.files.create(
+          key: input_file.key.gsub('.pdf', '.csv'),
+          body: self.generate_output_file_contents(reader)
+        )
+        input_file.destroy
+      rescue => e
+        output_directory.files.create(
+          key: input_file.key.gsub('.pdf', '.error'),
+          body: e.message
+        )
+      end
     end
   end
 

@@ -25,6 +25,31 @@ describe RapSheetProcessor do
 
       expect(actual_text).to eq(expected_text)
     end
+
+    it 'catches exceptions in the parser and logs the error to an output file' do
+      FileUtils.cp('spec/fixtures/not_a_valid_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/')
+      FileUtils.cp('spec/fixtures/skywalker_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/')
+
+      expected_error_message = 'Error: Not a valid RAP sheet'
+
+      allow_any_instance_of(RapSheetParser::Parser).to receive(:parse).and_wrap_original do |m, *args|
+        if args[0].include? 'not_a_valid_rap_sheet'
+          raise RapSheetParser::RapSheetParserException.new(double('parser', :failure_reason => expected_error_message), '')
+        else
+          m.call(*args)
+        end
+      end
+
+      described_class.run
+
+      expect(Dir['/tmp/autoclearance-rap-sheet-inputs/*']).to eq ['/tmp/autoclearance-rap-sheet-inputs/not_a_valid_rap_sheet.pdf']
+      expect(Dir['/tmp/autoclearance-outputs/*']).to eq ['/tmp/autoclearance-outputs/not_a_valid_rap_sheet.error',
+                                                         '/tmp/autoclearance-outputs/skywalker_rap_sheet.csv']
+
+      actual_text = File.read('/tmp/autoclearance-outputs/not_a_valid_rap_sheet.error')
+
+      expect(actual_text).to include(expected_error_message)
+    end
   end
 
   describe '.get_pdf_text' do
