@@ -38,10 +38,10 @@ class RapSheetProcessor
       lines.join("\n") + "\n"
   end
 
-  def self.parse_conviction_counts(text)
+  def self.parse_convictions(text)
     parsed_tree = RapSheetParser::Parser.new.parse(text)
     events = RapSheetParser::EventCollectionBuilder.build(parsed_tree)
-    RapSheetParser::ConvictionCountCollection.new(events.with_convictions.flat_map(&:counts))
+    events.with_convictions
   end
 
   def self.create_csv(conviction_counts)
@@ -63,7 +63,8 @@ class RapSheetProcessor
 
   def self.generate_output_file_contents(reader)
     text = self.get_pdf_text(reader)
-    convictions = self.parse_conviction_counts(text)
-    self.create_csv(convictions)
+    convictions = self.parse_convictions(text)
+    eligible_convictions = EligibilityChecker.new(convictions).eligible_events
+    self.create_csv(eligible_convictions.flat_map(&:counts))
   end
 end

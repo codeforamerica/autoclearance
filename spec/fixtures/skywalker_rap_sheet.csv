@@ -1,5 +1,4 @@
 Date,Case Number,Courthouse,Charge,Severity,Sentence
-1984-09-18,1234567,CASC Los Angeles,HS 11357,M,"3y probation, 30d jail, fine, restitution"
-1984-09-18,1234567,CASC Los Angeles,PC 496,M,"3y probation, 30d jail, fine, restitution"
-1984-09-18,1234567,CASC Los Angeles,HS 11358,M,"3y probation, 30d jail, fine, restitution"
-2004-04-13,3456789,CASC Los Angeles,HS 11358,F,"2y probation, 5d jail"
+1984-09-18,1234567,CASC San Francisco,HS 11357,M,"3y probation, 30d jail, fine, restitution"
+1984-09-18,1234567,CASC San Francisco,PC 496,M,"3y probation, 30d jail, fine, restitution"
+1984-09-18,1234567,CASC San Francisco,HS 11358,M,"3y probation, 30d jail, fine, restitution"
