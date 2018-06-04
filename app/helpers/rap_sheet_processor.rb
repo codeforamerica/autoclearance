@@ -12,7 +12,8 @@ class RapSheetProcessor
         reader = PDF::Reader.new(StringIO.new(input_file.body))
         output_directory.files.create(
           key: input_file.key.gsub('.pdf', '.csv'),
-          body: self.generate_output_file_contents(reader)
+          body: self.generate_output_file_contents(reader),
+          content_type: 'text/csv'
         )
         input_file.destroy
       rescue => e
