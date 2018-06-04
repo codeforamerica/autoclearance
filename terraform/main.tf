@@ -686,6 +686,24 @@ resource "aws_elastic_beanstalk_environment" "beanstalk_application_environment"
     name = "InstanceRefreshEnabled"
     value = "true"
   }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:cloudwatch:logs"
+    name = "StreamLogs"
+    value = "true"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:cloudwatch:logs"
+    name = "DeleteOnTerminate"
+    value = "false"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:cloudwatch:logs"
+    name = "RetentionInDays"
+    value = "3653"
+  }
 }
 
 resource "aws_config_config_rule" "r" {
