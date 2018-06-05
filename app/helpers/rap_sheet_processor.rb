@@ -46,7 +46,18 @@ class RapSheetProcessor
 
   def self.create_csv(conviction_counts)
     CSV.generate do |csv|
-      csv << ['Date', 'Case Number', 'Courthouse', 'Charge', 'Severity', 'Sentence', 'Prop 64 Eligible']
+      csv << [
+        'Date',
+        'Case Number',
+        'Courthouse',
+        'Charge',
+        'Severity',
+        'Sentence',
+        'Prop 64 Eligible',
+        'Needs info under 18',
+        'Needs info under 21',
+        'Needs info across state lines'
+      ]
       conviction_counts.each do |count|
         count_data = [
           count.event.date,
@@ -55,7 +66,10 @@ class RapSheetProcessor
           count.code_section,
           count.severity,
           count.event.sentence,
-          count.prop64_eligible?
+          count.prop64_eligible?,
+          count.needs_info_under_18?,
+          count.needs_info_under_21?,
+          count.needs_info_across_state_lines?
         ]
         csv << count_data
       end
