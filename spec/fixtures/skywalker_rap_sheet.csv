@@ -1,4 +1,4 @@
-Date,Case Number,Courthouse,Charge,Severity,Sentence
-1984-09-18,1234567,CASC San Francisco,HS 11357,M,"3y probation, 30d jail, fine, restitution"
-1984-09-18,1234567,CASC San Francisco,PC 496,M,"3y probation, 30d jail, fine, restitution"
-1984-09-18,1234567,CASC San Francisco,HS 11358,M,"3y probation, 30d jail, fine, restitution"
+Date,Case Number,Courthouse,Charge,Severity,Sentence,Prop 64 Eligible
+1984-09-18,1234567,CASC San Francisco,HS 11357,M,"3y probation, 30d jail, fine, restitution",true
+1984-09-18,1234567,CASC San Francisco,PC 496,M,"3y probation, 30d jail, fine, restitution",false
+1984-09-18,1234567,CASC San Francisco,HS 11358,M,"3y probation, 30d jail, fine, restitution",true

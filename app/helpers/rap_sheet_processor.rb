@@ -32,10 +32,10 @@ class RapSheetProcessor
   end
 
   def self.strip_page_header_and_footer page_text
-      lines = page_text.split("\n")
-      lines.pop while lines.last.blank? || lines.last.lstrip.starts_with?('http://', 'https://', 'file://', 'ﬁle://')
-      lines.shift while lines.first.blank? || lines.first.lstrip.starts_with?('Page', 'Route')
-      lines.join("\n") + "\n"
+    lines = page_text.split("\n")
+    lines.pop while lines.last.blank? || lines.last.lstrip.starts_with?('http://', 'https://', 'file://', 'ﬁle://')
+    lines.shift while lines.first.blank? || lines.first.lstrip.starts_with?('Page', 'Route')
+    lines.join("\n") + "\n"
   end
 
   def self.parse_convictions(text)
@@ -46,7 +46,7 @@ class RapSheetProcessor
 
   def self.create_csv(conviction_counts)
     CSV.generate do |csv|
-      csv << ['Date','Case Number','Courthouse','Charge','Severity','Sentence']
+      csv << ['Date', 'Case Number', 'Courthouse', 'Charge', 'Severity', 'Sentence', 'Prop 64 Eligible']
       conviction_counts.each do |count|
         count_data = [
           count.event.date,
@@ -54,7 +54,8 @@ class RapSheetProcessor
           count.event.courthouse,
           count.code_section,
           count.severity,
-          count.event.sentence
+          count.event.sentence,
+          count.prop64_eligible?
         ]
         csv << count_data
       end
