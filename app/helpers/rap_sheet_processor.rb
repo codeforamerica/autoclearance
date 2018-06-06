@@ -19,17 +19,16 @@ class RapSheetProcessor
     connection = Fog::Storage.new(Rails.configuration.fog_params)
     input_directory = connection.directories.new(key: Rails.configuration.input_bucket)
     output_directory = connection.directories.new(key: Rails.configuration.output_bucket)
-
-    summary_rows = []
-
+    summary_csv = SummaryCSV.new
+    
     input_directory.files.each do |input_file|
       begin
         reader = PDF::Reader.new(StringIO.new(input_file.body))
-        rows = self.get_csv_rows(reader)
-        self.append_rows_to_summary(summary_rows, input_file.key, rows)
+        counts = self.get_counts_with_eligibility(reader)
+        summary_csv.append(input_file.key, counts)
         output_directory.files.create(
           key: input_file.key.gsub('.pdf', '.csv'),
-          body: self.create_csv(CSV_HEADER, rows),
+          body: SingleCSV.new(counts).text,
           content_type: 'text/csv'
         )
         input_file.destroy
@@ -44,7 +43,7 @@ class RapSheetProcessor
     timestamp = Time.now.strftime('%Y%m%d-%H%M%S')
     output_directory.files.create(
       key: "summary_#{timestamp}.csv",
-      body: self.create_csv(CSV_HEADER.unshift('Filename'), summary_rows),
+      body: summary_csv.text,
       content_type: 'text/csv'
     )
   end
@@ -55,28 +54,11 @@ class RapSheetProcessor
     end
   end
 
-  def self.get_csv_rows(reader)
+  def self.get_counts_with_eligibility(reader)
     text = self.get_pdf_text(reader)
     convictions = self.parse_convictions(text)
     eligible_convictions = EligibilityChecker.new(convictions).eligible_events
-    self.csv_data(eligible_convictions.flat_map(&:counts))
-  end
-
-  def self.csv_data(counts)
-    counts.map do |count|
-      [
-        count.event.date,
-        count.event.case_number,
-        count.event.courthouse,
-        count.code_section,
-        count.severity,
-        count.event.sentence,
-        count.prop64_eligible?,
-        count.needs_info_under_18?,
-        count.needs_info_under_21?,
-        count.needs_info_across_state_lines?
-      ]
-    end
+    eligible_convictions.flat_map(&:counts)
   end
 
   def self.get_pdf_text reader
