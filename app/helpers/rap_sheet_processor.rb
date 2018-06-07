@@ -21,7 +21,7 @@ class RapSheetProcessor
     output_directory = connection.directories.new(key: Rails.configuration.output_bucket)
     summary_csv = SummaryCSV.new
     
-    input_directory.files.each do |input_file|
+    input_directory.files.to_a.sort_by {|f| f.key}.each do |input_file|
       begin
         reader = PDF::Reader.new(StringIO.new(input_file.body))
         counts = self.get_counts_with_eligibility(reader)
