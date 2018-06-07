@@ -59,12 +59,19 @@ describe RapSheetProcessor do
       end
 
       expect(Dir['/tmp/autoclearance-rap-sheet-inputs/*']).to eq ['/tmp/autoclearance-rap-sheet-inputs/not_a_valid_rap_sheet.pdf']
-      expect(Dir['/tmp/autoclearance-outputs/*']).to contain_exactly('/tmp/autoclearance-outputs/not_a_valid_rap_sheet.error',
-        '/tmp/autoclearance-outputs/skywalker_rap_sheet.csv', '/tmp/autoclearance-outputs/summary_20100102-010444.csv')
+      expect(Dir['/tmp/autoclearance-outputs/*']).to contain_exactly(
+        '/tmp/autoclearance-outputs/not_a_valid_rap_sheet.error',
+        '/tmp/autoclearance-outputs/summary_20100102-010444.error',
+        '/tmp/autoclearance-outputs/skywalker_rap_sheet.csv',
+        '/tmp/autoclearance-outputs/summary_20100102-010444.csv'
+      )
 
-      actual_text = File.read('/tmp/autoclearance-outputs/not_a_valid_rap_sheet.error')
+      actual_error = File.read('/tmp/autoclearance-outputs/not_a_valid_rap_sheet.error')
+      actual_summary_error = File.read('/tmp/autoclearance-outputs/summary_20100102-010444.error')
 
-      expect(actual_text).to include(expected_error_message)
+      expect(actual_error).to include(expected_error_message)
+      expect(actual_summary_error).to include('not_a_valid_rap_sheet.pdf:')
+      expect(actual_summary_error).to include(expected_error_message)
     end
   end
 

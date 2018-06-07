@@ -20,6 +20,7 @@ class RapSheetProcessor
     input_directory = connection.directories.new(key: Rails.configuration.input_bucket)
     output_directory = connection.directories.new(key: Rails.configuration.output_bucket)
     summary_csv = SummaryCSV.new
+    summary_errors = ''
     
     input_directory.files.to_a.sort_by {|f| f.key}.each do |input_file|
       begin
@@ -37,6 +38,8 @@ class RapSheetProcessor
           key: input_file.key.gsub('.pdf', '.error'),
           body: e.message
         )
+        summary_errors += "#{input_file.key}:\n"
+        summary_errors += "#{e.message}\n\n"
       end
     end
 
@@ -46,6 +49,13 @@ class RapSheetProcessor
       body: summary_csv.text,
       content_type: 'text/csv'
     )
+
+    unless summary_errors.blank?
+      output_directory.files.create(
+        key: "summary_#{timestamp}.error",
+        body: summary_errors
+      )
+    end
   end
 
   def self.append_rows_to_summary(summary_rows, filename, rows)
