@@ -64,5 +64,5 @@ terraform/backend-config
 !.elasticbeanstalk/*.global.yml
 
 .venv
-
+.DS_Store
 test_data/
