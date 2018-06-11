@@ -8,15 +8,15 @@ class RapSheetProcessor
     output_directory = connection.directories.new(key: Rails.configuration.output_bucket)
     summary_csv = SummaryCSV.new
     summary_errors = ''
-    
-    input_directory.files.to_a.sort_by {|f| f.key}.each do |input_file|
+
+    input_directory.files.to_a.sort_by { |f| f.key }.each do |input_file|
       begin
         text = PDFReader.new(input_file.body).text
-        counts = self.get_counts_with_eligibility(text)
-        summary_csv.append(input_file.key, counts)
+        eligibility = self.get_eligibility(text)
+        summary_csv.append(input_file.key, eligibility)
         output_directory.files.create(
           key: input_file.key.gsub('.pdf', '.csv'),
-          body: SingleCSV.new(counts).text,
+          body: SingleCSV.new(eligibility).text,
           content_type: 'text/csv'
         )
         input_file.destroy
@@ -45,10 +45,9 @@ class RapSheetProcessor
     end
   end
 
-  def self.get_counts_with_eligibility(text)
+  def self.get_eligibility(text)
     convictions = self.parse_convictions(text)
-    eligible_convictions = EligibilityChecker.new(convictions).eligible_events
-    eligible_convictions.flat_map(&:counts)
+    Eligibility.new(convictions)
   end
 
   def self.parse_convictions(text)

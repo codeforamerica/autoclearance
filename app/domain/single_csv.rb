@@ -1,6 +1,8 @@
 class SingleCSV
-  def initialize(counts)
-    @rows = counts.map { |count| count_data(count) }
+  def initialize(eligibility)
+    @rows = eligibility.counts.map do |count|
+      count_data(count, eligibility)
+    end
   end
 
   def text
@@ -13,21 +15,22 @@ class SingleCSV
   end
 
   private
-    
-    def count_data(count)
-      [
-        count.event.date,
-        count.event.case_number,
-        count.event.courthouse,
-        count.code_section,
-        count.severity,
-        count.event.sentence,
-        count.prop64_eligible?,
-        count.needs_info_under_18?,
-        count.needs_info_under_21?,
-        count.needs_info_across_state_lines?
-      ]
-    end
+
+  def count_data(count, eligibility)
+    [
+      count.event.date,
+      count.event.case_number,
+      count.event.courthouse,
+      count.code_section,
+      count.severity,
+      count.event.sentence,
+      count.prop64_eligible?,
+      count.needs_info_under_18?,
+      count.needs_info_under_21?,
+      count.needs_info_across_state_lines?,
+      eligibility.contains_superstrike?
+    ]
+  end
 
   def header
     [
@@ -40,9 +43,18 @@ class SingleCSV
       'Prop 64 Eligible',
       'Needs info under 18',
       'Needs info under 21',
-      'Needs info across state lines'
+      'Needs info across state lines',
+      'Superstrikes'
     ]
   end
+
+  # def superstrikes(counts)
+  #   superstrikes = counts.
+  #     select(&:superstrike?).
+  #     map(&:code_section)
+  #   
+  #   superstrikes.present? ? superstrikes.join(', ') : nil
+  # end
 
   attr_reader :rows
 end
