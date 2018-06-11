@@ -17,12 +17,6 @@ class CountWithEligibility < SimpleDelegator
 
   private
 
-  def code_section_starts_with(codes)
-    codes.any? do |d|
-      code_section.start_with? d
-    end
-  end
-
   def dismissible_codes
     [
       'HS 11357', #simple possession
