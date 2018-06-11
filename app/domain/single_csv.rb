@@ -28,7 +28,7 @@ class SingleCSV
       count.needs_info_under_18?,
       count.needs_info_under_21?,
       count.needs_info_across_state_lines?,
-      eligibility.contains_superstrike?
+      eligibility.superstrikes.join(', ')
     ]
   end
 
@@ -47,14 +47,6 @@ class SingleCSV
       'Superstrikes'
     ]
   end
-
-  # def superstrikes(counts)
-  #   superstrikes = counts.
-  #     select(&:superstrike?).
-  #     map(&:code_section)
-  #   
-  #   superstrikes.present? ? superstrikes.join(', ') : nil
-  # end
 
   attr_reader :rows
 end
