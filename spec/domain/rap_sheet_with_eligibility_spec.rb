@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe EligibilityChecker do
+describe RapSheetWithEligibility do
   describe '#eligible_events' do
     it 'filters out events not in San Francisco' do
       eligible_event = RapSheetParser::ConvictionEvent.new(
@@ -15,9 +15,9 @@ describe EligibilityChecker do
         courthouse: 'CASC Los Angeles',
         sentence: nil
       )
-      events = RapSheetParser::EventCollection.new([eligible_event, ineligible_event])
+      rap_sheet = RapSheetParser::RapSheet.new([eligible_event, ineligible_event])
 
-      expect(described_class.new(events).eligible_events).to eq [eligible_event]
+      expect(described_class.new(rap_sheet).eligible_events).to eq [eligible_event]
     end
 
     it 'logs events that appear to be from San Fransisco, but do not match a known courthouse' do
@@ -27,11 +27,11 @@ describe EligibilityChecker do
         courthouse: 'CAMC SAN FRANCISCO',
         sentence: nil
       )
-      events = RapSheetParser::EventCollection.new([unknown_courthouse_event])
+      rap_sheet = RapSheetParser::RapSheet.new([unknown_courthouse_event])
 
       expect(Rails.logger).to receive(:warn).with('Unknown Courthouse: CAMC SAN FRANCISCO')
 
-      expect(described_class.new(events).eligible_events).to eq [unknown_courthouse_event]
+      expect(described_class.new(rap_sheet).eligible_events).to eq [unknown_courthouse_event]
     end
   end
 end

@@ -46,13 +46,7 @@ class RapSheetProcessor
   end
 
   def self.get_eligibility(text)
-    convictions = self.parse_convictions(text)
-    Eligibility.new(convictions)
-  end
-
-  def self.parse_convictions(text)
-    parsed_tree = RapSheetParser::Parser.new.parse(text)
-    events = RapSheetParser::EventCollectionBuilder.build(parsed_tree)
-    events.with_convictions
+    rap_sheet = RapSheetParser::Parser.new.parse(text)
+    RapSheetWithEligibility.new(rap_sheet)
   end
 end
