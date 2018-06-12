@@ -1,10 +1,4 @@
 class RapSheetWithEligibility < SimpleDelegator
-  def superstrikes
-    @superstrikes ||= convictions.flat_map(&:counts).
-      select(&:superstrike?).
-      map(&:code_section)
-  end
-
   def counts
     eligible_events.flat_map(&:counts)
   end

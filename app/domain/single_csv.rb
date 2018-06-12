@@ -28,7 +28,7 @@ class SingleCSV
       count.needs_info_under_18?,
       count.needs_info_under_21?,
       count.needs_info_across_state_lines?,
-      eligibility.superstrikes.join(', ')
+      eligibility.superstrikes.map(&:code_section).join(', ')
     ]
   end
 
