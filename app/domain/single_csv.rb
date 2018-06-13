@@ -41,7 +41,8 @@ class SingleCSV
       'Needs info under 21',
       'Needs info across state lines',
       'Superstrikes',
-      '2 prior convictions'
+      '2 prior convictions',
+      'PC290'
     ]
   end
 
@@ -52,10 +53,11 @@ class SingleCSV
         count.needs_info_under_21?,
         count.needs_info_across_state_lines?,
         eligibility.superstrikes.map(&:code_section).join(', '),
-        eligibility.has_two_prior_convictions_of_same_type?(count)
+        eligibility.has_two_prior_convictions_of_same_type?(count),
+        eligibility.pc290?
       ]
     else
-      [false, false, false, "", false]
+      [false, false, false, "", false, false]
     end
   end
 
