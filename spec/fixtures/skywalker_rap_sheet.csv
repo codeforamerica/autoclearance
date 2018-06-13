@@ -1,4 +1,4 @@
-Date,Case Number,Courthouse,Charge,Severity,Sentence,Prop 64 Eligible,Needs info under 18,Needs info under 21,Needs info across state lines,Superstrikes
-1984-09-18,1234567,CASC San Francisco,HS 11357,M,"3y probation, 30d jail, fine, restitution",true,false,false,false,""
-1984-09-18,1234567,CASC San Francisco,PC 496,M,"3y probation, 30d jail, fine, restitution",false,false,false,false,""
-1984-09-18,1234567,CASC San Francisco,HS 11358,M,"3y probation, 30d jail, fine, restitution",true,false,false,false,""
+Date,Case Number,Courthouse,Charge,Severity,Sentence,Prop 64 Eligible,Needs info under 18,Needs info under 21,Needs info across state lines,Superstrikes,2 prior convictions
+1984-09-18,1234567,CASC San Francisco,HS 11357,M,"3y probation, 30d jail, fine, restitution",true,false,false,false,"",false
+1984-09-18,1234567,CASC San Francisco,PC 496,M,"3y probation, 30d jail, fine, restitution",false,false,false,false,"",false
+1984-09-18,1234567,CASC San Francisco,HS 11358,M,"3y probation, 30d jail, fine, restitution",true,false,false,false,"",false

@@ -24,12 +24,8 @@ class SingleCSV
       count.code_section,
       count.severity,
       count.event.sentence,
-      count.prop64_eligible?,
-      count.needs_info_under_18?,
-      count.needs_info_under_21?,
-      count.needs_info_across_state_lines?,
-      eligibility.superstrikes.map(&:code_section).join(', ')
-    ]
+      count.prop64_eligible?
+    ] + additional_eligibility_info(count, eligibility)
   end
 
   def header
@@ -44,8 +40,23 @@ class SingleCSV
       'Needs info under 18',
       'Needs info under 21',
       'Needs info across state lines',
-      'Superstrikes'
+      'Superstrikes',
+      '2 prior convictions'
     ]
+  end
+
+  def additional_eligibility_info(count, eligibility)
+    if count.prop64_eligible?
+      [
+        count.needs_info_under_18?,
+        count.needs_info_under_21?,
+        count.needs_info_across_state_lines?,
+        eligibility.superstrikes.map(&:code_section).join(', '),
+        eligibility.has_two_prior_convictions_of_same_type?(count)
+      ]
+    else
+      [false, false, false, "", false]
+    end
   end
 
   attr_reader :rows
