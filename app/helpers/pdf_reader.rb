@@ -7,13 +7,13 @@ class PDFReader
     reader = PDF::Reader.new(StringIO.new(file_contents))
     reader.pages.map do |page|
       PDFReader.strip_page_header_and_footer(page.text)
-    end.join()
+    end.join
   end
 
-  def self.strip_page_header_and_footer page_text
+  def self.strip_page_header_and_footer(page_text)
     lines = page_text.split("\n")
-    lines.pop while lines.last.blank? || lines.last.lstrip.starts_with?('http://', 'https://', 'file://', 'ﬁle://')
-    lines.shift while lines.first.blank? || lines.first.lstrip.starts_with?('Page', 'Route')
+    lines.pop while lines.any? && (lines.last.strip.empty? || lines.last.lstrip.start_with?('http://', 'https://', 'file://', 'ﬁle://'))
+    lines.shift while lines.any? && (lines.first.strip.empty? || lines.first.lstrip.start_with?('Page', 'Route'))
     lines.join("\n") + "\n"
   end
 

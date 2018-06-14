@@ -1,4 +1,6 @@
-require 'rails_helper'
+require 'spec_helper'
+require 'pdf-reader'
+require_relative '../../app/helpers/pdf_reader'
 
 describe PDFReader do
   describe '#text' do
@@ -103,6 +105,10 @@ describe PDFReader do
       INPUT_TEXT
 
       expect(described_class.strip_page_header_and_footer(input_text)).to eq expected_text
+    end
+
+    it 'returns a newline when passed a blank input' do
+      expect(described_class.strip_page_header_and_footer("\n\n\n\n")).to eq "\n"
     end
   end
 
