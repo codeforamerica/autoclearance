@@ -7,13 +7,15 @@ describe RapSheetWithEligibility do
         date: Date.today,
         case_number: '12345',
         courthouse: 'CASC San Francisco',
-        sentence: nil
+        sentence: nil,
+        updates: nil
       )
       ineligible_event = RapSheetParser::ConvictionEvent.new(
         date: Date.today,
         case_number: '12345',
         courthouse: 'CASC Los Angeles',
-        sentence: nil
+        sentence: nil,
+        updates: nil
       )
       rap_sheet = RapSheetParser::RapSheet.new([eligible_event, ineligible_event])
 
@@ -25,7 +27,8 @@ describe RapSheetWithEligibility do
         date: Date.today,
         case_number: '12345',
         courthouse: 'CAMC SAN FRANCISCO',
-        sentence: nil
+        sentence: nil,
+        updates: nil
       )
       rap_sheet = RapSheetParser::RapSheet.new([unknown_courthouse_event])
 
@@ -44,7 +47,8 @@ describe RapSheetWithEligibility do
         date: Date.today - 7.days,
         case_number: '1',
         courthouse: 'CASC San Francisco',
-        sentence: nil
+        sentence: nil,
+        updates: nil
       )
       count_1 = RapSheetParser::ConvictionCount.new(
         event: event_1,
@@ -59,7 +63,8 @@ describe RapSheetWithEligibility do
         date: Date.today - 3.days,
         case_number: '2',
         courthouse: 'CASC Los Angeles',
-        sentence: nil
+        sentence: nil,
+        updates: nil
       )
       count_2 = RapSheetParser::ConvictionCount.new(
         event: event_2,
@@ -74,7 +79,8 @@ describe RapSheetWithEligibility do
         date: Date.today,
         case_number: '456',
         courthouse: nil,
-        sentence: nil
+        sentence: nil,
+        updates: nil
       )
       count_3 = RapSheetParser::ConvictionCount.new(
         event: event_3,
