@@ -8,14 +8,38 @@ describe RapSheetWithEligibility do
         case_number: '12345',
         courthouse: 'CASC San Francisco',
         sentence: nil,
-        updates: nil
+        updates: []
       )
       ineligible_event = RapSheetParser::ConvictionEvent.new(
         date: Date.today,
         case_number: '12345',
         courthouse: 'CASC Los Angeles',
         sentence: nil,
-        updates: nil
+        updates: []
+      )
+      rap_sheet = RapSheetParser::RapSheet.new([eligible_event, ineligible_event])
+
+      expect(described_class.new(rap_sheet).eligible_events).to eq [eligible_event]
+    end
+
+    it 'filters out events dismissed by PC1203' do
+      eligible_event = RapSheetParser::ConvictionEvent.new(
+        date: Date.today,
+        case_number: '12345',
+        courthouse: 'CASC San Francisco',
+        sentence: nil,
+        updates: []
+      )
+      ineligible_event = RapSheetParser::ConvictionEvent.new(
+        date: Date.today,
+        case_number: '39493',
+        courthouse: 'CASC San Francisco',
+        sentence: nil,
+        updates: [
+          RapSheetParser::Update.new(
+            dispositions: [RapSheetParser::PC1203DismissedDisposition.new]
+          )
+        ]
       )
       rap_sheet = RapSheetParser::RapSheet.new([eligible_event, ineligible_event])
 
@@ -28,7 +52,7 @@ describe RapSheetWithEligibility do
         case_number: '12345',
         courthouse: 'CAMC SAN FRANCISCO',
         sentence: nil,
-        updates: nil
+        updates: []
       )
       rap_sheet = RapSheetParser::RapSheet.new([unknown_courthouse_event])
 

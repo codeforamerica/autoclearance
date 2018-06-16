@@ -4,7 +4,10 @@ class RapSheetWithEligibility < SimpleDelegator
   end
 
   def eligible_events
-    events_in_sf.map { |e| EventWithEligibility.new(e) }
+    convictions.
+      select { |e| in_sf?(e) }.
+      reject(&:dismissed_by_pc1203?).
+      map { |e| EventWithEligibility.new(e) }
   end
 
   def has_two_prior_convictions_of_same_type?(count)
@@ -17,13 +20,11 @@ class RapSheetWithEligibility < SimpleDelegator
 
   private
 
-  def events_in_sf
-    convictions.select do |e|
-      if e.courthouse.include? 'SAN FRANCISCO'
-        Rails.logger.tagged('UNEXPECTED INPUT') { Rails.logger.warn("Unknown Courthouse: #{e.courthouse}") }
-      end
-
-      e.courthouse.upcase.include? 'SAN FRANCISCO'
+  def in_sf?(e)
+    if e.courthouse.include? 'SAN FRANCISCO'
+      Rails.logger.tagged('UNEXPECTED INPUT') { Rails.logger.warn("Unknown Courthouse: #{e.courthouse}") }
     end
+
+    e.courthouse.upcase.include? 'SAN FRANCISCO'
   end
 end
