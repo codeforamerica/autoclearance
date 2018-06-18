@@ -1,5 +1,5 @@
 class JobsController < ApplicationController
   def create
-    RapSheetProcessor.run
+    ProcessRapSheetsJob.perform_later
   end
 end
