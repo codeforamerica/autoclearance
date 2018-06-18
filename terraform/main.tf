@@ -598,7 +598,7 @@ resource "aws_iam_instance_profile" "instance_profile" {
 resource "aws_elastic_beanstalk_environment" "beanstalk_application_environment" {
   name = "autoclearance-prod"
   application = "${aws_elastic_beanstalk_application.ng_beanstalk_application.name}"
-  solution_stack_name = "64bit Amazon Linux 2017.09 v2.7.2 running Ruby 2.5 (Puma)"
+  solution_stack_name = "64bit Amazon Linux 2018.03 v2.8.0 running Ruby 2.5 (Puma)"
   tier = "WebServer"
 
   setting {
