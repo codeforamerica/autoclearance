@@ -1,2 +1,5 @@
 brew "terraform"
 brew "chruby"
+brew "ruby-install"
+tap "git-duet/tap"
+brew "git-duet/tap/git-duet"
