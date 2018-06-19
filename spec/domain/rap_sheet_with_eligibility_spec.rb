@@ -12,14 +12,23 @@ describe RapSheetWithEligibility do
       )
       ineligible_event = RapSheetParser::ConvictionEvent.new(
         date: Date.today,
-        case_number: '12345',
-        courthouse: 'CASC Los Angeles',
+        case_number: 'abcde',
+        courthouse: 'CASO San Francisco',
         sentence: nil,
         updates: []
       )
-      rap_sheet = RapSheetParser::RapSheet.new([eligible_event, ineligible_event])
+      south_san_francisco_event = RapSheetParser::ConvictionEvent.new(
+          date: Date.today,
+          case_number: '456',
+          courthouse: 'CASC South San Francisco',
+          sentence: nil,
+          updates: []
+      )
+      rap_sheet = RapSheetParser::RapSheet.new([eligible_event, ineligible_event,south_san_francisco_event])
 
-      expect(described_class.new(rap_sheet).eligible_events).to eq [eligible_event]
+      subject = described_class.new(rap_sheet).eligible_events
+      expect(subject.length).to eq 1
+      expect(subject[0].case_number).to eq '12345'
     end
 
     it 'filters out events dismissed by PC1203' do
@@ -50,15 +59,17 @@ describe RapSheetWithEligibility do
       unknown_courthouse_event = RapSheetParser::ConvictionEvent.new(
         date: Date.today,
         case_number: '12345',
-        courthouse: 'CAMC SAN FRANCISCO',
+        courthouse: 'SAN FRANCISCO',
         sentence: nil,
         updates: []
       )
       rap_sheet = RapSheetParser::RapSheet.new([unknown_courthouse_event])
 
-      expect(Rails.logger).to receive(:warn).with('Unknown Courthouse: CAMC SAN FRANCISCO')
+      allow(Rails.logger).to receive(:warn)
 
-      expect(described_class.new(rap_sheet).eligible_events).to eq [unknown_courthouse_event]
+      described_class.new(rap_sheet).eligible_events
+
+      expect(Rails.logger).to have_received(:warn).with('Unknown Courthouse: SAN FRANCISCO')
     end
   end
 
