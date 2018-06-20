@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe RapSheetProcessor do
-  describe '.run' do
+  describe '#run' do
     before :each do
       Dir.mkdir '/tmp/autoclearance-rap-sheet-inputs' unless Dir.exist? '/tmp/autoclearance-rap-sheet-inputs'
       Dir.mkdir '/tmp/autoclearance-outputs' unless Dir.exist? '/tmp/autoclearance-outputs'
@@ -17,7 +17,7 @@ describe RapSheetProcessor do
       FileUtils.cp('spec/fixtures/chewbacca_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/')
 
       travel_to Time.new(2010, 1, 2, 01, 04, 44) do
-        described_class.run
+        described_class.new.run
       end
 
       expect(Dir['/tmp/autoclearance-rap-sheet-inputs/*']).to eq []
@@ -55,7 +55,7 @@ describe RapSheetProcessor do
       end
 
       travel_to Time.new(2010, 1, 2, 01, 04, 44) do
-        described_class.run
+        described_class.new.run
       end
 
       expect(Dir['/tmp/autoclearance-rap-sheet-inputs/*']).to eq ['/tmp/autoclearance-rap-sheet-inputs/not_a_valid_rap_sheet.pdf']
