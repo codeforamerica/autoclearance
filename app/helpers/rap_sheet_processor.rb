@@ -7,7 +7,7 @@ class RapSheetProcessor
 
     @summary_errors = ''
 
-    @warning_log = StringIO.new('warning')
+    @warning_log = StringIO.new
     @warning_logger = Logger.new(
       @warning_log,
       formatter: proc { |severity, datetime, progname, msg| "#{msg}\n" }
