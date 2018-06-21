@@ -4,7 +4,14 @@ require 'rap_sheet_parser'
 class RapSheetProcessor
   def initialize
     @summary_csv = SummaryCSV.new
+
     @summary_errors = ''
+
+    @warning_log = StringIO.new('warning')
+    @warning_logger = Logger.new(
+      @warning_log,
+      formatter: proc { |severity, datetime, progname, msg| "#{msg}\n" }
+    )
   end
 
   def run
@@ -16,6 +23,7 @@ class RapSheetProcessor
 
     save_summary_csv(timestamp)
     save_summary_errors(timestamp)
+    save_summary_warnings(timestamp)
   end
 
   private
@@ -52,6 +60,15 @@ class RapSheetProcessor
     end
   end
 
+  def save_summary_warnings(timestamp)
+    unless @warning_log.string.blank?
+      output_directory.files.create(
+        key: "summary_#{timestamp}.warning",
+        body: @warning_log.string
+      )
+    end
+  end
+
   def save_summary_csv(timestamp)
     output_directory.files.create(
       key: "summary_#{timestamp}.csv",
@@ -74,7 +91,7 @@ class RapSheetProcessor
 
   def rap_sheet_with_eligibility(input_file)
     text = PDFReader.new(input_file.body).text
-    rap_sheet = RapSheetParser::Parser.new.parse(text)
+    rap_sheet = RapSheetParser::Parser.new.parse(text, logger: @warning_logger)
 
     RapSheetWithEligibility.new(rap_sheet)
   end
