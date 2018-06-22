@@ -1,7 +1,15 @@
 # Autoclearance
 
 ## Development
-To set up a machine for development, install local dependencies by running `brew bundle`
+Clone this repository and navigate to it.
+
+Homebrew is used to install local dependencies. [Install it here.](https://brew.sh/)
+Then. run `brew bundle` from the `autoclearance` directory.
+
+`ruby-install` and `chruby` are used to manage Ruby versions.
+[Follow instructions here for autoswitching with chruby](https://github.com/postmodern/chruby#auto-switching)
+
+Run `gem install bundler` and then `bundle` to install Ruby dependencies.
 
 To install the Beanstalk CLI, first instantiate a Python virtualenv by running:
 
