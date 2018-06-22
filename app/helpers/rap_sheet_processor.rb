@@ -8,10 +8,6 @@ class RapSheetProcessor
     @summary_errors = ''
 
     @warning_log = StringIO.new
-    @warning_logger = Logger.new(
-      @warning_log,
-      formatter: proc { |severity, datetime, progname, msg| "#{msg}\n" }
-    )
   end
 
   def run
@@ -91,7 +87,13 @@ class RapSheetProcessor
 
   def rap_sheet_with_eligibility(input_file)
     text = PDFReader.new(input_file.body).text
-    rap_sheet = RapSheetParser::Parser.new.parse(text, logger: @warning_logger)
+
+    warning_logger = Logger.new(
+      @warning_log,
+      formatter: proc { |severity, datetime, progname, msg| "[#{input_file.key}] #{msg}\n" }
+    )
+
+    rap_sheet = RapSheetParser::Parser.new.parse(text, logger: warning_logger)
 
     RapSheetWithEligibility.new(rap_sheet)
   end

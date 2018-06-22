@@ -34,7 +34,7 @@ describe RapSheetProcessor do
       chewbacca_expected_text = File.read('spec/fixtures/chewbacca_rap_sheet.csv')
       chewbacca_actual_text = File.read('/tmp/autoclearance-outputs/chewbacca_rap_sheet.csv')
       expect(chewbacca_actual_text).to eq(chewbacca_expected_text)
-     
+
       summary_expected_text = File.read('spec/fixtures/summary.csv')
       summary_actual_text = File.read('/tmp/autoclearance-outputs/summary_20100102-010444.csv')
       expect(summary_actual_text).to eq(summary_expected_text)
@@ -83,8 +83,8 @@ describe RapSheetProcessor do
 
       actual_warning = File.read('/tmp/autoclearance-outputs/summary_20100102-010444.warning')
 
-      expect(actual_warning).to include("Unrecognized event:\nHI")
-      expect(actual_warning).to include("Unrecognized event:\n  BYE")
+      expect(actual_warning).to include("[not_a_valid_rap_sheet.pdf] Unrecognized event:\n[not_a_valid_rap_sheet.pdf] HI")
+      expect(actual_warning).to include("[not_a_valid_rap_sheet.pdf] Unrecognized event:\n[not_a_valid_rap_sheet.pdf]   BYE")
     end
   end
 end
