@@ -54,23 +54,6 @@ describe RapSheetWithEligibility do
 
       expect(described_class.new(rap_sheet).eligible_events).to eq [eligible_event]
     end
-
-    it 'logs events that appear to be from San Fransisco, but do not match a known courthouse' do
-      unknown_courthouse_event = RapSheetParser::ConvictionEvent.new(
-        date: Date.today,
-        case_number: '12345',
-        courthouse: 'SAN FRANCISCO',
-        sentence: nil,
-        updates: []
-      )
-      rap_sheet = RapSheetParser::RapSheet.new([unknown_courthouse_event])
-
-      allow(Rails.logger).to receive(:warn)
-
-      described_class.new(rap_sheet).eligible_events
-
-      expect(Rails.logger).to have_received(:warn).with('Unknown Courthouse: SAN FRANCISCO')
-    end
   end
 
   describe '#has_two_prior_convictions_of_same_type?' do

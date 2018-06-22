@@ -21,9 +21,6 @@ class RapSheetWithEligibility < SimpleDelegator
   private
 
   def in_sf?(e)
-    if e.courthouse.include? 'SAN FRANCISCO'
-      Rails.logger.tagged('UNEXPECTED INPUT') { Rails.logger.warn("Unknown Courthouse: #{e.courthouse}") }
-    end
     sf_county_courthouses = ['CASC San Francisco', 'CASC San Francisco Co', 'CAMC San Francisco']
     sf_county_courthouses.include? e.courthouse
   end
