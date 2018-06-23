@@ -13,6 +13,10 @@ variable "aws_az2" {
   default = "us-gov-west-1b"
 }
 
+variable "rds_username" {}
+
+variable "rds_password" {}
+
 variable "environment" {
   description = "environment name to append to s3 bucket names (e.g. staging, or prod)"
 }

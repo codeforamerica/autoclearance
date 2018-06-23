@@ -31,6 +31,16 @@ resource "aws_subnet" "public" {
   }
 }
 
+# Create a public subnet for our bastion
+resource "aws_subnet" "public_2" {
+  vpc_id = "${aws_vpc.default.id}"
+  cidr_block = "10.0.1.0/24"
+  availability_zone = "${var.aws_az2}"
+  tags {
+    Name = "public 2"
+  }
+}
+
 # Create an internet gateway to give our subnet access to the outside world
 resource "aws_internet_gateway" "default" {
   vpc_id = "${aws_vpc.default.id}"
@@ -592,6 +602,32 @@ resource "aws_iam_role_policy_attachment" "s3_read_write" {
 resource "aws_iam_instance_profile" "instance_profile" {
   name = "instance_profile"
   role = "${aws_iam_role.instance_role.name}"
+}
+
+resource "aws_db_subnet_group" "default" {
+  name = "main"
+  subnet_ids = [
+    "${aws_subnet.public.id}",
+    "${aws_subnet.public_2.id}"
+  ]
+
+  tags {
+    Name = "DB Subnet"
+  }
+}
+
+resource "aws_db_instance" "db" {
+  allocated_storage = 10
+  availability_zone = "${var.aws_az1}"
+  db_subnet_group_name = "${aws_db_subnet_group.default.name}"
+  engine = "postgres"
+  instance_class = "db.m3.medium"
+  kms_key_id = "${aws_kms_key.k.arn}"
+  name = "autoclearance"
+  username = "${var.rds_username}"
+  password = "${var.rds_password}"
+  storage_encrypted = true
+  storage_type = "gp2"
 }
 
 # Beanstalk Environment
