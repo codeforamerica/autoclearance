@@ -16,7 +16,7 @@ describe RapSheetProcessor do
       FileUtils.cp('spec/fixtures/skywalker_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/')
       FileUtils.cp('spec/fixtures/chewbacca_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/')
 
-      travel_to Time.new(2010, 1, 2, 01, 04, 44) do
+      travel_to Time.new(2011, 1, 2, 01, 04, 44) do
         described_class.new.run
       end
 
@@ -24,7 +24,7 @@ describe RapSheetProcessor do
       expect(Dir['/tmp/autoclearance-outputs/*']).to contain_exactly(
         '/tmp/autoclearance-outputs/skywalker_rap_sheet.csv',
         '/tmp/autoclearance-outputs/chewbacca_rap_sheet.csv',
-        '/tmp/autoclearance-outputs/summary_20100102-010444.csv'
+        '/tmp/autoclearance-outputs/summary_20110102-010444.csv'
       )
 
       skywalker_expected_text = File.read('spec/fixtures/skywalker_rap_sheet.csv')
@@ -36,7 +36,7 @@ describe RapSheetProcessor do
       expect(chewbacca_actual_text).to eq(chewbacca_expected_text)
 
       summary_expected_text = File.read('spec/fixtures/summary.csv')
-      summary_actual_text = File.read('/tmp/autoclearance-outputs/summary_20100102-010444.csv')
+      summary_actual_text = File.read('/tmp/autoclearance-outputs/summary_20110102-010444.csv')
       expect(summary_actual_text).to eq(summary_expected_text)
     end
 
