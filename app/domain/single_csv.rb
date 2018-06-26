@@ -1,7 +1,9 @@
 class SingleCSV
   def initialize(eligibility)
-    @rows = eligibility.counts.map do |count|
-      count_data(count, eligibility)
+    @rows = eligibility.eligible_events.flat_map do |event|
+      event.counts.map do |count|
+        count_data(count, event, eligibility)
+      end
     end
   end
 
@@ -16,16 +18,16 @@ class SingleCSV
 
   private
 
-  def count_data(count, eligibility)
+  def count_data(count, event, eligibility)
     [
-      count.event.date,
-      count.event.case_number,
-      count.event.courthouse,
+      event.date,
+      event.case_number,
+      event.courthouse,
       count.code_section,
       count.severity,
-      count.event.sentence,
+      event.sentence,
       count.prop64_eligible?
-    ] + additional_eligibility_info(count, eligibility)
+    ] + additional_eligibility_info(count, event, eligibility)
   end
 
   def header
@@ -47,16 +49,16 @@ class SingleCSV
     ]
   end
 
-  def additional_eligibility_info(count, eligibility)
+  def additional_eligibility_info(count, event, eligibility)
     if count.prop64_eligible?
       [
         count.needs_info_under_18?,
         count.needs_info_under_21?,
         count.needs_info_across_state_lines?,
         eligibility.superstrikes.map(&:code_section).join(', '),
-        eligibility.has_two_prior_convictions_of_same_type?(count),
+        eligibility.has_two_prior_convictions_of_same_type?(event, count),
         eligibility.sex_offender_registration?,
-        count.event.remedy
+        event.remedy
       ]
     else
       [false, false, false, "", false, false, ""]

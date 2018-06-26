@@ -4,8 +4,10 @@ class SummaryCSV < SingleCSV
   end
 
   def append(filename, eligibility)
-    eligibility.counts.each do |count|
-      rows << [filename] + count_data(count, eligibility)
+    eligibility.eligible_events.each do |event|
+      event.counts.each do |count|
+        rows << [filename] + count_data(count, event, eligibility)
+      end
     end
   end
 

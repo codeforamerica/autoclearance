@@ -1,8 +1,4 @@
 class RapSheetWithEligibility < SimpleDelegator
-  def counts
-    eligible_events.flat_map(&:counts)
-  end
-
   def eligible_events
     convictions.
       select { |e| in_sf?(e) }.
@@ -10,11 +6,13 @@ class RapSheetWithEligibility < SimpleDelegator
       map { |e| EventWithEligibility.new(e) }
   end
 
-  def has_two_prior_convictions_of_same_type?(count)
-    convictions.flat_map(&:counts).select do |c|
-      c.code_section_starts_with([count.code_section]) && c.event.case_number != count.event.case_number
-    end.select do |c|
-      c.event.date <= count.event.date
+  def has_two_prior_convictions_of_same_type?(event, count)
+    events_in_past = convictions.select { |e| e.date <= event.date }
+
+    events_in_past.flat_map do |e|
+      e.counts.select do |c|
+        c.code_section_starts_with([count.code_section]) && e.case_number != event.case_number
+      end
     end.length >= 2
   end
 

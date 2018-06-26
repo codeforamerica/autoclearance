@@ -8,6 +8,7 @@ describe RapSheetWithEligibility do
         case_number: '12345',
         courthouse: 'CASC San Francisco',
         sentence: nil,
+        counts: [],
         updates: []
       )
       ineligible_event = RapSheetParser::ConvictionEvent.new(
@@ -15,16 +16,18 @@ describe RapSheetWithEligibility do
         case_number: 'abcde',
         courthouse: 'CASO San Francisco',
         sentence: nil,
+        counts: [],
         updates: []
       )
       south_san_francisco_event = RapSheetParser::ConvictionEvent.new(
-          date: Date.today,
-          case_number: '456',
-          courthouse: 'CASC South San Francisco',
-          sentence: nil,
-          updates: []
+        date: Date.today,
+        case_number: '456',
+        courthouse: 'CASC South San Francisco',
+        sentence: nil,
+        counts: [],
+        updates: []
       )
-      rap_sheet = RapSheetParser::RapSheet.new([eligible_event, ineligible_event,south_san_francisco_event])
+      rap_sheet = RapSheetParser::RapSheet.new([eligible_event, ineligible_event, south_san_francisco_event])
 
       subject = described_class.new(rap_sheet).eligible_events
       expect(subject.length).to eq 1
@@ -37,6 +40,7 @@ describe RapSheetWithEligibility do
         case_number: '12345',
         courthouse: 'CASC San Francisco',
         sentence: nil,
+        counts: [],
         updates: []
       )
       ineligible_event = RapSheetParser::ConvictionEvent.new(
@@ -44,6 +48,7 @@ describe RapSheetWithEligibility do
         case_number: '39493',
         courthouse: 'CASC San Francisco',
         sentence: nil,
+        counts: [],
         updates: [
           RapSheetParser::Update.new(
             dispositions: [RapSheetParser::PC1203DismissedDisposition.new]
@@ -58,62 +63,59 @@ describe RapSheetWithEligibility do
 
   describe '#has_two_prior_convictions_of_same_type?' do
     it 'returns true if rap sheet contains two priors with ' +
-      'the same code section and with event dates on the ' +
-      'same day or before' do
+         'the same code section and with event dates on the ' +
+         'same day or before' do
 
+      count_1 = RapSheetParser::ConvictionCount.new(
+        code_section_description: nil,
+        severity: nil,
+        code: 'PC',
+        section: '123'
+      )
       event_1 = RapSheetParser::ConvictionEvent.new(
         date: Date.today - 7.days,
         case_number: '1',
         courthouse: 'CASC San Francisco',
         sentence: nil,
-        updates: nil
+        updates: nil,
+        counts: [count_1]
       )
-      count_1 = RapSheetParser::ConvictionCount.new(
-        event: event_1,
+
+      count_2 = RapSheetParser::ConvictionCount.new(
         code_section_description: nil,
         severity: nil,
         code: 'PC',
         section: '123'
       )
-      event_1.counts = [count_1]
-
       event_2 = RapSheetParser::ConvictionEvent.new(
         date: Date.today - 3.days,
         case_number: '2',
         courthouse: 'CASC Los Angeles',
         sentence: nil,
-        updates: nil
+        updates: nil,
+        counts: [count_2]
       )
-      count_2 = RapSheetParser::ConvictionCount.new(
-        event: event_2,
+
+      count_3 = RapSheetParser::ConvictionCount.new(
         code_section_description: nil,
         severity: nil,
         code: 'PC',
         section: '123'
       )
-      event_2.counts = [count_2]
-
       event_3 = RapSheetParser::ConvictionEvent.new(
         date: Date.today,
         case_number: '456',
         courthouse: nil,
         sentence: nil,
-        updates: nil
+        updates: nil,
+        counts: [count_3]
       )
-      count_3 = RapSheetParser::ConvictionCount.new(
-        event: event_3,
-        code_section_description: nil,
-        severity: nil,
-        code: 'PC',
-        section: '123'
-      )
-      event_3.counts = [count_3]
 
       rap_sheet = RapSheetParser::RapSheet.new([event_1, event_2, event_3])
 
-      expect(described_class.new(rap_sheet).has_two_prior_convictions_of_same_type?(count_1)).to eq false
-      expect(described_class.new(rap_sheet).has_two_prior_convictions_of_same_type?(count_2)).to eq false
-      expect(described_class.new(rap_sheet).has_two_prior_convictions_of_same_type?(count_3)).to eq true
+      expect(described_class.new(rap_sheet).has_two_prior_convictions_of_same_type?(event_1, count_1)).to eq false
+      expect(described_class.new(rap_sheet).has_two_prior_convictions_of_same_type?(event_2, count_2)).to eq false
+      expect(described_class.new(rap_sheet).has_two_prior_convictions_of_same_type?(event_3, count_3)).to eq true
     end
   end
 end

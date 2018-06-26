@@ -9,7 +9,8 @@ describe EventWithEligibility do
         case_number: '1',
         courthouse: 'CASC San Francisco',
         sentence: sentence,
-        updates: nil
+        counts: [],
+        updates: []
       )
     end
 

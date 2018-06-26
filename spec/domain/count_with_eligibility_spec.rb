@@ -5,7 +5,6 @@ require_relative '../../app/domain/count_with_eligibility'
 describe CountWithEligibility do
   let(:count) do
     RapSheetParser::ConvictionCount.new(
-      event: nil,
       code_section_description: 'foo',
       severity: 'F',
       code: code,

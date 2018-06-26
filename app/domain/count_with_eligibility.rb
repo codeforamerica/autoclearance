@@ -15,10 +15,6 @@ class CountWithEligibility < SimpleDelegator
     code_section_starts_with(['HS 11360'])
   end
 
-  def event
-    EventWithEligibility.new(super)
-  end
-
   private
 
   def dismissible_codes
