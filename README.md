@@ -11,7 +11,8 @@ Then. run `brew bundle` from the `autoclearance` directory.
 
 Run `gem install bundler` and then `bundle` to install Ruby dependencies.
 
-To install the Beanstalk CLI, first instantiate a Python virtualenv by running:
+### To install the Beanstalk CLI
+First instantiate a Python virtualenv by running:
 
 ```
 python3 -m venv .venv
@@ -27,6 +28,9 @@ aws_access_key_id=<your key>
 aws_secret_access_key=<your secret key>
 region=us-gov-west-1
 ```
+
+Initialize Elastic Beanstalk
+`eb init --profile autoclearance --region us-gov-west-1`
 
 ## Deploying
 Create two files: `backend-config` and `varfile` to supply Amazon credentials. Examples are located at `backend-config.example` and `varfile.example`
