@@ -1,4 +1,7 @@
-require 'rails_helper'
+require 'spec_helper'
+require 'rap_sheet_parser'
+require_relative '../../app/domain/event_with_eligibility'
+require_relative '../../app/domain/rap_sheet_with_eligibility'
 
 describe RapSheetWithEligibility do
   describe '#eligible_events' do
@@ -27,7 +30,7 @@ describe RapSheetWithEligibility do
         counts: [],
         updates: []
       )
-      rap_sheet = RapSheetParser::RapSheet.new([eligible_event, ineligible_event, south_san_francisco_event])
+      rap_sheet = build_rap_sheet(events: [eligible_event, ineligible_event, south_san_francisco_event])
 
       subject = described_class.new(rap_sheet).eligible_events
       expect(subject.length).to eq 1
@@ -55,7 +58,7 @@ describe RapSheetWithEligibility do
           )
         ]
       )
-      rap_sheet = RapSheetParser::RapSheet.new([eligible_event, ineligible_event])
+      rap_sheet = build_rap_sheet(events: ([eligible_event, ineligible_event]))
 
       expect(described_class.new(rap_sheet).eligible_events).to eq [eligible_event]
     end
@@ -111,11 +114,15 @@ describe RapSheetWithEligibility do
         counts: [count_3]
       )
 
-      rap_sheet = RapSheetParser::RapSheet.new([event_1, event_2, event_3])
+      rap_sheet = build_rap_sheet(events: ([event_1, event_2, event_3]))
 
       expect(described_class.new(rap_sheet).has_two_prior_convictions_of_same_type?(event_1, count_1)).to eq false
       expect(described_class.new(rap_sheet).has_two_prior_convictions_of_same_type?(event_2, count_2)).to eq false
       expect(described_class.new(rap_sheet).has_two_prior_convictions_of_same_type?(event_3, count_3)).to eq true
     end
+  end
+
+  def build_rap_sheet(events: [], personal_info: nil)
+    RapSheetParser::RapSheet.new(events: events, personal_info: personal_info)
   end
 end
