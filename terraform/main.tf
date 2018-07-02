@@ -700,6 +700,24 @@ resource "aws_elastic_beanstalk_environment" "beanstalk_application_environment"
   }
 
   setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name = "RDS_HOST"
+    value = "${aws_db_instance.db.address}"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name = "RDS_USERNAME"
+    value = "${var.rds_username}"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name = "RDS_PASSWORD"
+    value = "${var.rds_password}"
+  }
+
+  setting {
     namespace = "aws:elasticbeanstalk:managedactions"
     name = "ManagedActionsEnabled"
     value = "true"
