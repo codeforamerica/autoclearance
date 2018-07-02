@@ -1,8 +1,9 @@
 GIT
   remote: https://github.com/codeforamerica/rap_sheet_parser
-  revision: ec799ccf5ac56b8475eb24ec2e73c471f04689c2
+  revision: 46203df292eabd50574ef9633b0252761324226f
   specs:
     rap_sheet_parser (0.1.0)
+      activerecord
       activesupport
       treetop
 

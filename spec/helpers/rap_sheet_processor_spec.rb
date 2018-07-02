@@ -35,6 +35,8 @@ describe RapSheetProcessor do
       chewbacca_actual_text = File.read('/tmp/autoclearance-outputs/chewbacca_rap_sheet.csv')
       expect(chewbacca_actual_text).to eq(chewbacca_expected_text)
 
+      expect(RapSheetParser::PersonalInfo.count).to eq 2
+      
       summary_expected_text = File.read('spec/fixtures/summary.csv')
       summary_actual_text = File.read('/tmp/autoclearance-outputs/summary_20110102-010444.csv')
       expect(summary_actual_text).to eq(summary_expected_text)
