@@ -460,6 +460,27 @@ resource "aws_security_group" "application_security" {
   }
 }
 
+resource "aws_security_group" "rds_security" {
+  name = "rds_security"
+  vpc_id = "${aws_vpc.default.id}"
+
+  ingress {
+    from_port = 5432
+    to_port = 5432
+    protocol = "tcp"
+    security_groups = ["${aws_security_group.application_security.id}"]
+  }
+
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = [
+      "0.0.0.0/0"
+    ]
+  }
+}
+
 resource "aws_instance" "bastion" {
   # The connection block tells our provisioner how to
   # communicate with the resource (instance)
@@ -628,6 +649,7 @@ resource "aws_db_instance" "db" {
   password = "${var.rds_password}"
   storage_encrypted = true
   storage_type = "gp2"
+  vpc_security_group_ids = ["${aws_security_group.rds_security.id}"]
 }
 
 # Beanstalk Environment
