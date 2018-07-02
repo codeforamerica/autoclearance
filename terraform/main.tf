@@ -31,16 +31,6 @@ resource "aws_subnet" "public" {
   }
 }
 
-# Create a public subnet for our bastion
-resource "aws_subnet" "public_2" {
-  vpc_id = "${aws_vpc.default.id}"
-  cidr_block = "10.0.1.0/24"
-  availability_zone = "${var.aws_az2}"
-  tags {
-    Name = "public 2"
-  }
-}
-
 # Create an internet gateway to give our subnet access to the outside world
 resource "aws_internet_gateway" "default" {
   vpc_id = "${aws_vpc.default.id}"
@@ -126,6 +116,16 @@ resource "aws_subnet" "private" {
   availability_zone = "${var.aws_az1}"
   tags {
     Name = "private"
+  }
+}
+
+# Create a second private subnet for our db
+resource "aws_subnet" "private_2" {
+  vpc_id = "${aws_vpc.default.id}"
+  cidr_block = "10.0.3.0/24"
+  availability_zone = "${var.aws_az2}"
+  tags {
+    Name = "private 2"
   }
 }
 
@@ -607,8 +607,8 @@ resource "aws_iam_instance_profile" "instance_profile" {
 resource "aws_db_subnet_group" "default" {
   name = "main"
   subnet_ids = [
-    "${aws_subnet.public.id}",
-    "${aws_subnet.public_2.id}"
+    "${aws_subnet.private.id}",
+    "${aws_subnet.private_2.id}"
   ]
 
   tags {
@@ -634,7 +634,7 @@ resource "aws_db_instance" "db" {
 resource "aws_elastic_beanstalk_environment" "beanstalk_application_environment" {
   name = "autoclearance-prod"
   application = "${aws_elastic_beanstalk_application.ng_beanstalk_application.name}"
-  solution_stack_name = "64bit Amazon Linux 2018.03 v2.8.0 running Ruby 2.5 (Puma)"
+  solution_stack_name = "64bit Amazon Linux 2018.03 v2.8.1 running Ruby 2.5 (Puma)"
   tier = "WebServer"
 
   setting {
