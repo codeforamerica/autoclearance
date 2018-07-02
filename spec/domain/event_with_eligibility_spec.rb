@@ -4,13 +4,10 @@ require_relative '../../app/domain/event_with_eligibility'
 describe EventWithEligibility do
   describe 'remedy' do
     let (:event) do
-      RapSheetParser::ConvictionEvent.new(
+      build_conviction_event(
         date: Date.today - 7.days,
-        case_number: '1',
         courthouse: 'CASC San Francisco',
         sentence: sentence,
-        counts: [],
-        updates: []
       )
     end
 
