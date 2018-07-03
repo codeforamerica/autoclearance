@@ -31,7 +31,7 @@ CNT:03
 
 - - - -
 
-COURT:                NAM:01
+COURT:                NAM:02
 19840918  CASC SAN FRANCISCO
 
 CNT:01     #1234567
@@ -87,7 +87,7 @@ CNT:01     #34567423423
 
 * * * *
 
-COURT:                NAM:01
+COURT:                NAM:03
 20150505  CASC SAN FRANCISCO
 
 CNT:01     #abcde

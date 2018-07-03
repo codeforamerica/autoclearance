@@ -20,6 +20,7 @@ class SingleCSV
 
   def count_data(count, event, eligibility)
     [
+      eligibility.personal_info.names[event.name_code],
       event.date,
       event.case_number,
       event.courthouse,
@@ -32,6 +33,7 @@ class SingleCSV
 
   def header
     [
+      'Name',
       'Date',
       'Case Number',
       'Courthouse',
