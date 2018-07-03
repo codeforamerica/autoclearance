@@ -2,10 +2,15 @@
 # for example lib/tasks/capistrano.rake, and they will automatically be available to Rake.
 
 require_relative 'config/application'
-require 'bundler/audit/task'
 
 Rails.application.load_tasks
 
-Bundler::Audit::Task.new
+begin
+  require 'bundler/audit/task'
+  Bundler::Audit::Task.new
 
-task default: 'bundle:audit'
+  task default: 'bundle:audit'
+rescue NameError, LoadError
+  # bundler-audit is not available
+end
+
