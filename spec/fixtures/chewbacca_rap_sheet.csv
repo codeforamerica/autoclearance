@@ -1,4 +1,4 @@
-Name,Date,Case Number,Courthouse,Charge,Severity,Sentence,Prop 64 Eligible,Needs info under 18,Needs info under 21,Needs info across state lines,Superstrikes,2 prior convictions,PC290,Remedy
+Name,Date,Case Number,Courthouse,Charge,Severity,Sentence,Prop 64 Conviction,Needs info under 18,Needs info under 21,Needs info across state lines,Superstrikes,2 prior convictions,PC290,Remedy
 "BACCA, CHEW E.",1984-09-18,1234567,CASC San Francisco,HS 11360,M,"3y probation, 30d jail, fine, restitution",true,true,false,true,PC 220,false,true,redesignation
 "BACCA, CHEW E.",1984-09-18,1234567,CASC San Francisco,PC 496,M,"3y probation, 30d jail, fine, restitution",false,false,false,false,"",false,false,""
 "BACCA, CHEW E.",1984-09-18,1234567,CASC San Francisco,HS 11358,M,"3y probation, 30d jail, fine, restitution",true,false,false,false,PC 220,false,true,redesignation

@@ -40,7 +40,7 @@ class SingleCSV
       'Charge',
       'Severity',
       'Sentence',
-      'Prop 64 Eligible',
+      'Prop 64 Conviction',
       'Needs info under 18',
       'Needs info under 21',
       'Needs info across state lines',
