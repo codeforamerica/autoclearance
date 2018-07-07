@@ -27,7 +27,7 @@ class SingleCSV
       count.code_section,
       count.severity,
       event.sentence,
-      count.prop64_eligible?
+      count.prop64_conviction?
     ] + additional_eligibility_info(count, event, eligibility)
   end
 
@@ -41,31 +41,28 @@ class SingleCSV
       'Severity',
       'Sentence',
       'Prop 64 Conviction',
-      'Needs info under 18',
-      'Needs info under 21',
-      'Needs info across state lines',
       'Superstrikes',
       '2 prior convictions',
       'PC290',
-      'Remedy'
+      'Remedy',
+      'Eligible'
     ]
   end
 
   def additional_eligibility_info(count, event, eligibility)
-    if count.prop64_eligible?
+    if count.prop64_conviction?
       [
-        count.needs_info_under_18?,
-        count.needs_info_under_21?,
-        count.needs_info_across_state_lines?,
         eligibility.superstrikes.map(&:code_section).join(', '),
         eligibility.has_two_prior_convictions_of_same_type?(event, count),
         eligibility.sex_offender_registration?,
-        event.remedy
+        event.remedy,
+        eligibility.prop64_eligible(event,count)
       ]
     else
-      [false, false, false, "", false, false, ""]
+      ["", false, false, "", false]
     end
   end
+
 
   attr_reader :rows
 end

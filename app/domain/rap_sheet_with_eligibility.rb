@@ -16,6 +16,12 @@ class RapSheetWithEligibility < SimpleDelegator
     end.length >= 2
   end
 
+  def prop64_eligible(event, count)
+    has_disqualifiers = count.ineligible_conviction? || has_two_prior_convictions_of_same_type?(event,count) || sex_offender_registration? || superstrikes.length > 0
+
+    count.prop64_conviction? && !has_disqualifiers
+  end
+
   private
 
   def in_sf?(e)

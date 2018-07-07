@@ -1,5 +1,5 @@
 class CountWithEligibility < SimpleDelegator
-  def prop64_eligible?
+  def prop64_conviction?
     code_section_starts_with(dismissible_codes)
   end
 
@@ -15,6 +15,10 @@ class CountWithEligibility < SimpleDelegator
     code_section_starts_with(['HS 11360'])
   end
 
+  def ineligible_conviction?
+    code_section_starts_with(ineligible_codes)
+  end
+
   private
 
   def dismissible_codes
@@ -24,6 +28,15 @@ class CountWithEligibility < SimpleDelegator
       'HS 11359', #possession for sale
       'HS 11360', #transportation for sale
       'HS 11362.1'
+    ]
+  end
+
+  def ineligible_codes
+    [
+      'HS 11359(c)(3)',
+      'HS 11359(d)',
+      'HS 11360(a)(3)(c)',
+      'HS 11360(a)(3)(d)'
     ]
   end
 end

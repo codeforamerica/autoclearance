@@ -1,8 +1,10 @@
-Filename,Name,Date,Case Number,Courthouse,Charge,Severity,Sentence,Prop 64 Conviction,Needs info under 18,Needs info under 21,Needs info across state lines,Superstrikes,2 prior convictions,PC290,Remedy
-chewbacca_rap_sheet.pdf,"BACCA, CHEW E.",1984-09-18,1234567,CASC San Francisco,HS 11360,M,"3y probation, 30d jail, fine, restitution",true,true,false,true,PC 220,false,true,redesignation
-chewbacca_rap_sheet.pdf,"BACCA, CHEW E.",1984-09-18,1234567,CASC San Francisco,PC 496,M,"3y probation, 30d jail, fine, restitution",false,false,false,false,"",false,false,""
-chewbacca_rap_sheet.pdf,"BACCA, CHEW E.",1984-09-18,1234567,CASC San Francisco,HS 11358,M,"3y probation, 30d jail, fine, restitution",true,false,false,false,PC 220,false,true,redesignation
-chewbacca_rap_sheet.pdf,"BACCA, CHEW",2010-04-13,34567423423,CASC San Francisco,HS 11358,F,"2y probation, 5d jail",true,false,false,false,PC 220,true,true,resentencing
-skywalker_rap_sheet.pdf,"SKYWALKER,LUKE JAY",1984-09-18,1234567,CASC San Francisco,HS 11357,M,"3y probation, 30d jail, fine, restitution",true,false,false,false,"",false,false,redesignation
-skywalker_rap_sheet.pdf,"SKYWALKER,LUKE JAY",1984-09-18,1234567,CASC San Francisco,PC 496,M,"3y probation, 30d jail, fine, restitution",false,false,false,false,"",false,false,""
-skywalker_rap_sheet.pdf,"SKYWALKER,LUKE JAY",1984-09-18,1234567,CASC San Francisco,HS 11358,M,"3y probation, 30d jail, fine, restitution",true,false,false,false,"",false,false,redesignation
+Filename,Name,Date,Case Number,Courthouse,Charge,Severity,Sentence,Prop 64 Conviction,Superstrikes,2 prior convictions,PC290,Remedy,Eligible
+chewbacca_rap_sheet.pdf,"BACCA, CHEW E.",1984-09-18,1234567,CASC San Francisco,HS 11360,M,"3y probation, 30d jail, fine, restitution",true,PC 220,false,true,redesignation,false
+chewbacca_rap_sheet.pdf,"BACCA, CHEW E.",1984-09-18,1234567,CASC San Francisco,PC 496,M,"3y probation, 30d jail, fine, restitution",false,"",false,false,"",false
+chewbacca_rap_sheet.pdf,"BACCA, CHEW E.",1984-09-18,1234567,CASC San Francisco,HS 11358,M,"3y probation, 30d jail, fine, restitution",true,PC 220,false,true,redesignation,false
+chewbacca_rap_sheet.pdf,"BACCA, CHEW",2010-04-13,34567423423,CASC San Francisco,HS 11358,F,"2y probation, 5d jail",true,PC 220,true,true,resentencing,false
+skywalker_rap_sheet.pdf,"SKYWALKER,LUKE JAY",1984-09-18,1234567,CASC San Francisco,HS 11357,M,"3y probation, 30d jail, fine, restitution",true,"",false,false,redesignation,true
+skywalker_rap_sheet.pdf,"SKYWALKER,LUKE JAY",1984-09-18,1234567,CASC San Francisco,PC 496,M,"3y probation, 30d jail, fine, restitution",false,"",false,false,"",false
+skywalker_rap_sheet.pdf,"SKYWALKER,LUKE JAY",1984-09-18,1234567,CASC San Francisco,HS 11358,M,"3y probation, 30d jail, fine, restitution",true,"",false,false,redesignation,true
+skywalker_rap_sheet.pdf,"SKYWALKER,LUKE JAY",1990-04-13,33857493,CASC San Francisco,HS 11359(d),F,"2y probation, 30d jail",true,"",false,false,redesignation,false
+skywalker_rap_sheet.pdf,"SKYWALKER,LUKE JAY",1990-04-13,33857493,CASC San Francisco,HS 11358,M,"2y probation, 30d jail",true,"",false,false,redesignation,true
