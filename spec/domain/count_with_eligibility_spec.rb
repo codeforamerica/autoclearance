@@ -3,14 +3,7 @@ require 'rap_sheet_parser'
 require_relative '../../app/domain/count_with_eligibility'
 
 describe CountWithEligibility do
-  let(:count) do
-    RapSheetParser::ConvictionCount.new(
-      code_section_description: 'foo',
-      severity: 'F',
-      code: code,
-      section: section
-    )
-  end
+  let(:count) { build_court_count(code: code, section: section) }
 
   subject { described_class.new(count) }
 

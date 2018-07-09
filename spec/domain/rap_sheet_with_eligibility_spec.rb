@@ -45,36 +45,21 @@ describe RapSheetWithEligibility do
       'the same code section and with event dates on the ' +
       'same day or before' do
 
-      count_1 = RapSheetParser::ConvictionCount.new(
-        code_section_description: nil,
-        severity: nil,
-        code: 'PC',
-        section: '123'
-      )
+      count_1 = build_court_count(code: 'PC', section: '123')
       event_1 = build_conviction_event(
         date: Date.today - 7.days,
         case_number: '1',
         counts: [count_1]
       )
 
-      count_2 = RapSheetParser::ConvictionCount.new(
-        code_section_description: nil,
-        severity: nil,
-        code: 'PC',
-        section: '123'
-      )
+      count_2 = build_court_count(code: 'PC', section: '123')
       event_2 = build_conviction_event(
         date: Date.today - 3.days,
         case_number: '2',
         counts: [count_2]
       )
 
-      count_3 = RapSheetParser::ConvictionCount.new(
-        code_section_description: nil,
-        severity: nil,
-        code: 'PC',
-        section: '123'
-      )
+      count_3 = build_court_count(code: 'PC', section: '123')
       event_3 = build_conviction_event(
         date: Date.today,
         case_number: '456',
