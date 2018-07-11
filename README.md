@@ -11,16 +11,7 @@ Then. run `brew bundle` from the `autoclearance` directory.
 
 Run `gem install bundler` and then `bundle` to install Ruby dependencies.
 
-### To install the Beanstalk CLI
-First instantiate a Python virtualenv by running:
-
-```
-python3 -m venv .venv
-. .venv/bin/activate
-```
-Install the EB CLI by running:
-`pip install awsebcli`
-
+### To set up the Beanstalk CLI
 To add a Elastic Beanstalk profile for the environment, add the following to `~/.aws/config`
 ```
 [profile autoclearance]
