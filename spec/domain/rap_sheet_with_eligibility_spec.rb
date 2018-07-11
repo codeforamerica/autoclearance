@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'rap_sheet_parser'
+require_relative '../../app/domain/count_with_eligibility'
 require_relative '../../app/domain/event_with_eligibility'
 require_relative '../../app/domain/rap_sheet_with_eligibility'
 
@@ -42,8 +43,8 @@ describe RapSheetWithEligibility do
 
   describe '#has_two_prior_convictions_of_same_type?' do
     it 'returns true if rap sheet contains two priors with ' +
-      'the same code section and with event dates on the ' +
-      'same day or before' do
+         'the same code section and with event dates on the ' +
+         'same day or before' do
 
       count_1 = build_court_count(code: 'PC', section: '123')
       event_1 = build_conviction_event(
@@ -68,9 +69,37 @@ describe RapSheetWithEligibility do
 
       rap_sheet = build_rap_sheet(events: ([event_1, event_2, event_3]))
 
-      expect(described_class.new(rap_sheet).has_two_prior_convictions_of_same_type?(event_1, count_1)).to eq false
-      expect(described_class.new(rap_sheet).has_two_prior_convictions_of_same_type?(event_2, count_2)).to eq false
-      expect(described_class.new(rap_sheet).has_two_prior_convictions_of_same_type?(event_3, count_3)).to eq true
+      expect(described_class.new(rap_sheet).has_two_prior_convictions_of_same_type?(EventWithEligibility.new(event_1), CountWithEligibility.new(count_1))).to eq false
+      expect(described_class.new(rap_sheet).has_two_prior_convictions_of_same_type?(EventWithEligibility.new(event_2), CountWithEligibility.new(count_2))).to eq false
+      expect(described_class.new(rap_sheet).has_two_prior_convictions_of_same_type?(EventWithEligibility.new(event_3), CountWithEligibility.new(count_3))).to eq true
+    end
+  end
+
+  describe '#prop64_eligible' do
+    it 'returns false if count is an ineligible conviction' +
+         'has_two_prior_convictions_of_same_type?' +
+         'registered sex offender' +
+         'contains any superstrikes' do
+
+      ineligible_count = build_court_count(code: 'HS', section: '11359(c)(3)')
+      eligible_count = build_court_count(code: 'HS', section: '11357')
+
+      event_1 = build_conviction_event(
+        date: Date.today - 7.days,
+        case_number: '1',
+        counts: [ineligible_count]
+      )
+
+      event_2 = build_conviction_event(
+        date: Date.today - 7.days,
+        case_number: '1',
+        counts: [eligible_count]
+      )
+
+      rap_sheet = build_rap_sheet(events: ([event_1, event_2]))
+
+      expect(described_class.new(rap_sheet).prop64_eligible(EventWithEligibility.new(event_1), CountWithEligibility.new(ineligible_count))).to eq false
+      expect(described_class.new(rap_sheet).prop64_eligible(EventWithEligibility.new(event_2), CountWithEligibility.new(eligible_count))).to eq true
     end
   end
 end

@@ -56,7 +56,7 @@ class SingleCSV
         eligibility.has_two_prior_convictions_of_same_type?(event, count),
         eligibility.sex_offender_registration?,
         event.remedy,
-        eligibility.prop64_eligible(event,count)
+        eligibility.prop64_eligible(event, count)
       ]
     else
       ["", false, false, "", false]
