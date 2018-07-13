@@ -36,6 +36,9 @@ gem 'pdf-reader'
 gem 'rap_sheet_parser', :git => 'https://github.com/codeforamerica/rap_sheet_parser'
 #gem 'rap_sheet_parser', :path => '../rap_sheet_parser'
 
+gem 'pdf-forms'
+gem 'cliver'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
