@@ -1,7 +1,7 @@
 class SingleCSV
   def initialize(eligibility)
     @rows = eligibility.eligible_events.flat_map do |event|
-      event.counts.map do |count|
+      event.prop64_counts.map do |count|
         count_data(count, event, eligibility)
       end
     end

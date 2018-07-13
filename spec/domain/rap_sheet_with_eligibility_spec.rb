@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 require 'rap_sheet_parser'
 require_relative '../../app/domain/count_with_eligibility'
 require_relative '../../app/domain/event_with_eligibility'

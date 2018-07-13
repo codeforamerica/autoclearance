@@ -27,7 +27,6 @@ class CountWithEligibility < SimpleDelegator
       'HS 11358', #cultivation
       'HS 11359', #possession for sale
       'HS 11360', #transportation for sale
-      'HS 11362.1'
     ]
   end
 

@@ -3,6 +3,10 @@ class EventWithEligibility < SimpleDelegator
     super.map { |c| CountWithEligibility.new(c) }
   end
 
+  def prop64_counts
+    counts.select { |count| count.prop64_conviction? }
+  end
+
   def remedy
     return 'redesignation' if sentence.nil?
 
