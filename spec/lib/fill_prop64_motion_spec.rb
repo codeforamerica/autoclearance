@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe FillProp64Motion do
   it 'fills out fields' do
     counts = [
-        build_court_count(code: 'HS', section: '11357'),
+        build_court_count(code: 'HS', section: '11357(a)'),
         build_court_count(code: 'HS', section: '11359')
     ]
     event = build_conviction_event(

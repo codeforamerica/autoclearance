@@ -25,8 +25,8 @@ describe RapSheetProcessor do
         '/tmp/autoclearance-outputs/skywalker_rap_sheet.csv',
         '/tmp/autoclearance-outputs/chewbacca_rap_sheet.csv',
         '/tmp/autoclearance-outputs/summary_20110102-010444.csv',
-        '/tmp/autoclearance-outputs/skywalker_rap_sheet_motion_1234567.pdf',
-        '/tmp/autoclearance-outputs/skywalker_rap_sheet_motion_33857493.pdf'
+        '/tmp/autoclearance-outputs/skywalker_rap_sheet_motion_0.pdf',
+        '/tmp/autoclearance-outputs/skywalker_rap_sheet_motion_1.pdf'
       ]
       expect(Dir['/tmp/autoclearance-outputs/*']).to contain_exactly(*expected)
 
@@ -38,7 +38,7 @@ describe RapSheetProcessor do
       chewbacca_actual_text = File.read('/tmp/autoclearance-outputs/chewbacca_rap_sheet.csv')
       expect(chewbacca_actual_text).to eq(chewbacca_expected_text)
 
-      skywalker_motion_fields = get_fields_from_pdf(File.open('/tmp/autoclearance-outputs/skywalker_rap_sheet_motion_1234567.pdf'))
+      skywalker_motion_fields = get_fields_from_pdf(File.open('/tmp/autoclearance-outputs/skywalker_rap_sheet_motion_0.pdf'))
       expect(skywalker_motion_fields["Defendant"]).to eq "SKYWALKER,LUKE JAY"
 
       expect(RapSheetParser::PersonalInfo.count).to eq 2
@@ -72,8 +72,8 @@ describe RapSheetProcessor do
         '/tmp/autoclearance-outputs/summary_20100102-010444.error',
         '/tmp/autoclearance-outputs/skywalker_rap_sheet.csv',
         '/tmp/autoclearance-outputs/summary_20100102-010444.csv',
-        '/tmp/autoclearance-outputs/skywalker_rap_sheet_motion_1234567.pdf',
-        '/tmp/autoclearance-outputs/skywalker_rap_sheet_motion_33857493.pdf'
+        '/tmp/autoclearance-outputs/skywalker_rap_sheet_motion_0.pdf',
+        '/tmp/autoclearance-outputs/skywalker_rap_sheet_motion_1.pdf'
       )
 
       actual_error = File.read('/tmp/autoclearance-outputs/not_a_valid_rap_sheet.error')

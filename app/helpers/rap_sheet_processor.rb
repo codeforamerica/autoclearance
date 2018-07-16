@@ -43,16 +43,16 @@ class RapSheetProcessor
       event.counts.any? do |count|
         eligibility.prop64_eligible(event, count)
       end
-    end.each do |event|
-      file_name = "#{input_file.key.gsub('.pdf', '')}_motion_#{event.case_number}.pdf"
+    end.each_with_index do |event, index|
+      file_name = "#{input_file.key.gsub('.pdf', '')}_motion_#{index}.pdf"
       eligible_counts = event.counts.select do |count|
         eligibility.prop64_eligible(event, count)
       end
 
       output_directory.files.create(
-          key: file_name,
-          body: FillProp64Motion.new(eligible_counts, event, eligibility).filled_motion,
-          content_type: 'application/pdf'
+        key: file_name,
+        body: FillProp64Motion.new(eligible_counts, event, eligibility).filled_motion,
+        content_type: 'application/pdf'
       )
     end
 
