@@ -11,6 +11,10 @@ Then. run `brew bundle` from the `autoclearance` directory.
 
 Run `gem install bundler` and then `bundle` to install Ruby dependencies.
 
+Install PDFtk for PDF filling functionality
+
+[Install PDFTK from here](https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/pdftk_server-2.02-mac_osx-10.11-setup.pkg)
+
 ### To set up the Beanstalk CLI
 To add a Elastic Beanstalk profile for the environment, add the following to `~/.aws/config`
 ```
