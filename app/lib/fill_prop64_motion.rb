@@ -11,7 +11,7 @@ class FillProp64Motion
     pdftk = PdfForms.new(Cliver.detect('pdftk'))
 
     pdftk.fill_form 'app/assets/motions/prop64.pdf', tempfile.path, {
-      "Defendant" => eligibility.personal_info.names[event.name_code],
+      "Defendant" => name,
       "SCN" => event.case_number,
       "FOR RESENTENCING OR DISMISSAL HS  113618b" => on_or_off(event.remedy == 'resentencing'),
       "FOR REDESIGNATION OR DISMISSALSEALING HS  113618f" => on_or_off(event.remedy == 'redesignation'),
@@ -29,6 +29,15 @@ class FillProp64Motion
   end
 
   private
+
+  def name
+    first_name_key = eligibility.personal_info.names.keys.min_by(&:to_i)
+    if first_name_key != event.name_code
+      "#{eligibility.personal_info.names[first_name_key]} AKA #{eligibility.personal_info.names[event.name_code]}"
+    else
+      eligibility.personal_info.names[first_name_key]
+    end
+  end
 
   def number_of_counts_for_code(code)
     counts.select { |count| count.code_section_starts_with([code]) }.length
