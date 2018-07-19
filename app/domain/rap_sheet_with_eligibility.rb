@@ -7,11 +7,11 @@ class RapSheetWithEligibility < SimpleDelegator
   end
 
   def has_two_prior_convictions_of_same_type?(event, count)
-    events_in_past = convictions.select { |e| e.date <= event.date }
+    other_events = convictions.select { |e| e.case_number != event.case_number }
 
-    events_in_past.flat_map do |e|
-      e.counts.select do |c|
-        c.code_section_starts_with([count.code_section]) && e.case_number != event.case_number
+    other_events.select do |e|
+      e.counts.any? do |c|
+        c.code_section_starts_with([count.code_section])
       end
     end.length >= 2
   end

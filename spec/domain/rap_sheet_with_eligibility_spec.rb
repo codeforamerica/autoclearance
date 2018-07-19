@@ -101,5 +101,30 @@ describe RapSheetWithEligibility do
       expect(described_class.new(rap_sheet).prop64_eligible(EventWithEligibility.new(event_1), CountWithEligibility.new(ineligible_count))).to eq false
       expect(described_class.new(rap_sheet).prop64_eligible(EventWithEligibility.new(event_2), CountWithEligibility.new(eligible_count))).to eq true
     end
+
+    it 'returns false if there are three distinct conviction events which include the same eligible code_section' do
+      event1_count = build_court_count(code: 'HS', section: '11357')
+      event_1 = build_conviction_event(
+        case_number: '111',
+        counts: [event1_count]
+      )
+
+      event2_count = build_court_count(code: 'HS', section: '11357')
+      event_2 = build_conviction_event(
+        case_number: '222',
+        counts: [event2_count]
+      )
+
+      rap_sheet = build_rap_sheet(events: ([event_1, event_2]))
+      expect(described_class.new(rap_sheet).prop64_eligible(EventWithEligibility.new(event_2), CountWithEligibility.new(event2_count))).to eq true
+
+      event3_count = build_court_count(code: 'HS', section: '11357')
+      event_3 = build_conviction_event(
+        case_number: '333',
+        counts: [event3_count]
+      )
+      rap_sheet = build_rap_sheet(events: ([event_1, event_2, event_3]))
+      expect(described_class.new(rap_sheet).prop64_eligible(EventWithEligibility.new(event_2), CountWithEligibility.new(event2_count))).to eq false
+    end
   end
 end
