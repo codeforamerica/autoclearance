@@ -69,8 +69,8 @@ describe RapSheetWithEligibility do
 
       rap_sheet = build_rap_sheet(events: ([event_1, event_2, event_3]))
 
-      expect(described_class.new(rap_sheet).has_two_prior_convictions_of_same_type?(EventWithEligibility.new(event_1), CountWithEligibility.new(count_1))).to eq false
-      expect(described_class.new(rap_sheet).has_two_prior_convictions_of_same_type?(EventWithEligibility.new(event_2), CountWithEligibility.new(count_2))).to eq false
+      expect(described_class.new(rap_sheet).has_two_prior_convictions_of_same_type?(EventWithEligibility.new(event_1), CountWithEligibility.new(count_1))).to eq true
+      expect(described_class.new(rap_sheet).has_two_prior_convictions_of_same_type?(EventWithEligibility.new(event_2), CountWithEligibility.new(count_2))).to eq true
       expect(described_class.new(rap_sheet).has_two_prior_convictions_of_same_type?(EventWithEligibility.new(event_3), CountWithEligibility.new(count_3))).to eq true
     end
   end
