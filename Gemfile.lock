@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/codeforamerica/rap_sheet_parser
-  revision: a934f53856967d3faa9da6b60b99eeda31b41dee
+  revision: c24cd9f59b15a9225637238c530e6dcf93326b1d
   specs:
     rap_sheet_parser (0.1.0)
       activerecord
