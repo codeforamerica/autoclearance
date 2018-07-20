@@ -27,7 +27,18 @@ class RapSheetProcessor
   attr_accessor :summary_csv, :summary_errors
 
   def process_one_rap_sheet(input_file)
-    eligibility = rap_sheet_with_eligibility(input_file)
+    warning_logger = Logger.new(
+      @warning_log,
+      formatter: proc { |severity, datetime, progname, msg| "[#{input_file.key}] #{msg}\n" }
+    )
+
+    eligibility = rap_sheet_with_eligibility(input_file, warning_logger)
+
+    unless eligibility.prop64_counts?
+      warning_logger.warn("No eligible prop64 convictions found")
+      input_file.destroy
+      return
+    end
 
     summary_csv.append(input_file.key, eligibility)
 
@@ -55,7 +66,6 @@ class RapSheetProcessor
         content_type: 'application/pdf'
       )
     end
-
     input_file.destroy
   rescue => e
     output_directory.files.create(
@@ -103,15 +113,14 @@ class RapSheetProcessor
     @connection ||= Fog::Storage.new(Rails.configuration.fog_params)
   end
 
-  def rap_sheet_with_eligibility(input_file)
-    text = PDFReader.new(input_file.body).text
+  def rap_sheet_with_eligibility(input_file, logger)
+    text = if input_file.content_type == "application/pdf"
+      PDFReader.new(input_file.body).text
+    else
+      input_file.body
+    end
 
-    warning_logger = Logger.new(
-      @warning_log,
-      formatter: proc { |severity, datetime, progname, msg| "[#{input_file.key}] #{msg}\n" }
-    )
-
-    rap_sheet = RapSheetParser::Parser.new.parse(text, logger: warning_logger)
+    rap_sheet = RapSheetParser::Parser.new.parse(text, logger: logger)
 
     RapSheetWithEligibility.new(rap_sheet)
   end

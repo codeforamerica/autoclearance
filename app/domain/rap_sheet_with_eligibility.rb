@@ -6,6 +6,12 @@ class RapSheetWithEligibility < SimpleDelegator
       map { |e| EventWithEligibility.new(e) }
   end
 
+  def prop64_counts?
+    eligible_events.any? do |eligible_event|
+      eligible_event.counts.any?(&:prop64_conviction?)
+    end
+  end
+
   def has_two_prior_convictions_of_same_type?(event, count)
     other_events = convictions.select { |e| e.case_number != event.case_number }
 

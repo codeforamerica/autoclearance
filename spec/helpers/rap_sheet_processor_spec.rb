@@ -94,5 +94,63 @@ describe RapSheetProcessor do
       expect(actual_warning).to include("[not_a_valid_rap_sheet.pdf] Unrecognized event:\n[not_a_valid_rap_sheet.pdf] HI")
       expect(actual_warning).to include("[not_a_valid_rap_sheet.pdf] Unrecognized event:\n[not_a_valid_rap_sheet.pdf]   BYE")
     end
+
+    context 'warnings for rap sheets with nothing potentially eligible' do
+      it 'saves warnings for rap sheets that did not seem to have any potentially prop64 eligible counts' do
+        rap_sheet_text = <<-EOT
+          personal info content
+          * * * *
+          ARR/DET/CITE: NAM:02 DOB:19550505 19840725 CASO LOS ANGELES
+          CNT:01     #1111111
+            12345 HS-LEGALLY CORRECT THING
+          CNT:02
+            496 PC-RECEIVE/ETC KNOWN STOLEN PROPERTY
+             COM: WARRANT NBR A-400000 BOTH CNTS
+          CNT:03
+            66122 HS-ALSO VERY CORRECT, LEGALLY
+          - - - -
+          COURT:                NAM:01
+          19840918  CASC LOS ANGELES
+          
+          CNT:01     #1234567
+            12345 HS-LEGALLY CORRECT THING
+          *DISPO:CONVICTED
+             CONV STATUS:MISDEMEANOR
+          EOT
+        File.write("/tmp/autoclearance-rap-sheet-inputs/no_prop64_eligible_convictions.txt", rap_sheet_text)
+
+        travel_to Time.new(2010, 1, 2, 01, 04, 44) do
+          described_class.new.run
+        end
+
+        actual_warning = File.read('/tmp/autoclearance-outputs/summary_20100102-010444.warning')
+
+        expect(actual_warning).to include("[no_prop64_eligible_convictions.txt] No eligible prop64 convictions found")
+      end
+
+      it 'saves warnings for rap sheets with no convictions at all' do
+        rap_sheet_text = <<-EOT
+          personal info content
+          * * * *
+          ARR/DET/CITE: NAM:02 DOB:19550505 19840725 CASO LOS ANGELES
+          CNT:01     #1111111
+            12345 HS-LEGALLY CORRECT THING
+          CNT:02
+            496 PC-RECEIVE/ETC KNOWN STOLEN PROPERTY
+             COM: WARRANT NBR A-400000 BOTH CNTS
+          CNT:03
+            66122 HS-ALSO VERY CORRECT, LEGALLY
+        EOT
+        File.write("/tmp/autoclearance-rap-sheet-inputs/no_prop64_eligible_convictions.txt", rap_sheet_text)
+
+        travel_to Time.new(2010, 1, 2, 01, 04, 44) do
+          described_class.new.run
+        end
+
+        actual_warning = File.read('/tmp/autoclearance-outputs/summary_20100102-010444.warning')
+
+        expect(actual_warning).to include("[no_prop64_eligible_convictions.txt] No eligible prop64 convictions found")
+      end
+    end
   end
 end
