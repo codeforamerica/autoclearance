@@ -35,7 +35,6 @@ class RapSheetProcessor
     eligibility = rap_sheet_with_eligibility(input_file, warning_logger)
 
     unless eligibility.prop64_counts?
-      warning_logger.warn("No eligible prop64 convictions found")
       input_file.destroy
       return
     end
@@ -114,14 +113,10 @@ class RapSheetProcessor
   end
 
   def rap_sheet_with_eligibility(input_file, logger)
-    text = if input_file.content_type == "application/pdf"
-      PDFReader.new(input_file.body).text
-    else
-      input_file.body
-    end
+    text = PDFReader.new(input_file.body).text
 
     rap_sheet = RapSheetParser::Parser.new.parse(text, logger: logger)
 
-    RapSheetWithEligibility.new(rap_sheet)
+    RapSheetWithEligibility.new(rap_sheet, logger: logger)
   end
 end

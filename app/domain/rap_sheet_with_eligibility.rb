@@ -1,4 +1,12 @@
 class RapSheetWithEligibility < SimpleDelegator
+  def initialize(rap_sheet, logger:)
+    super(rap_sheet)
+
+    unless prop64_counts?
+      logger.warn('No eligible prop64 convictions found')
+    end
+  end
+
   def eligible_events
     convictions.
       select { |e| in_sf?(e) }.

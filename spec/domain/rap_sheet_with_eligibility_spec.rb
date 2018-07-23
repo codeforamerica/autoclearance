@@ -18,7 +18,7 @@ describe RapSheetWithEligibility do
       )
       rap_sheet = build_rap_sheet(events: [eligible_event, ineligible_event, south_san_francisco_event])
 
-      subject = described_class.new(rap_sheet).eligible_events
+      subject = new_rap_sheet(rap_sheet).eligible_events
       expect(subject.length).to eq 1
       expect(subject[0].case_number).to eq '12345'
     end
@@ -37,7 +37,7 @@ describe RapSheetWithEligibility do
       )
       rap_sheet = build_rap_sheet(events: ([eligible_event, ineligible_event]))
 
-      expect(described_class.new(rap_sheet).eligible_events).to eq [eligible_event]
+      expect(new_rap_sheet(rap_sheet).eligible_events).to eq [eligible_event]
     end
   end
 
@@ -69,9 +69,9 @@ describe RapSheetWithEligibility do
 
       rap_sheet = build_rap_sheet(events: ([event_1, event_2, event_3]))
 
-      expect(described_class.new(rap_sheet).has_two_prior_convictions_of_same_type?(EventWithEligibility.new(event_1), CountWithEligibility.new(count_1))).to eq true
-      expect(described_class.new(rap_sheet).has_two_prior_convictions_of_same_type?(EventWithEligibility.new(event_2), CountWithEligibility.new(count_2))).to eq true
-      expect(described_class.new(rap_sheet).has_two_prior_convictions_of_same_type?(EventWithEligibility.new(event_3), CountWithEligibility.new(count_3))).to eq true
+      expect(new_rap_sheet(rap_sheet).has_two_prior_convictions_of_same_type?(EventWithEligibility.new(event_1), CountWithEligibility.new(count_1))).to eq true
+      expect(new_rap_sheet(rap_sheet).has_two_prior_convictions_of_same_type?(EventWithEligibility.new(event_2), CountWithEligibility.new(count_2))).to eq true
+      expect(new_rap_sheet(rap_sheet).has_two_prior_convictions_of_same_type?(EventWithEligibility.new(event_3), CountWithEligibility.new(count_3))).to eq true
     end
   end
 
@@ -98,8 +98,8 @@ describe RapSheetWithEligibility do
 
       rap_sheet = build_rap_sheet(events: ([event_1, event_2]))
 
-      expect(described_class.new(rap_sheet).prop64_eligible(EventWithEligibility.new(event_1), CountWithEligibility.new(ineligible_count))).to eq false
-      expect(described_class.new(rap_sheet).prop64_eligible(EventWithEligibility.new(event_2), CountWithEligibility.new(eligible_count))).to eq true
+      expect(new_rap_sheet(rap_sheet).prop64_eligible(EventWithEligibility.new(event_1), CountWithEligibility.new(ineligible_count))).to eq false
+      expect(new_rap_sheet(rap_sheet).prop64_eligible(EventWithEligibility.new(event_2), CountWithEligibility.new(eligible_count))).to eq true
     end
 
     it 'returns false if there are three distinct conviction events which include the same eligible code_section' do
@@ -116,7 +116,7 @@ describe RapSheetWithEligibility do
       )
 
       rap_sheet = build_rap_sheet(events: ([event_1, event_2]))
-      expect(described_class.new(rap_sheet).prop64_eligible(EventWithEligibility.new(event_2), CountWithEligibility.new(event2_count))).to eq true
+      expect(new_rap_sheet(rap_sheet).prop64_eligible(EventWithEligibility.new(event_2), CountWithEligibility.new(event2_count))).to eq true
 
       event3_count = build_court_count(code: 'HS', section: '11357')
       event_3 = build_conviction_event(
@@ -124,7 +124,24 @@ describe RapSheetWithEligibility do
         counts: [event3_count]
       )
       rap_sheet = build_rap_sheet(events: ([event_1, event_2, event_3]))
-      expect(described_class.new(rap_sheet).prop64_eligible(EventWithEligibility.new(event_2), CountWithEligibility.new(event2_count))).to eq false
+      expect(new_rap_sheet(rap_sheet).prop64_eligible(EventWithEligibility.new(event_2), CountWithEligibility.new(event2_count))).to eq false
     end
+  end
+
+  context 'warnings for rap sheets with nothing potentially eligible' do
+    it 'saves warnings for rap sheets that did not seem to have any potentially prop64 eligible counts' do
+      count = build_court_count(code: 'HS', section: '1234')
+      events = [build_conviction_event(counts: [count], courthouse: 'CASC San Francisco')]
+      rap_sheet = build_rap_sheet(events: events)
+
+      warning_file = StringIO.new
+      new_rap_sheet(rap_sheet, logger: Logger.new(warning_file))
+
+      expect(warning_file.string).to include('No eligible prop64 convictions found')
+    end
+  end
+
+  def new_rap_sheet(rap_sheet, logger: Logger.new(StringIO.new))
+    described_class.new(rap_sheet, logger: logger)
   end
 end

@@ -27,7 +27,7 @@ RSpec.describe FillProp64Motion do
   }
 
   subject {
-    eligibility = RapSheetWithEligibility.new(build_rap_sheet(events: [event], personal_info: personal_info))
+    eligibility = RapSheetWithEligibility.new(build_rap_sheet(events: [event], personal_info: personal_info), logger: Logger.new(StringIO.new))
     event_with_eligibility = EventWithEligibility.new(event)
 
     file = described_class.new(counts, event_with_eligibility, eligibility).filled_motion
