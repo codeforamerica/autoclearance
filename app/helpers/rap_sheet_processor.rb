@@ -67,11 +67,12 @@ class RapSheetProcessor
     end
     input_file.destroy
   rescue => e
+    error = ([e.message] + e.backtrace).join("\n")
     output_directory.files.create(
       key: input_file.key.gsub('.pdf', '.error'),
-      body: ([e.message] + e.backtrace).join("\n")
+      body: error
     )
-    summary_errors << "#{input_file.key}:\n#{e.message}\n\n"
+    summary_errors << "#{input_file.key}:\n#{error}\n\n"
   end
 
   def save_summary_errors(timestamp)
