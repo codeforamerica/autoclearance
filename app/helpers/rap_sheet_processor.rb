@@ -70,7 +70,7 @@ class RapSheetProcessor
   rescue => e
     output_directory.files.create(
       key: input_file.key.gsub('.pdf', '.error'),
-      body: e.message
+      body: ([e.message] + e.backtrace).join("\n")
     )
     summary_errors << "#{input_file.key}:\n#{e.message}\n\n"
   end
