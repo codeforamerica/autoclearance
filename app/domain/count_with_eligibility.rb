@@ -3,18 +3,6 @@ class CountWithEligibility < SimpleDelegator
     code_section_starts_with(dismissible_codes) && !code_section_starts_with(ineligible_codes)
   end
 
-  def needs_info_under_18?
-    code_section_starts_with(['HS 11359', 'HS 11360'])
-  end
-
-  def needs_info_under_21?
-    code_section_starts_with(['HS 11359'])
-  end
-  
-  def needs_info_across_state_lines?
-    code_section_starts_with(['HS 11360'])
-  end
-
   private
 
   def dismissible_codes
