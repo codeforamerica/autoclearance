@@ -1,6 +1,4 @@
-require 'spec_helper'
-require 'rap_sheet_parser'
-require_relative '../../app/domain/count_with_eligibility'
+require 'rails_helper'
 
 describe CountWithEligibility do
   let(:count) { build_court_count(code: code, section: section) }
@@ -27,6 +25,14 @@ describe CountWithEligibility do
     context 'when the count is an ineligible code' do
       let(:code) { 'HS' }
       let(:section) { '12345' }
+      it 'returns false' do
+        expect(subject).not_to be_prop64_conviction
+      end
+    end
+
+    context 'when the count is an ineligible subsection' do
+      let(:code) { 'HS' }
+      let(:section) { '11359(d)' }
       it 'returns false' do
         expect(subject).not_to be_prop64_conviction
       end

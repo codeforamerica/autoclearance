@@ -1,6 +1,6 @@
 class CountWithEligibility < SimpleDelegator
   def prop64_conviction?
-    code_section_starts_with(dismissible_codes)
+    code_section_starts_with(dismissible_codes) && !code_section_starts_with(ineligible_codes)
   end
 
   def needs_info_under_18?
@@ -13,10 +13,6 @@ class CountWithEligibility < SimpleDelegator
   
   def needs_info_across_state_lines?
     code_section_starts_with(['HS 11360'])
-  end
-
-  def ineligible_conviction?
-    code_section_starts_with(ineligible_codes)
   end
 
   private
