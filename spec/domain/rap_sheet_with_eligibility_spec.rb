@@ -75,59 +75,6 @@ describe RapSheetWithEligibility do
     end
   end
 
-  describe '#prop64_eligible' do
-    it 'returns false if count is an ineligible conviction' +
-         'has_two_prior_convictions_of_same_type?' +
-         'registered sex offender' +
-         'contains any superstrikes' do
-
-      ineligible_count = build_court_count(code: 'HS', section: '11359(c)(3)')
-      eligible_count = build_court_count(code: 'HS', section: '11357')
-
-      event_1 = build_conviction_event(
-        date: Date.today - 7.days,
-        case_number: '1',
-        counts: [ineligible_count]
-      )
-
-      event_2 = build_conviction_event(
-        date: Date.today - 7.days,
-        case_number: '1',
-        counts: [eligible_count]
-      )
-
-      rap_sheet = build_rap_sheet(events: ([event_1, event_2]))
-
-      expect(new_rap_sheet(rap_sheet).prop64_eligible(EventWithEligibility.new(event_1), CountWithEligibility.new(ineligible_count))).to eq false
-      expect(new_rap_sheet(rap_sheet).prop64_eligible(EventWithEligibility.new(event_2), CountWithEligibility.new(eligible_count))).to eq true
-    end
-
-    it 'returns false if there are three distinct conviction events which include the same eligible code_section' do
-      event1_count = build_court_count(code: 'HS', section: '11357')
-      event_1 = build_conviction_event(
-        case_number: '111',
-        counts: [event1_count]
-      )
-
-      event2_count = build_court_count(code: 'HS', section: '11357')
-      event_2 = build_conviction_event(
-        case_number: '222',
-        counts: [event2_count]
-      )
-
-      rap_sheet = build_rap_sheet(events: ([event_1, event_2]))
-      expect(new_rap_sheet(rap_sheet).prop64_eligible(EventWithEligibility.new(event_2), CountWithEligibility.new(event2_count))).to eq true
-
-      event3_count = build_court_count(code: 'HS', section: '11357')
-      event_3 = build_conviction_event(
-        case_number: '333',
-        counts: [event3_count]
-      )
-      rap_sheet = build_rap_sheet(events: ([event_1, event_2, event_3]))
-      expect(new_rap_sheet(rap_sheet).prop64_eligible(EventWithEligibility.new(event_2), CountWithEligibility.new(event2_count))).to eq false
-    end
-  end
-
   context 'warnings for rap sheets with nothing potentially eligible' do
     it 'saves warnings for rap sheets that did not seem to have any potentially prop64 eligible counts' do
       count = build_court_count(code: 'HS', section: '1234')

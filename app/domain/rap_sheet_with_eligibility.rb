@@ -16,7 +16,9 @@ class RapSheetWithEligibility < SimpleDelegator
 
   def prop64_counts?
     eligible_events.any? do |eligible_event|
-      eligible_event.counts.any?(&:prop64_conviction?)
+      eligible_event.counts.any? do |count|
+        count.prop64_conviction_or_possible_bargain?(eligible_event)
+      end
     end
   end
 
@@ -28,13 +30,6 @@ class RapSheetWithEligibility < SimpleDelegator
         c.code_section_starts_with([count.code_section])
       end
     end.length >= 2
-  end
-
-  def prop64_eligible(event, count)
-    count.prop64_conviction? &&
-      !has_two_prior_convictions_of_same_type?(event, count) &&
-      !sex_offender_registration? &&
-      !(superstrikes.length > 0)
   end
 
   private

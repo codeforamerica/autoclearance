@@ -27,7 +27,7 @@ class SingleCSV
       count.code_section,
       count.severity,
       event.sentence,
-      count.prop64_conviction?
+      count.prop64_conviction_or_possible_bargain?(event)
     ] + additional_eligibility_info(count, event, eligibility)
   end
 
@@ -50,13 +50,13 @@ class SingleCSV
   end
 
   def additional_eligibility_info(count, event, eligibility)
-    if count.prop64_conviction?
+    if count.prop64_conviction_or_possible_bargain?(event)
       [
         eligibility.superstrikes.map(&:code_section).join(', '),
         eligibility.has_two_prior_convictions_of_same_type?(event, count),
         eligibility.sex_offender_registration?,
         event.remedy,
-        eligibility.prop64_eligible(event, count)
+        count.prop64_eligible(event, eligibility)
       ]
     else
       ["", false, false, "", false]

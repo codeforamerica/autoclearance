@@ -51,12 +51,12 @@ class RapSheetProcessor
     # Create a bunch of PDFs
     eligibility.eligible_events.select do |event|
       event.counts.any? do |count|
-        eligibility.prop64_eligible(event, count)
+        count.prop64_eligible(event, eligibility)
       end
     end.each_with_index do |event, index|
       file_name = "#{input_file.key.gsub('.pdf', '')}_motion_#{index}.pdf"
       eligible_counts = event.counts.select do |count|
-        eligibility.prop64_eligible(event, count)
+        count.prop64_eligible(event, eligibility)
       end
 
       output_directory.files.create(
