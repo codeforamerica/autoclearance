@@ -8,13 +8,15 @@ class CountWithEligibility < SimpleDelegator
   end
 
   def csv_eligibility_column(event, eligibility)
-    if plea_bargained?(event)
-      return true
-    elsif possibly_plea_bargained?(event)
-      return 'maybe'
-    end
+    return false if has_disqualifiers?(event, eligibility)
 
-    prop64_conviction? && !has_disqualifiers?(event, eligibility)
+    if plea_bargained?(event)
+      true
+    elsif prop64_conviction?
+      true
+    elsif possibly_plea_bargained?(event)
+      'maybe'
+    end
   end
 
   def eligible?(event, eligibility)
@@ -34,12 +36,12 @@ class CountWithEligibility < SimpleDelegator
   end
 
   def plea_bargained?(event)
-    code_section_starts_with(possible_plea_bargain_codes) && code_sections_in_cycle_are_only(event, dismissible_codes + possible_plea_bargain_codes)
+    code_section_starts_with(possible_plea_bargain_codes) && code_sections_in_cycle_are_potentially_eligible(event)
   end
 
-  def code_sections_in_cycle_are_only(event, codes)
+  def code_sections_in_cycle_are_potentially_eligible(event)
     unrejected_counts_for_event_cycle(event).all? do |count|
-      count.code_section_starts_with(codes)
+      count.code_section_starts_with(possible_plea_bargain_codes) || count.prop64_conviction?
     end
   end
 

@@ -38,30 +38,129 @@ describe CountWithEligibility do
         expect(subject.potentially_eligible?(event)).to eq false
       end
     end
+
+    context 'plea bargains' do
+      it 'returns true for accessory charge with prop64 charge in the cycle' do
+        text = <<-TEXT
+          CII/A99000099
+          DOB/19660119 SEX/M RAC/WHITE
+          HGT/502 WGT/317 EYE/GRN HAIR/PNK POB/CA
+          NAM/01 LASTY, FIRSTY
+  
+          * * * *
+          ARR/DET/CITE:         NAM:01  DOB:19750101
+          19980101  CAPD SAN FRANCISCO
+  
+          CNT:01     #111 
+            11357 HS-BLAH
+  
+          CNT:02  135 PC-DESTROY/CONCEAL EVIDENCE
+          19980101 DISPO:PROS REJ-OTHER
+          - - - -
+          COURT:                NAM:01
+          19980101  CAMC SAN FRANCISCO
+  
+          CNT:01     #222
+            32 PC-ACCESSORY
+          *DISPO:CONVICTED   
+            CONV STATUS:MISDEMEANOR   
+            SEN: 12 DAYS JAIL
+        TEXT
+
+        rap_sheet = RapSheetParser::Parser.new.parse(text)
+
+        eligibility = new_rap_sheet(rap_sheet)
+        event = EventWithEligibility.new(eligibility.eligible_events[0])
+        count = CountWithEligibility.new(event.counts[0])
+        expect(count.code_section).to eq('PC 32')
+        expect(count.potentially_eligible?(event)).to eq(true)
+      end
+
+      it 'returns false for accessory charge with no prop64 charge in the cycle' do
+        text = <<-TEXT
+          CII/A99000099
+          DOB/19660119 SEX/M RAC/WHITE
+          HGT/502 WGT/317 EYE/GRN HAIR/PNK POB/CA
+          NAM/01 LASTY, FIRSTY
+  
+          * * * *
+          ARR/DET/CITE:         NAM:01  DOB:19750101
+          19980101  CAPD SAN FRANCISCO
+  
+          CNT:01     #111 
+            496 PC-RECEIVE/ETC KNOWN STOLEN PROPERTY
+  
+          CNT:02  135 PC-DESTROY/CONCEAL EVIDENCE
+          19980101 DISPO:PROS REJ-OTHER
+          - - - -
+          COURT:                NAM:01
+          19980101  CAMC SAN FRANCISCO
+  
+          CNT:01     #222
+            32 PC-ACCESSORY
+          *DISPO:CONVICTED   
+            CONV STATUS:MISDEMEANOR   
+            SEN: 12 DAYS JAIL
+        TEXT
+
+        rap_sheet = RapSheetParser::Parser.new.parse(text)
+
+        eligibility = new_rap_sheet(rap_sheet)
+        event = EventWithEligibility.new(eligibility.eligible_events[0])
+        count = CountWithEligibility.new(event.counts[0])
+        expect(count.code_section).to eq('PC 32')
+        expect(count.potentially_eligible?(event)).to eq(false)
+      end
+    end
   end
 
   describe '#csv_eligibility_column' do
-    it 'returns false if count is an ineligible conviction, has_two_prior_convictions_of_same_type?, registered sex offender, or contains any superstrikes' do
-      ineligible_count = build_court_count(code: 'HS', section: '11359(c)(3)')
+    it 'returns true if prop64 conviction and no disqualifiers' do
       eligible_count = build_court_count(code: 'HS', section: '11357')
 
-      event_1 = build_conviction_event(
-        date: Date.today - 7.days,
-        case_number: '1',
-        counts: [ineligible_count]
-      )
-
-      event_2 = build_conviction_event(
+      event = build_conviction_event(
         date: Date.today - 7.days,
         case_number: '1',
         counts: [eligible_count]
       )
 
-      rap_sheet = build_rap_sheet(events: ([event_1, event_2]))
+      rap_sheet = build_rap_sheet(events: ([event]))
       eligibility = new_rap_sheet(rap_sheet)
 
-      expect(described_class.new(ineligible_count).csv_eligibility_column(EventWithEligibility.new(event_1), eligibility)).to eq false
-      expect(described_class.new(eligible_count).csv_eligibility_column(EventWithEligibility.new(event_2), eligibility)).to eq true
+      expect(described_class.new(eligible_count).csv_eligibility_column(EventWithEligibility.new(event), eligibility)).to eq true
+    end
+
+    it 'returns false if registered sex offender' do
+      eligible_count = build_court_count(code: 'HS', section: '11357')
+
+      event = build_conviction_event(
+        date: Date.today - 7.days,
+        case_number: '1',
+        counts: [eligible_count]
+      )
+
+      registration = RapSheetParser::RegistrationEvent.new(date: Date.today, code_section: 'PC 290')
+
+      rap_sheet = build_rap_sheet(events: ([registration, event]))
+      eligibility = new_rap_sheet(rap_sheet)
+
+      expect(described_class.new(eligible_count).csv_eligibility_column(EventWithEligibility.new(event), eligibility)).to eq false
+    end
+
+    it 'returns false if contains any superstrikes' do
+      eligible_count = build_court_count(code: 'HS', section: '11357')
+      superstrike = build_court_count(code: 'PC', section: '187')
+
+      event = build_conviction_event(
+        date: Date.today - 7.days,
+        case_number: '1',
+        counts: [eligible_count, superstrike]
+      )
+
+      rap_sheet = build_rap_sheet(events: ([event]))
+      eligibility = new_rap_sheet(rap_sheet)
+
+      expect(described_class.new(eligible_count).csv_eligibility_column(EventWithEligibility.new(event), eligibility)).to eq false
     end
 
     it 'returns false if there are three distinct conviction events which include the same eligible code_section' do
@@ -129,6 +228,51 @@ describe CountWithEligibility do
         expect(count.csv_eligibility_column(event, eligibility)).to eq(true)
       end
 
+      it 'returns false for plea bargain with disqualifier' do
+        text = <<-TEXT
+          CII/A99000099
+          DOB/19660119 SEX/M RAC/WHITE
+          HGT/502 WGT/317 EYE/GRN HAIR/PNK POB/CA
+          NAM/01 LASTY, FIRSTY
+  
+          * * * *
+          ARR/DET/CITE:         NAM:01  DOB:19750101
+          19980101  CAPD SAN FRANCISCO
+  
+          CNT:01     #111 
+            11360 HS-SELL/TRANSPORT/ETC MARIJUANA/HASH
+  
+          CNT:02  135 PC-DESTROY/CONCEAL EVIDENCE
+          19980101 DISPO:PROS REJ-OTHER
+  
+          CNT:03  11364 HS-POSSESS CONTROL SUBSTANCE PARAPHERNA
+          19980101 DISPO:PROS REJ-OTHER
+          - - - -
+          COURT:                NAM:01
+          19980101  CAMC SAN FRANCISCO
+  
+          CNT:01     #222
+            32 PC-ACCESSORY
+          *DISPO:CONVICTED   
+            CONV STATUS:MISDEMEANOR   
+            SEN: 12 DAYS JAIL
+
+          CNT:02
+            187 PC-SUPERSTRIKE
+          *DISPO:CONVICTED   
+            CONV STATUS:MISDEMEANOR   
+            SEN: 12 DAYS JAIL
+        TEXT
+
+        rap_sheet = RapSheetParser::Parser.new.parse(text)
+
+        eligibility = new_rap_sheet(rap_sheet)
+        event = EventWithEligibility.new(eligibility.eligible_events[0])
+        count = described_class.new(event.counts[0])
+        expect(count.code_section).to eq('PC 32')
+        expect(count.csv_eligibility_column(event, eligibility)).to eq(false)
+      end
+
       it 'can consider PC32 / HS11364 as "maybe" dismissible if there were other non-prop64 charges in the arrest or court event' do
         text = <<-TEXT
           CII/A99000099
@@ -170,84 +314,10 @@ describe CountWithEligibility do
         expect(count.code_section).to eq('PC 32')
         expect(count.csv_eligibility_column(event, eligibility)).to eq('maybe')
       end
-
-      it 'does not consider PC32/etc dismissable if there were ineligible prop64 charges' do
-        text = <<-TEXT
-          CII/A99000099
-          DOB/19660119 SEX/M RAC/WHITE
-          HGT/502 WGT/317 EYE/GRN HAIR/PNK POB/CA
-          NAM/01 LASTY, FIRSTY
-  
-          * * * *
-          ARR/DET/CITE:         NAM:01  DOB:19750101
-          19980101  CAPD SAN FRANCISCO
-  
-          CNT:01     #111 
-            11359(D) HS-SOMETHING SOMETHING
-  
-          CNT:02  135 PC-DESTROY/CONCEAL EVIDENCE
-          19980101 DISPO:PROS REJ-OTHER
-          - - - -
-          COURT:                NAM:01
-          19980101  CAMC SAN FRANCISCO
-  
-          CNT:01     #222
-            32 PC-ACCESSORY
-          *DISPO:CONVICTED   
-            CONV STATUS:MISDEMEANOR   
-            SEN: 12 DAYS JAIL
-        TEXT
-
-        rap_sheet = RapSheetParser::Parser.new.parse(text)
-
-        eligibility = new_rap_sheet(rap_sheet)
-
-        event = EventWithEligibility.new(eligibility.eligible_events[0])
-        expect(event.potentially_eligible_counts.length).to eq(0)
-
-        count = CountWithEligibility.new(event.counts[0])
-        expect(count.code_section).to eq('PC 32')
-        expect(count.csv_eligibility_column(event, eligibility)).to eq(true)
-      end
-
-      it 'does not consider PC32/etc dismissable if there were no prop64 charges' do
-        text = <<-TEXT
-          CII/A99000099
-          DOB/19660119 SEX/M RAC/WHITE
-          HGT/502 WGT/317 EYE/GRN HAIR/PNK POB/CA
-          NAM/01 LASTY, FIRSTY
-  
-          * * * *
-          ARR/DET/CITE:         NAM:01  DOB:19750101
-          19980101  CAPD SAN FRANCISCO
-  
-          CNT:01     #111 
-            496 PC-RECEIVE/ETC KNOWN STOLEN PROPERTY
-  
-          CNT:02  135 PC-DESTROY/CONCEAL EVIDENCE
-          19980101 DISPO:PROS REJ-OTHER
-          - - - -
-          COURT:                NAM:01
-          19980101  CAMC SAN FRANCISCO
-  
-          CNT:01     #222
-            32 PC-ACCESSORY
-          *DISPO:CONVICTED   
-            CONV STATUS:MISDEMEANOR   
-            SEN: 12 DAYS JAIL
-        TEXT
-
-        rap_sheet = RapSheetParser::Parser.new.parse(text)
-
-        eligibility = new_rap_sheet(rap_sheet)
-
-        csv_rows = SingleCSV.new(eligibility).instance_variable_get(:@rows)
-        expect(csv_rows.length).to eq(0)
-      end
     end
+  end
 
-    def new_rap_sheet(rap_sheet, logger: Logger.new(StringIO.new))
-      RapSheetWithEligibility.new(rap_sheet, logger: logger)
-    end
+  def new_rap_sheet(rap_sheet, logger: Logger.new(StringIO.new))
+    RapSheetWithEligibility.new(rap_sheet, logger: logger)
   end
 end
