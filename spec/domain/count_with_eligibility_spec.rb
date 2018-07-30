@@ -5,13 +5,13 @@ describe CountWithEligibility do
 
   subject { described_class.new(count) }
 
-  describe '#prop64_conviction_or_possible_bargain?' do
+  describe '#potentially_eligible?' do
     let(:event) { EventWithEligibility.new(build_conviction_event) }
     context 'when the count is an eligible code' do
       let(:code) { 'HS' }
       let(:section) { '11359' }
       it 'returns true' do
-        expect(subject.prop64_conviction_or_possible_bargain?(event)).to eq true
+        expect(subject.potentially_eligible?(event)).to eq true
       end
     end
 
@@ -19,7 +19,7 @@ describe CountWithEligibility do
       let(:code) { 'HS' }
       let(:section) { '11359(a)' }
       it 'returns true' do
-        expect(subject.prop64_conviction_or_possible_bargain?(event)).to eq true
+        expect(subject.potentially_eligible?(event)).to eq true
       end
     end
 
@@ -27,7 +27,7 @@ describe CountWithEligibility do
       let(:code) { 'HS' }
       let(:section) { '12345' }
       it 'returns false' do
-        expect(subject.prop64_conviction_or_possible_bargain?(event)).to eq false
+        expect(subject.potentially_eligible?(event)).to eq false
       end
     end
 
@@ -35,12 +35,12 @@ describe CountWithEligibility do
       let(:code) { 'HS' }
       let(:section) { '11359(d)' }
       it 'returns false' do
-        expect(subject.prop64_conviction_or_possible_bargain?(event)).to eq false
+        expect(subject.potentially_eligible?(event)).to eq false
       end
     end
   end
 
-  describe '#prop64_eligible' do
+  describe '#csv_eligibility_column' do
     it 'returns false if count is an ineligible conviction, has_two_prior_convictions_of_same_type?, registered sex offender, or contains any superstrikes' do
       ineligible_count = build_court_count(code: 'HS', section: '11359(c)(3)')
       eligible_count = build_court_count(code: 'HS', section: '11357')
@@ -60,8 +60,8 @@ describe CountWithEligibility do
       rap_sheet = build_rap_sheet(events: ([event_1, event_2]))
       eligibility = new_rap_sheet(rap_sheet)
 
-      expect(described_class.new(ineligible_count).prop64_eligible(EventWithEligibility.new(event_1), eligibility)).to eq false
-      expect(described_class.new(eligible_count).prop64_eligible(EventWithEligibility.new(event_2), eligibility)).to eq true
+      expect(described_class.new(ineligible_count).csv_eligibility_column(EventWithEligibility.new(event_1), eligibility)).to eq false
+      expect(described_class.new(eligible_count).csv_eligibility_column(EventWithEligibility.new(event_2), eligibility)).to eq true
     end
 
     it 'returns false if there are three distinct conviction events which include the same eligible code_section' do
@@ -77,13 +77,13 @@ describe CountWithEligibility do
       subject = described_class.new(event2_count)
 
       rap_sheet = build_rap_sheet(events: ([event_1, event_2]))
-      expect(subject.prop64_eligible(
+      expect(subject.csv_eligibility_column(
         EventWithEligibility.new(event_2),
         new_rap_sheet(rap_sheet)
       )).to eq true
 
       rap_sheet = build_rap_sheet(events: ([event_1, event_2, event_3]))
-      expect(subject.prop64_eligible(
+      expect(subject.csv_eligibility_column(
         EventWithEligibility.new(event_2),
         new_rap_sheet(rap_sheet)
       )).to eq false
@@ -126,7 +126,7 @@ describe CountWithEligibility do
         event = EventWithEligibility.new(eligibility.eligible_events[0])
         count = described_class.new(event.counts[0])
         expect(count.code_section).to eq('PC 32')
-        expect(count.prop64_eligible(event, eligibility)).to eq(true)
+        expect(count.csv_eligibility_column(event, eligibility)).to eq(true)
       end
 
       it 'can consider PC32 / HS11364 as "maybe" dismissible if there were other non-prop64 charges in the arrest or court event' do
@@ -168,7 +168,7 @@ describe CountWithEligibility do
         event = EventWithEligibility.new(eligibility.eligible_events[0])
         count = CountWithEligibility.new(event.counts[0])
         expect(count.code_section).to eq('PC 32')
-        expect(count.prop64_eligible(event, eligibility)).to eq('maybe')
+        expect(count.csv_eligibility_column(event, eligibility)).to eq('maybe')
       end
 
       it 'does not consider PC32/etc dismissable if there were ineligible prop64 charges' do
@@ -203,11 +203,11 @@ describe CountWithEligibility do
         eligibility = new_rap_sheet(rap_sheet)
 
         event = EventWithEligibility.new(eligibility.eligible_events[0])
-        expect(event.prop64_counts.length).to eq(0)
+        expect(event.potentially_eligible_counts.length).to eq(0)
 
         count = CountWithEligibility.new(event.counts[0])
         expect(count.code_section).to eq('PC 32')
-        expect(count.prop64_eligible(event, eligibility)).to eq(true)
+        expect(count.csv_eligibility_column(event, eligibility)).to eq(true)
       end
 
       it 'does not consider PC32/etc dismissable if there were no prop64 charges' do

@@ -2,7 +2,7 @@ class RapSheetWithEligibility < SimpleDelegator
   def initialize(rap_sheet, logger:)
     super(rap_sheet)
 
-    unless prop64_counts?
+    unless potentially_eligible_counts?
       logger.warn('No eligible prop64 convictions found')
     end
   end
@@ -14,11 +14,9 @@ class RapSheetWithEligibility < SimpleDelegator
       map { |e| EventWithEligibility.new(e) }
   end
 
-  def prop64_counts?
+  def potentially_eligible_counts?
     eligible_events.any? do |eligible_event|
-      eligible_event.counts.any? do |count|
-        count.prop64_conviction_or_possible_bargain?(eligible_event)
-      end
+      eligible_event.potentially_eligible_counts.any?
     end
   end
 

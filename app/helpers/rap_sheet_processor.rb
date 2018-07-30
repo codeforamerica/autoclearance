@@ -34,7 +34,7 @@ class RapSheetProcessor
 
     eligibility = rap_sheet_with_eligibility(input_file, warning_logger)
 
-    unless eligibility.prop64_counts?
+    unless eligibility.potentially_eligible_counts?
       input_file.destroy
       return
     end
@@ -51,12 +51,12 @@ class RapSheetProcessor
     # Create a bunch of PDFs
     eligibility.eligible_events.select do |event|
       event.counts.any? do |count|
-        count.prop64_eligible(event, eligibility)
+        count.eligible?(event, eligibility)
       end
     end.each_with_index do |event, index|
       file_name = "#{input_file.key.gsub('.pdf', '')}_motion_#{index}.pdf"
       eligible_counts = event.counts.select do |count|
-        count.prop64_eligible(event, eligibility)
+        count.eligible?(event, eligibility)
       end
 
       output_directory.files.create(

@@ -47,7 +47,7 @@ describe EventWithEligibility do
     end
   end
 
-  describe 'prop64_counts' do
+  describe 'potentially_eligible_counts' do
     let (:event) do
       prop64_eligible_count = build_court_count(code: 'HS', section: '11357')
       prop64_ineligible_count = build_court_count(code: 'HS', section: '12345')
@@ -59,10 +59,9 @@ describe EventWithEligibility do
     end
 
     context 'when event has prop 64 eligible and ineligible counts' do
-
       it 'filters out counts that are not prop 64 convictions' do
-        expect(event_with_eligibility.prop64_counts.length).to eq 1
-        expect(event_with_eligibility.prop64_counts[0].section).to eq '11357'
+        expect(event_with_eligibility.potentially_eligible_counts.length).to eq 1
+        expect(event_with_eligibility.potentially_eligible_counts[0].section).to eq '11357'
       end
     end
 

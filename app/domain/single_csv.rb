@@ -1,7 +1,7 @@
 class SingleCSV
   def initialize(eligibility)
     @rows = eligibility.eligible_events.flat_map do |event|
-      event.prop64_counts.map do |count|
+      event.potentially_eligible_counts.map do |count|
         count_data(count, event, eligibility)
       end
     end
@@ -31,7 +31,7 @@ class SingleCSV
       eligibility.has_two_prior_convictions_of_same_type?(event, count),
       eligibility.sex_offender_registration?,
       event.remedy,
-      count.prop64_eligible(event, eligibility)
+      count.csv_eligibility_column(event, eligibility)
     ]
   end
 
