@@ -1,6 +1,6 @@
 class CountWithEligibility < SimpleDelegator
   def potentially_eligible?(event)
-    prop64_conviction? || possibly_plea_bargained?(event)
+    prop64_conviction? || plea_bargain_classifier(event).possible_plea_bargain?
   end
 
   def prop64_conviction?
@@ -10,11 +10,11 @@ class CountWithEligibility < SimpleDelegator
   def csv_eligibility_column(event, eligibility)
     return false if has_disqualifiers?(event, eligibility)
 
-    if plea_bargained?(event)
+    if plea_bargain_classifier(event).plea_bargain?
       true
     elsif prop64_conviction?
       true
-    elsif possibly_plea_bargained?(event)
+    elsif plea_bargain_classifier(event).possible_plea_bargain?
       'maybe'
     end
   end
@@ -25,44 +25,14 @@ class CountWithEligibility < SimpleDelegator
 
   private
 
+  def plea_bargain_classifier(event)
+    PleaBargainClassifier.new(event: event, count: self)
+  end
+  
   def has_disqualifiers?(event, eligibility)
     eligibility.has_two_prior_convictions_of_same_type?(event, self) ||
       eligibility.sex_offender_registration? ||
       eligibility.superstrikes.any?
-  end
-
-  def possibly_plea_bargained?(event)
-    code_section_starts_with(possible_plea_bargain_codes) && cycle_contains_prop64_count(event)
-  end
-
-  def plea_bargained?(event)
-    code_section_starts_with(possible_plea_bargain_codes) && code_sections_in_cycle_are_potentially_eligible(event)
-  end
-
-  def code_sections_in_cycle_are_potentially_eligible(event)
-    unrejected_counts_for_event_cycle(event).all? do |count|
-      count.code_section_starts_with(possible_plea_bargain_codes) || count.prop64_conviction?
-    end
-  end
-
-  def cycle_contains_prop64_count(event)
-    unrejected_counts_for_event_cycle(event).any?(&:prop64_conviction?)
-  end
-
-  def unrejected_counts_for_event_cycle(event)
-    event.cycle_events.flat_map do |event|
-      event.counts.reject do |count|
-        count.disposition == 'prosecutor_rejected'
-      end
-    end
-  end
-
-  def possible_plea_bargain_codes
-    [
-      'PC 32',
-      'HS 11364',
-      'HS 11366'
-    ]
   end
 
   def dismissible_codes

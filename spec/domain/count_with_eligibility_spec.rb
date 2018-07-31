@@ -40,105 +40,34 @@ describe CountWithEligibility do
     end
 
     context 'plea bargains' do
-      it 'returns true for accessory charge with prop64 charge in the cycle' do
-        text = <<-TEXT
-          CII/A99000099
-          DOB/19660119 SEX/M RAC/WHITE
-          HGT/502 WGT/317 EYE/GRN HAIR/PNK POB/CA
-          NAM/01 LASTY, FIRSTY
-  
-          * * * *
-          ARR/DET/CITE:         NAM:01  DOB:19750101
-          19980101  CAPD SAN FRANCISCO
-  
-          CNT:01     #111 
-            11357 HS-BLAH
-  
-          CNT:02  135 PC-DESTROY/CONCEAL EVIDENCE
-          19980101 DISPO:PROS REJ-OTHER
-          - - - -
-          COURT:                NAM:01
-          19980101  CAMC SAN FRANCISCO
-  
-          CNT:01     #222
-            32 PC-ACCESSORY
-          *DISPO:CONVICTED   
-            CONV STATUS:MISDEMEANOR   
-            SEN: 12 DAYS JAIL
-        TEXT
+      context 'when the count is a possible plea bargain' do
+        let(:code) { 'PC' }
+        let(:section) { '32' }
 
-        rap_sheet = RapSheetParser::Parser.new.parse(text)
+        before do
+          plea_bargain_classifier = instance_double(PleaBargainClassifier, possible_plea_bargain?: true)
+          allow(PleaBargainClassifier).to receive(:new).with(event: event, count: subject).
+            and_return(plea_bargain_classifier)
+        end
 
-        eligibility = new_rap_sheet(rap_sheet)
-        event = EventWithEligibility.new(eligibility.eligible_events[0])
-        count = CountWithEligibility.new(event.counts[0])
-        expect(count.code_section).to eq('PC 32')
-        expect(count.potentially_eligible?(event)).to eq(true)
+        it 'returns true' do
+          expect(subject.potentially_eligible?(event)).to eq true
+        end
       end
 
-      it 'returns true for accessory charge with dismissed prop64 charge in the court event' do
-        text = <<-TEXT
-          NAM/01 LASTY, FIRSTY
-          * * * *
-          COURT:                NAM:01
-          19980101  CAMC SAN FRANCISCO
+      context 'when the count is not a possible plea bargain' do
+        let(:code) { 'PC' }
+        let(:section) { '32' }
 
-          CNT:01     #222
-            32 PC-ACCESSORY
-          *DISPO:CONVICTED
-            CONV STATUS:MISDEMEANOR
-            SEN: 12 DAYS JAIL
-          CNT:02
-            11357 HS-BLAH
-          *DISPO:DISMISSED
-        TEXT
+        before do
+          plea_bargain_classifier = instance_double(PleaBargainClassifier, possible_plea_bargain?: false)
+          allow(PleaBargainClassifier).to receive(:new).with(event: event, count: subject).
+            and_return(plea_bargain_classifier)
+        end
 
-        rap_sheet = RapSheetParser::Parser.new.parse(text)
-
-        eligibility = new_rap_sheet(rap_sheet)
-        event = EventWithEligibility.new(eligibility.eligible_events[0])
-
-        expect(event.counts.length).to eq 2
-
-        count = CountWithEligibility.new(event.counts[0])
-        expect(count.code_section).to eq('PC 32')
-        expect(count.potentially_eligible?(event)).to eq(true)
-      end
-
-      it 'returns false for accessory charge with no prop64 charge in the cycle' do
-        text = <<-TEXT
-          CII/A99000099
-          DOB/19660119 SEX/M RAC/WHITE
-          HGT/502 WGT/317 EYE/GRN HAIR/PNK POB/CA
-          NAM/01 LASTY, FIRSTY
-  
-          * * * *
-          ARR/DET/CITE:         NAM:01  DOB:19750101
-          19980101  CAPD SAN FRANCISCO
-  
-          CNT:01     #111 
-            496 PC-RECEIVE/ETC KNOWN STOLEN PROPERTY
-  
-          CNT:02  135 PC-DESTROY/CONCEAL EVIDENCE
-          19980101 DISPO:PROS REJ-OTHER
-          - - - -
-          COURT:                NAM:01
-          19980101  CAMC SAN FRANCISCO
-  
-          CNT:01     #222
-            32 PC-ACCESSORY
-          *DISPO:CONVICTED   
-            CONV STATUS:MISDEMEANOR   
-            SEN: 12 DAYS JAIL
-        TEXT
-
-        rap_sheet = RapSheetParser::Parser.new.parse(text)
-
-        eligibility = new_rap_sheet(rap_sheet)
-        event = EventWithEligibility.new(eligibility.eligible_events[0])
-        count = CountWithEligibility.new(event.counts[0])
-        expect(count.code_section).to eq('PC 32')
-        expect(count.potentially_eligible?(event)).to eq(false)
+        it 'returns false' do
+          expect(subject.potentially_eligible?(event)).to eq false
+        end
       end
     end
   end
@@ -218,130 +147,39 @@ describe CountWithEligibility do
     end
 
     context 'plea bargain detection' do
-      it 'can consider PC32 / HS11364 as dismissable if we think it was a plea bargain from prop64 dismissable code' do
-        text = <<-TEXT
-          CII/A99000099
-          DOB/19660119 SEX/M RAC/WHITE
-          HGT/502 WGT/317 EYE/GRN HAIR/PNK POB/CA
-          NAM/01 LASTY, FIRSTY
-  
-          * * * *
-          ARR/DET/CITE:         NAM:01  DOB:19750101
-          19980101  CAPD SAN FRANCISCO
-  
-          CNT:01     #111 
-            11360 HS-SELL/TRANSPORT/ETC MARIJUANA/HASH
-  
-          CNT:02  135 PC-DESTROY/CONCEAL EVIDENCE
-          19980101 DISPO:PROS REJ-OTHER
-  
-          CNT:03  11364 HS-POSSESS CONTROL SUBSTANCE PARAPHERNA
-          19980101 DISPO:PROS REJ-OTHER
-          - - - -
-          COURT:                NAM:01
-          19980101  CAMC SAN FRANCISCO
-  
-          CNT:01     #222
-            32 PC-ACCESSORY
-          *DISPO:CONVICTED   
-            CONV STATUS:MISDEMEANOR   
-            SEN: 12 DAYS JAIL
-        TEXT
-
-        rap_sheet = RapSheetParser::Parser.new.parse(text)
-
-        eligibility = new_rap_sheet(rap_sheet)
-        event = EventWithEligibility.new(eligibility.eligible_events[0])
-        count = described_class.new(event.counts[0])
-        expect(count.code_section).to eq('PC 32')
-        expect(count.csv_eligibility_column(event, eligibility)).to eq(true)
+      let(:code) {}
+      let(:section) {}
+      
+      it 'returns true if plea bargain' do
+        eligibility = new_rap_sheet(build_rap_sheet)
+        event = EventWithEligibility.new(build_conviction_event)
+        plea_bargain_classifier = instance_double(PleaBargainClassifier, plea_bargain?: true)
+        allow(PleaBargainClassifier).to receive(:new).with(event: event, count: subject).
+          and_return(plea_bargain_classifier)
+        
+        expect(subject.csv_eligibility_column(event, eligibility)).to eq(true)
       end
 
       it 'returns false for plea bargain with disqualifier' do
-        text = <<-TEXT
-          CII/A99000099
-          DOB/19660119 SEX/M RAC/WHITE
-          HGT/502 WGT/317 EYE/GRN HAIR/PNK POB/CA
-          NAM/01 LASTY, FIRSTY
-  
-          * * * *
-          ARR/DET/CITE:         NAM:01  DOB:19750101
-          19980101  CAPD SAN FRANCISCO
-  
-          CNT:01     #111 
-            11360 HS-SELL/TRANSPORT/ETC MARIJUANA/HASH
-  
-          CNT:02  135 PC-DESTROY/CONCEAL EVIDENCE
-          19980101 DISPO:PROS REJ-OTHER
-  
-          CNT:03  11364 HS-POSSESS CONTROL SUBSTANCE PARAPHERNA
-          19980101 DISPO:PROS REJ-OTHER
-          - - - -
-          COURT:                NAM:01
-          19980101  CAMC SAN FRANCISCO
-  
-          CNT:01     #222
-            32 PC-ACCESSORY
-          *DISPO:CONVICTED   
-            CONV STATUS:MISDEMEANOR   
-            SEN: 12 DAYS JAIL
-
-          CNT:02
-            187 PC-SUPERSTRIKE
-          *DISPO:CONVICTED   
-            CONV STATUS:MISDEMEANOR   
-            SEN: 12 DAYS JAIL
-        TEXT
-
-        rap_sheet = RapSheetParser::Parser.new.parse(text)
-
-        eligibility = new_rap_sheet(rap_sheet)
-        event = EventWithEligibility.new(eligibility.eligible_events[0])
-        count = described_class.new(event.counts[0])
-        expect(count.code_section).to eq('PC 32')
-        expect(count.csv_eligibility_column(event, eligibility)).to eq(false)
+        superstrike = build_court_count(code: 'PC', section: '187')
+        conviction_event = build_conviction_event(counts: [superstrike])
+        eligibility = new_rap_sheet(build_rap_sheet(events: [conviction_event]))
+        plea_bargain_classifier = instance_double(PleaBargainClassifier, plea_bargain?: true)
+        event = EventWithEligibility.new(conviction_event)
+        allow(PleaBargainClassifier).to receive(:new).with(event: event, count: subject).
+          and_return(plea_bargain_classifier)
+        
+        expect(subject.csv_eligibility_column(event, eligibility)).to eq(false)
       end
 
-      it 'can consider PC32 / HS11364 as "maybe" dismissible if there were other non-prop64 charges in the arrest or court event' do
-        text = <<-TEXT
-          CII/A99000099
-          DOB/19660119 SEX/M RAC/WHITE
-          HGT/502 WGT/317 EYE/GRN HAIR/PNK POB/CA
-          NAM/01 LASTY, FIRSTY
-  
-          * * * *
-          ARR/DET/CITE:         NAM:01  DOB:19750101
-          19980101  CAPD SAN FRANCISCO
-  
-          CNT:01     #111 
-            11360 HS-SELL/TRANSPORT/ETC MARIJUANA/HASH
-  
-          CNT:02  135 PC-DESTROY/CONCEAL EVIDENCE
-          19980101 DISPO:PROS REJ-OTHER
-  
-          CNT:03  11364 HS-POSSESS CONTROL SUBSTANCE PARAPHERNA
-          19980101 DISPO:PROS REJ-OTHER
-  
-          CNT:04
-            496 PC-RECEIVE/ETC KNOWN STOLEN PROPERTY
-          - - - -
-          COURT:                NAM:01
-          19980101  CAMC SAN FRANCISCO
-  
-          CNT:01     #222
-            32 PC-ACCESSORY
-          *DISPO:CONVICTED   
-            CONV STATUS:MISDEMEANOR   
-            SEN: 12 DAYS JAIL
-        TEXT
-
-        rap_sheet = RapSheetParser::Parser.new.parse(text)
-
-        eligibility = new_rap_sheet(rap_sheet)
-        event = EventWithEligibility.new(eligibility.eligible_events[0])
-        count = CountWithEligibility.new(event.counts[0])
-        expect(count.code_section).to eq('PC 32')
-        expect(count.csv_eligibility_column(event, eligibility)).to eq('maybe')
+      it 'returns "maybe" if possible plea bargain only' do
+        eligibility = new_rap_sheet(build_rap_sheet)
+        event = EventWithEligibility.new(build_conviction_event)
+        plea_bargain_classifier = instance_double(PleaBargainClassifier, plea_bargain?: false, possible_plea_bargain?: true)
+        allow(PleaBargainClassifier).to receive(:new).with(event: event, count: subject).
+          and_return(plea_bargain_classifier)
+        
+        expect(subject.csv_eligibility_column(event, eligibility)).to eq('maybe')
       end
     end
   end
