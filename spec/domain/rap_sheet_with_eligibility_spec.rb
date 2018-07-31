@@ -41,65 +41,48 @@ describe RapSheetWithEligibility do
     end
   end
 
-  describe '#has_two_prior_convictions_of_same_type?' do
-    it 'returns true if rap sheet contains two priors with ' +
-         'the same code section and with event dates on the ' +
-         'same day or before' do
-
+  describe '#has_three_convictions_of_same_type?' do
+    it 'returns true if rap sheet contains three convictions with the same code section' do
       count_1 = build_court_count(code: 'PC', section: '123')
-      event_1 = build_conviction_event(
-        date: Date.today - 7.days,
-        case_number: '1',
-        counts: [count_1]
-      )
+      event_1 = build_conviction_event(counts: [count_1])
 
       count_2 = build_court_count(code: 'PC', section: '123')
-      event_2 = build_conviction_event(
-        date: Date.today - 3.days,
-        case_number: '2',
-        counts: [count_2]
-      )
+      event_2 = build_conviction_event(counts: [count_2])
 
       count_3 = build_court_count(code: 'PC', section: '123')
-      event_3 = build_conviction_event(
-        date: Date.today,
-        case_number: '456',
-        counts: [count_3]
-      )
+      event_3 = build_conviction_event(counts: [count_3])
 
       rap_sheet = build_rap_sheet(events: ([event_1, event_2, event_3]))
 
-      expect(new_rap_sheet(rap_sheet).has_two_prior_convictions_of_same_type?(EventWithEligibility.new(event_1), CountWithEligibility.new(count_1))).to eq true
-      expect(new_rap_sheet(rap_sheet).has_two_prior_convictions_of_same_type?(EventWithEligibility.new(event_2), CountWithEligibility.new(count_2))).to eq true
-      expect(new_rap_sheet(rap_sheet).has_two_prior_convictions_of_same_type?(EventWithEligibility.new(event_3), CountWithEligibility.new(count_3))).to eq true
+      expect(new_rap_sheet(rap_sheet).has_three_convictions_of_same_type?('PC 123')).to eq true
     end
 
-    it 'returns false if rap sheet does not contain two prior convictions for the same code section' do
+    it 'returns false if rap sheet does not contain two convictions and one dismissed count for the same code section' do
       count_1 = build_court_count(code: 'PC', section: '123', disposition: 'convicted')
-      event_1 = build_conviction_event(
-        date: Date.today - 7.days,
-        case_number: '1',
-        counts: [count_1]
-      )
+      event_1 = build_conviction_event(counts: [count_1])
 
       count_2 = build_court_count(code: 'PC', section: '123', disposition: 'convicted')
-      event_2 = build_conviction_event(
-        date: Date.today - 3.days,
-        case_number: '2',
-        counts: [count_2]
-      )
+      event_2 = build_conviction_event(counts: [count_2])
 
       count_3 = build_court_count(code: 'PC', section: '123', disposition: 'dismissed')
-      event_3 = build_conviction_event(
-        date: Date.today,
-        case_number: '456',
-        counts: [count_3]
-      )
+      event_3 = build_conviction_event(counts: [count_3])
 
       rap_sheet = build_rap_sheet(events: ([event_1, event_2, event_3]))
 
-      expect(new_rap_sheet(rap_sheet).has_two_prior_convictions_of_same_type?(EventWithEligibility.new(event_1), CountWithEligibility.new(count_1))).to eq false
+      expect(new_rap_sheet(rap_sheet).has_three_convictions_of_same_type?('PC 123')).to eq false
+    end
 
+    it 'returns false if rap sheet contains three convictions for the same code section in two events' do
+      count_1 = build_court_count(code: 'PC', section: '123')
+      count_2 = build_court_count(code: 'PC', section: '123')
+      event_1 = build_conviction_event(counts: [count_1, count_2])
+
+      count_3 = build_court_count(code: 'PC', section: '123')
+      event_2 = build_conviction_event(counts: [count_3])
+
+      rap_sheet = build_rap_sheet(events: ([event_1, event_2]))
+
+      expect(new_rap_sheet(rap_sheet).has_three_convictions_of_same_type?('PC 123')).to eq false
     end
   end
 
@@ -113,6 +96,50 @@ describe RapSheetWithEligibility do
       new_rap_sheet(rap_sheet, logger: Logger.new(warning_file))
 
       expect(warning_file.string).to include('No eligible prop64 convictions found')
+    end
+  end
+
+  describe '#disqualifiers?' do
+    let(:code_section) {}
+
+    subject { new_rap_sheet(build_rap_sheet(events: events)) }
+
+    context 'sex offender registration' do
+      let(:events) { [RapSheetParser::RegistrationEvent.new(date: Date.today, code_section: 'PC 290')] }
+
+      it 'returns true if registered sex offender' do
+        expect(subject.disqualifiers?(code_section)).to eq true
+      end
+    end
+
+    context 'superstrike on rap sheet' do
+      let(:events) {
+        superstrike = build_court_count(code: 'PC', section: '187')
+        [build_conviction_event(counts: [superstrike])]
+      }
+
+      it 'returns true if superstrike' do
+        expect(subject.disqualifiers?(code_section)).to eq true
+      end
+    end
+
+    context 'three distinct conviction events which include the same eligible code_section' do
+      let(:events) {
+        event1_count = build_court_count(code: 'HS', section: '11357')
+        event_1 = build_conviction_event(case_number: '111', counts: [event1_count])
+
+        event2_count = build_court_count(code: 'HS', section: '11357')
+        event_2 = build_conviction_event(case_number: '222', counts: [event2_count])
+
+        event3_count = build_court_count(code: 'HS', section: '11357')
+        event_3 = build_conviction_event(case_number: '333', counts: [event3_count])
+
+        [event_1, event_2, event_3]
+      }
+
+      it 'returns true' do
+        expect(subject.disqualifiers?('HS 11357')).to eq true
+      end
     end
   end
 

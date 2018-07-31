@@ -28,7 +28,7 @@ class SingleCSV
       count.severity,
       event.sentence,
       eligibility.superstrikes.map(&:code_section).join(', '),
-      eligibility.has_two_prior_convictions_of_same_type?(event, count),
+      eligibility.has_three_convictions_of_same_type?(count.code_section),
       eligibility.sex_offender_registration?,
       event.remedy,
       count.csv_eligibility_column(event, eligibility)

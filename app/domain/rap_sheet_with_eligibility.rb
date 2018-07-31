@@ -20,16 +20,20 @@ class RapSheetWithEligibility < SimpleDelegator
     end
   end
 
-  def has_two_prior_convictions_of_same_type?(event, count)
-    other_events = convictions.select { |e| e.case_number != event.case_number }
-
-    other_events.select do |e|
-      e.convicted_counts.any? do |c|
-        c.code_section_starts_with([count.code_section])
-      end
-    end.length >= 2
+  def disqualifiers?(code_section)
+    sex_offender_registration? ||
+      superstrikes.any? ||
+      has_three_convictions_of_same_type?(code_section)
   end
 
+  def has_three_convictions_of_same_type?(code_section)
+    convictions.select do |e|
+      e.convicted_counts.any? do |c|
+        c.code_section_starts_with([code_section])
+      end
+    end.length >= 3
+  end
+  
   private
 
   def in_sf?(e)

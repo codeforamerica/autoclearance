@@ -8,7 +8,7 @@ class CountWithEligibility < SimpleDelegator
   end
 
   def csv_eligibility_column(event, eligibility)
-    return false if has_disqualifiers?(event, eligibility)
+    return false if has_disqualifiers?(eligibility)
 
     if plea_bargain_classifier(event).plea_bargain?
       true
@@ -20,7 +20,10 @@ class CountWithEligibility < SimpleDelegator
   end
 
   def eligible?(event, eligibility)
-    prop64_conviction? && !has_disqualifiers?(event, eligibility)
+    return false if has_disqualifiers?(eligibility)
+
+    plea_bargain_classifier(event).possible_plea_bargain? ||
+      prop64_conviction?
   end
 
   private
@@ -28,11 +31,9 @@ class CountWithEligibility < SimpleDelegator
   def plea_bargain_classifier(event)
     PleaBargainClassifier.new(event: event, count: self)
   end
-  
-  def has_disqualifiers?(event, eligibility)
-    eligibility.has_two_prior_convictions_of_same_type?(event, self) ||
-      eligibility.sex_offender_registration? ||
-      eligibility.superstrikes.any?
+
+  def has_disqualifiers?(eligibility)
+    eligibility.disqualifiers?(code_section)
   end
 
   def dismissible_codes
