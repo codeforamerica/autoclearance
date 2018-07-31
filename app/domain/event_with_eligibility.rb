@@ -3,8 +3,16 @@ class EventWithEligibility < SimpleDelegator
     super.map { |c| CountWithEligibility.new(c) }
   end
 
+  def convicted_counts
+    super.map { |c| CountWithEligibility.new(c) }
+  end
+
   def potentially_eligible_counts
-    counts.select { |count| count.potentially_eligible?(self) }
+    convicted_counts.select { |count| count.potentially_eligible?(self) }
+  end
+
+  def eligible_counts(eligibility)
+    convicted_counts.select { |count| count.eligible?(self, eligibility) }
   end
 
   def cycle_events

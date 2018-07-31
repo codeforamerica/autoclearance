@@ -11,28 +11,23 @@ describe EventWithEligibility do
       )
     end
 
-    let (:event_with_eligibility) do
-      described_class.new(event)
-    end
+    let((:event_with_eligibility)) { described_class.new(event) }
 
     context 'when the sentence is still active' do
       let (:sentence) do
-        RapSheetParser::ConvictionSentence.new(
-          probation: 3.years
-        )
+        RapSheetParser::ConvictionSentence.new(probation: 3.years)
       end
+
       it 'returns resentencing' do
         expect(event_with_eligibility.remedy).to eq 'resentencing'
       end
-
     end
 
     context 'when the sentence is not active' do
       let (:sentence) do
-        RapSheetParser::ConvictionSentence.new(
-          probation: 2.days
-        )
+        RapSheetParser::ConvictionSentence.new(probation: 2.days)
       end
+
       it 'returns redesignation' do
         expect(event_with_eligibility.remedy).to eq 'redesignation'
       end
@@ -48,22 +43,63 @@ describe EventWithEligibility do
   end
 
   describe 'potentially_eligible_counts' do
-    let (:event) do
-      prop64_eligible_count = build_court_count(code: 'HS', section: '11357')
-      prop64_ineligible_count = build_court_count(code: 'HS', section: '12345')
-      build_conviction_event(counts: [prop64_eligible_count, prop64_ineligible_count])
-    end
-
-    let (:event_with_eligibility) do
-      described_class.new(event)
-    end
+    let(:event_with_eligibility) { described_class.new(event) }
 
     context 'when event has prop 64 eligible and ineligible counts' do
+      let (:event) do
+        prop64_eligible_count = build_court_count(code: 'HS', section: '11357')
+        prop64_ineligible_count = build_court_count(code: 'HS', section: '12345')
+        build_conviction_event(counts: [prop64_eligible_count, prop64_ineligible_count])
+      end
+
       it 'filters out counts that are not prop 64 convictions' do
         expect(event_with_eligibility.potentially_eligible_counts.length).to eq 1
         expect(event_with_eligibility.potentially_eligible_counts[0].section).to eq '11357'
       end
     end
 
+    context 'there are dismissed counts' do
+      let (:event) do
+        prop64_eligible_count = build_court_count(code: 'HS', section: '11357', disposition: 'convicted')
+        prop64_ineligible_count = build_court_count(code: 'HS', section: '11360', disposition: 'dismissed')
+        build_conviction_event(counts: [prop64_eligible_count, prop64_ineligible_count])
+      end
+
+      it 'filters out counts without convictions' do
+        expect(event_with_eligibility.potentially_eligible_counts.length).to eq 1
+        expect(event_with_eligibility.potentially_eligible_counts[0].section).to eq '11357'
+      end
+    end
+  end
+
+  describe 'eligible_counts' do
+    let(:eligible_counts) { described_class.new(event).eligible_counts(rap_sheet_with_eligibility) }
+    let(:rap_sheet_with_eligibility) { RapSheetWithEligibility.new(build_rap_sheet, logger: Logger.new(StringIO.new)) }
+
+    context 'when event has prop 64 eligible and ineligible counts' do
+      let (:event) do
+        prop64_eligible_count = build_court_count(code: 'HS', section: '11357')
+        prop64_ineligible_count = build_court_count(code: 'HS', section: '12345')
+        build_conviction_event(counts: [prop64_eligible_count, prop64_ineligible_count])
+      end
+
+      it 'filters out counts that are not prop 64 convictions' do
+        expect(eligible_counts.length).to eq 1
+        expect(eligible_counts[0].section).to eq '11357'
+      end
+    end
+
+    context 'there are dismissed counts' do
+      let (:event) do
+        prop64_eligible_count = build_court_count(code: 'HS', section: '11357', disposition: 'convicted')
+        prop64_ineligible_count = build_court_count(code: 'HS', section: '11360', disposition: 'dismissed')
+        build_conviction_event(counts: [prop64_eligible_count, prop64_ineligible_count])
+      end
+
+      it 'filters out counts without convictions' do
+        expect(eligible_counts.length).to eq 1
+        expect(eligible_counts[0].section).to eq '11357'
+      end
+    end
   end
 end

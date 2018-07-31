@@ -73,6 +73,34 @@ describe RapSheetWithEligibility do
       expect(new_rap_sheet(rap_sheet).has_two_prior_convictions_of_same_type?(EventWithEligibility.new(event_2), CountWithEligibility.new(count_2))).to eq true
       expect(new_rap_sheet(rap_sheet).has_two_prior_convictions_of_same_type?(EventWithEligibility.new(event_3), CountWithEligibility.new(count_3))).to eq true
     end
+
+    it 'returns false if rap sheet does not contain two prior convictions for the same code section' do
+      count_1 = build_court_count(code: 'PC', section: '123', disposition: 'convicted')
+      event_1 = build_conviction_event(
+        date: Date.today - 7.days,
+        case_number: '1',
+        counts: [count_1]
+      )
+
+      count_2 = build_court_count(code: 'PC', section: '123', disposition: 'convicted')
+      event_2 = build_conviction_event(
+        date: Date.today - 3.days,
+        case_number: '2',
+        counts: [count_2]
+      )
+
+      count_3 = build_court_count(code: 'PC', section: '123', disposition: 'dismissed')
+      event_3 = build_conviction_event(
+        date: Date.today,
+        case_number: '456',
+        counts: [count_3]
+      )
+
+      rap_sheet = build_rap_sheet(events: ([event_1, event_2, event_3]))
+
+      expect(new_rap_sheet(rap_sheet).has_two_prior_convictions_of_same_type?(EventWithEligibility.new(event_1), CountWithEligibility.new(count_1))).to eq false
+
+    end
   end
 
   context 'warnings for rap sheets with nothing potentially eligible' do

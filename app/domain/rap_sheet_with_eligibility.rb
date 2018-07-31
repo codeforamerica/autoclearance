@@ -24,7 +24,7 @@ class RapSheetWithEligibility < SimpleDelegator
     other_events = convictions.select { |e| e.case_number != event.case_number }
 
     other_events.select do |e|
-      e.counts.any? do |c|
+      e.convicted_counts.any? do |c|
         c.code_section_starts_with([count.code_section])
       end
     end.length >= 2

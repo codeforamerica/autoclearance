@@ -60,7 +60,8 @@ class CountWithEligibility < SimpleDelegator
   def possible_plea_bargain_codes
     [
       'PC 32',
-      'HS 11364'
+      'HS 11364',
+      'HS 11366'
     ]
   end
 

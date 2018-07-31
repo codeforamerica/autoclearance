@@ -76,6 +76,35 @@ describe CountWithEligibility do
         expect(count.potentially_eligible?(event)).to eq(true)
       end
 
+      it 'returns true for accessory charge with dismissed prop64 charge in the court event' do
+        text = <<-TEXT
+          NAM/01 LASTY, FIRSTY
+          * * * *
+          COURT:                NAM:01
+          19980101  CAMC SAN FRANCISCO
+
+          CNT:01     #222
+            32 PC-ACCESSORY
+          *DISPO:CONVICTED
+            CONV STATUS:MISDEMEANOR
+            SEN: 12 DAYS JAIL
+          CNT:02
+            11357 HS-BLAH
+          *DISPO:DISMISSED
+        TEXT
+
+        rap_sheet = RapSheetParser::Parser.new.parse(text)
+
+        eligibility = new_rap_sheet(rap_sheet)
+        event = EventWithEligibility.new(eligibility.eligible_events[0])
+
+        expect(event.counts.length).to eq 2
+
+        count = CountWithEligibility.new(event.counts[0])
+        expect(count.code_section).to eq('PC 32')
+        expect(count.potentially_eligible?(event)).to eq(true)
+      end
+
       it 'returns false for accessory charge with no prop64 charge in the cycle' do
         text = <<-TEXT
           CII/A99000099
