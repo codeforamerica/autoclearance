@@ -1,8 +1,8 @@
 class FillProp64Motion
-  def initialize(counts, event, eligibility)
+  def initialize(counts, event, personal_info)
     @counts = counts
     @event = event
-    @eligibility = eligibility
+    @personal_info = personal_info
   end
 
   def filled_motion
@@ -22,7 +22,9 @@ class FillProp64Motion
       "11357 Count" => count_multiplier("HS 11357"),
       "11358 Count" => count_multiplier("HS 11358"),
       "11359 Count" => count_multiplier("HS 11359"),
-      "11360 Count" => count_multiplier("HS 11360")
+      "11360 Count" => count_multiplier("HS 11360"),
+      "Other Health and Safety Code Section" => on_or_off(other_code_sections.any?),
+      "Text2" => other_code_sections.join(', ')
     }
 
     tempfile
@@ -30,12 +32,24 @@ class FillProp64Motion
 
   private
 
+  def other_code_sections
+    code_sections = counts.reject do |count|
+      count.code_section_starts_with(["HS 11357", "HS 11358", "HS 11359", "HS 11360"])
+    end.map(&:code_section)
+
+    code_sections.uniq.map do |code|
+      count = code_sections.count(code)
+
+      (count == 1) ? code : "#{code} x#{count}"
+    end
+  end
+
   def name
-    first_name_key = eligibility.personal_info.names.keys.min_by(&:to_i)
+    first_name_key = personal_info.names.keys.min_by(&:to_i)
     if first_name_key != event.name_code
-      "#{eligibility.personal_info.names[first_name_key]} AKA #{eligibility.personal_info.names[event.name_code]}"
+      "#{personal_info.names[first_name_key]} AKA #{personal_info.names[event.name_code]}"
     else
-      eligibility.personal_info.names[first_name_key]
+      personal_info.names[first_name_key]
     end
   end
 
@@ -52,5 +66,5 @@ class FillProp64Motion
     bool ? 'On' : 'Off'
   end
 
-  attr_reader :counts, :event, :eligibility
+  attr_reader :counts, :event, :personal_info
 end

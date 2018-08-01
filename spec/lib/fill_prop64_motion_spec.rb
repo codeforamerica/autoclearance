@@ -21,16 +21,14 @@ RSpec.describe FillProp64Motion do
       name_code: name_code,
       case_number: 'MYCASE01',
       date: Date.new(1994, 1, 2),
-      sentence: RapSheetParser::ConvictionSentence.new(probation: 1.year),
-      counts: counts
+      sentence: RapSheetParser::ConvictionSentence.new(probation: 1.year)
     )
   }
 
   subject {
-    eligibility = RapSheetWithEligibility.new(build_rap_sheet(events: [event], personal_info: personal_info), logger: Logger.new(StringIO.new))
     event_with_eligibility = EventWithEligibility.new(event)
 
-    file = described_class.new(counts, event_with_eligibility, eligibility).filled_motion
+    file = described_class.new(counts, event_with_eligibility, personal_info).filled_motion
 
     get_fields_from_pdf(file)
   }
@@ -53,6 +51,26 @@ RSpec.describe FillProp64Motion do
       expect(fields["11359 Count"]).to eq('')
       expect(fields["11360  Transportation Distribution or"]).to eq('Off')
       expect(fields["11360 Count"]).to eq('')
+      expect(fields["Other Health and Safety Code Section"]).to eq 'Off'
+      expect(fields["Text2"]).to eq ''
+    end
+  end
+
+  context 'rap sheet with code sections not found on the checkboxes' do
+    let(:name_code) { '03' }
+    let(:counts) {
+      [
+        build_court_count(code: 'PC', section: '32'),
+        build_court_count(code: 'PC', section: '32'),
+        build_court_count(code: 'PC', section: '123')
+      ]
+    }
+
+    it 'fills out the Other field with code_section' do
+      fields = subject
+
+      expect(fields["Other Health and Safety Code Section"]).to eq 'On'
+      expect(fields["Text2"]).to eq 'PC 32 x2, PC 123'
     end
   end
 

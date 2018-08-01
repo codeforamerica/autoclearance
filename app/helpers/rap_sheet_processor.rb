@@ -57,7 +57,7 @@ class RapSheetProcessor
 
       output_directory.files.create(
         key: file_name,
-        body: FillProp64Motion.new(eligible_counts, event, eligibility).filled_motion,
+        body: FillProp64Motion.new(eligible_counts, event, eligibility.personal_info).filled_motion,
         content_type: 'application/pdf'
       )
     end
