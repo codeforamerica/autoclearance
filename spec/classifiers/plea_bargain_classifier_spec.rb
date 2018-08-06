@@ -67,6 +67,33 @@ describe PleaBargainClassifier do
       end
     end
 
+    context 'accessory charge with dismissed prop64 charge in the court event' do
+      let(:text) do
+        <<-TEXT
+          NAM/01 LASTY, FIRSTY
+          * * * *
+          COURT:                NAM:01
+          19980101  CAMC SAN FRANCISCO
+
+          CNT:01     #222
+            32 PC-ACCESSORY
+          *DISPO:CONVICTED
+            CONV STATUS:MISDEMEANOR
+            SEN: 12 DAYS JAIL
+          - - - -
+          COURT:                NAM:01
+          19980101  CAMC SAN FRANCISCO
+          CNT:01
+            11357 HS-BLAH
+          *DISPO:DISMISSED
+        TEXT
+      end
+
+      it 'returns true' do
+        expect(subject).to be_plea_bargain
+      end
+    end
+
     context 'there were other non-prop64 charges in the arrest or court event' do
       let(:text) do
         <<-TEXT
