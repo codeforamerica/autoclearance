@@ -161,6 +161,14 @@ describe CountWithEligibility do
 
       expect(count.eligible?(event, eligibility)).to eq(true)
     end
+
+    it 'returns false if no code section' do
+      event = build_court_event
+      eligibility = new_rap_sheet(build_rap_sheet(events: [event]))
+      count = described_class.new(build_court_count(code: nil, section: nil))
+
+      expect(count.eligible?(EventWithEligibility.new(event), eligibility)).to eq(false)
+    end
   end
 
   def new_rap_sheet(rap_sheet, logger: Logger.new(StringIO.new))

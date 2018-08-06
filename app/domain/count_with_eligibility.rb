@@ -20,10 +20,7 @@ class CountWithEligibility < SimpleDelegator
   end
 
   def eligible?(event, eligibility)
-    return false if has_disqualifiers?(eligibility)
-
-    plea_bargain_classifier(event).possible_plea_bargain? ||
-      prop64_conviction?
+    potentially_eligible?(event) && !has_disqualifiers?(eligibility)
   end
 
   private
