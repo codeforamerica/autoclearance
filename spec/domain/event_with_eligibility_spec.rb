@@ -4,7 +4,7 @@ require_relative '../../app/domain/event_with_eligibility'
 describe EventWithEligibility do
   describe 'remedy' do
     let (:event) do
-      build_conviction_event(
+      build_court_event(
         date: Date.today - 7.days,
         courthouse: 'CASC San Francisco',
         sentence: sentence,
@@ -49,7 +49,7 @@ describe EventWithEligibility do
       let (:event) do
         prop64_eligible_count = build_court_count(code: 'HS', section: '11357')
         prop64_ineligible_count = build_court_count(code: 'HS', section: '12345')
-        build_conviction_event(counts: [prop64_eligible_count, prop64_ineligible_count])
+        build_court_event(counts: [prop64_eligible_count, prop64_ineligible_count])
       end
 
       it 'filters out counts that are not prop 64 convictions' do
@@ -62,7 +62,7 @@ describe EventWithEligibility do
       let (:event) do
         prop64_eligible_count = build_court_count(code: 'HS', section: '11357', disposition: 'convicted')
         prop64_ineligible_count = build_court_count(code: 'HS', section: '11360', disposition: 'dismissed')
-        build_conviction_event(counts: [prop64_eligible_count, prop64_ineligible_count])
+        build_court_event(counts: [prop64_eligible_count, prop64_ineligible_count])
       end
 
       it 'filters out counts without convictions' do
@@ -80,7 +80,7 @@ describe EventWithEligibility do
       let (:event) do
         prop64_eligible_count = build_court_count(code: 'HS', section: '11357')
         prop64_ineligible_count = build_court_count(code: 'HS', section: '12345')
-        build_conviction_event(counts: [prop64_eligible_count, prop64_ineligible_count])
+        build_court_event(counts: [prop64_eligible_count, prop64_ineligible_count])
       end
 
       it 'filters out counts that are not prop 64 convictions' do
@@ -93,7 +93,7 @@ describe EventWithEligibility do
       let (:event) do
         prop64_eligible_count = build_court_count(code: 'HS', section: '11357', disposition: 'convicted')
         prop64_ineligible_count = build_court_count(code: 'HS', section: '11360', disposition: 'dismissed')
-        build_conviction_event(counts: [prop64_eligible_count, prop64_ineligible_count])
+        build_court_event(counts: [prop64_eligible_count, prop64_ineligible_count])
       end
 
       it 'filters out counts without convictions' do

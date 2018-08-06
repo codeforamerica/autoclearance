@@ -6,7 +6,7 @@ describe CountWithEligibility do
   subject { described_class.new(count) }
 
   describe '#potentially_eligible?' do
-    let(:event) { EventWithEligibility.new(build_conviction_event) }
+    let(:event) { EventWithEligibility.new(build_court_event) }
     context 'when the count is an eligible code' do
       let(:code) { 'HS' }
       let(:section) { '11359' }
@@ -76,7 +76,7 @@ describe CountWithEligibility do
     it 'returns true if prop64 conviction and no disqualifiers' do
       eligible_count = build_court_count(code: 'HS', section: '11357')
 
-      event = build_conviction_event(
+      event = build_court_event(
         date: Date.today - 7.days,
         case_number: '1',
         counts: [eligible_count]
@@ -91,7 +91,7 @@ describe CountWithEligibility do
     it 'returns false if rap sheet level disqualifiers' do
       eligible_count = build_court_count(code: 'HS', section: '11357')
 
-      event = build_conviction_event(counts: [eligible_count])
+      event = build_court_event(counts: [eligible_count])
 
       eligibility = double(disqualifiers?: true)
 
@@ -104,7 +104,7 @@ describe CountWithEligibility do
 
       it 'returns true if plea bargain' do
         eligibility = new_rap_sheet(build_rap_sheet)
-        event = EventWithEligibility.new(build_conviction_event)
+        event = EventWithEligibility.new(build_court_event)
         plea_bargain_classifier = instance_double(PleaBargainClassifier, plea_bargain?: true)
         allow(PleaBargainClassifier).to receive(:new).with(event: event, count: subject).
           and_return(plea_bargain_classifier)
@@ -114,7 +114,7 @@ describe CountWithEligibility do
 
       it 'returns "maybe" if possible plea bargain only' do
         eligibility = new_rap_sheet(build_rap_sheet)
-        event = EventWithEligibility.new(build_conviction_event)
+        event = EventWithEligibility.new(build_court_event)
         plea_bargain_classifier = instance_double(PleaBargainClassifier, plea_bargain?: false, possible_plea_bargain?: true)
         allow(PleaBargainClassifier).to receive(:new).with(event: event, count: subject).
           and_return(plea_bargain_classifier)
@@ -128,7 +128,7 @@ describe CountWithEligibility do
     it 'returns true if prop64 conviction and no disqualifiers' do
       eligible_count = build_court_count(code: 'HS', section: '11357')
 
-      event = build_conviction_event(
+      event = build_court_event(
         date: Date.today - 7.days,
         case_number: '1',
         counts: [eligible_count]
@@ -143,7 +143,7 @@ describe CountWithEligibility do
     it 'returns false if rap sheet level disqualifiers' do
       eligible_count = build_court_count(code: 'HS', section: '11357')
 
-      event = build_conviction_event(counts: [eligible_count])
+      event = build_court_event(counts: [eligible_count])
 
       eligibility = double(disqualifiers?: true)
 
@@ -152,7 +152,7 @@ describe CountWithEligibility do
 
     it 'returns true if possible plea bargain' do
       eligibility = new_rap_sheet(build_rap_sheet)
-      event = EventWithEligibility.new(build_conviction_event)
+      event = EventWithEligibility.new(build_court_event)
       count = described_class.new(build_court_count(code: 'PC', section: '32'))
       
       plea_bargain_classifier = instance_double(PleaBargainClassifier, possible_plea_bargain?: true)

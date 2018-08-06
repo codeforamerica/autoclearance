@@ -7,13 +7,13 @@ require_relative '../../app/domain/rap_sheet_with_eligibility'
 describe RapSheetWithEligibility do
   describe '#eligible_events' do
     it 'filters out events not in San Francisco' do
-      eligible_event = build_conviction_event(
+      eligible_event = build_court_event(
         courthouse: 'CASC San Francisco'
       )
-      ineligible_event = build_conviction_event(
+      ineligible_event = build_court_event(
         courthouse: 'CASO San Francisco'
       )
-      south_san_francisco_event = build_conviction_event(
+      south_san_francisco_event = build_court_event(
         courthouse: 'CASC South San Francisco',
       )
       rap_sheet = build_rap_sheet(events: [eligible_event, ineligible_event, south_san_francisco_event])
@@ -24,10 +24,10 @@ describe RapSheetWithEligibility do
     end
 
     it 'filters out events dismissed by PC1203' do
-      eligible_event = build_conviction_event(
+      eligible_event = build_court_event(
         courthouse: 'CASC San Francisco'
       )
-      ineligible_event = build_conviction_event(
+      ineligible_event = build_court_event(
         courthouse: 'CASC San Francisco',
         updates: [
           RapSheetParser::Update.new(
@@ -44,13 +44,13 @@ describe RapSheetWithEligibility do
   describe '#has_three_convictions_of_same_type?' do
     it 'returns true if rap sheet contains three convictions with the same code section' do
       count_1 = build_court_count(code: 'PC', section: '123')
-      event_1 = build_conviction_event(counts: [count_1])
+      event_1 = build_court_event(counts: [count_1])
 
       count_2 = build_court_count(code: 'PC', section: '123')
-      event_2 = build_conviction_event(counts: [count_2])
+      event_2 = build_court_event(counts: [count_2])
 
       count_3 = build_court_count(code: 'PC', section: '123')
-      event_3 = build_conviction_event(counts: [count_3])
+      event_3 = build_court_event(counts: [count_3])
 
       rap_sheet = build_rap_sheet(events: ([event_1, event_2, event_3]))
 
@@ -59,13 +59,13 @@ describe RapSheetWithEligibility do
 
     it 'returns false if rap sheet does not contain two convictions and one dismissed count for the same code section' do
       count_1 = build_court_count(code: 'PC', section: '123', disposition: 'convicted')
-      event_1 = build_conviction_event(counts: [count_1])
+      event_1 = build_court_event(counts: [count_1])
 
       count_2 = build_court_count(code: 'PC', section: '123', disposition: 'convicted')
-      event_2 = build_conviction_event(counts: [count_2])
+      event_2 = build_court_event(counts: [count_2])
 
       count_3 = build_court_count(code: 'PC', section: '123', disposition: 'dismissed')
-      event_3 = build_conviction_event(counts: [count_3])
+      event_3 = build_court_event(counts: [count_3])
 
       rap_sheet = build_rap_sheet(events: ([event_1, event_2, event_3]))
 
@@ -75,10 +75,10 @@ describe RapSheetWithEligibility do
     it 'returns false if rap sheet contains three convictions for the same code section in two events' do
       count_1 = build_court_count(code: 'PC', section: '123')
       count_2 = build_court_count(code: 'PC', section: '123')
-      event_1 = build_conviction_event(counts: [count_1, count_2])
+      event_1 = build_court_event(counts: [count_1, count_2])
 
       count_3 = build_court_count(code: 'PC', section: '123')
-      event_2 = build_conviction_event(counts: [count_3])
+      event_2 = build_court_event(counts: [count_3])
 
       rap_sheet = build_rap_sheet(events: ([event_1, event_2]))
 
@@ -89,7 +89,7 @@ describe RapSheetWithEligibility do
   context 'warnings for rap sheets with nothing potentially eligible' do
     it 'saves warnings for rap sheets that did not seem to have any potentially prop64 eligible counts' do
       count = build_court_count(code: 'HS', section: '1234')
-      events = [build_conviction_event(counts: [count], courthouse: 'CASC San Francisco')]
+      events = [build_court_event(counts: [count], courthouse: 'CASC San Francisco')]
       rap_sheet = build_rap_sheet(events: events)
 
       warning_file = StringIO.new
@@ -115,7 +115,7 @@ describe RapSheetWithEligibility do
     context 'superstrike on rap sheet' do
       let(:events) {
         superstrike = build_court_count(code: 'PC', section: '187')
-        [build_conviction_event(counts: [superstrike])]
+        [build_court_event(counts: [superstrike])]
       }
 
       it 'returns true if superstrike' do
@@ -126,13 +126,13 @@ describe RapSheetWithEligibility do
     context 'three distinct conviction events which include the same eligible code_section' do
       let(:events) {
         event1_count = build_court_count(code: 'HS', section: '11357')
-        event_1 = build_conviction_event(case_number: '111', counts: [event1_count])
+        event_1 = build_court_event(case_number: '111', counts: [event1_count])
 
         event2_count = build_court_count(code: 'HS', section: '11357')
-        event_2 = build_conviction_event(case_number: '222', counts: [event2_count])
+        event_2 = build_court_event(case_number: '222', counts: [event2_count])
 
         event3_count = build_court_count(code: 'HS', section: '11357')
-        event_3 = build_conviction_event(case_number: '333', counts: [event3_count])
+        event_3 = build_court_event(case_number: '333', counts: [event3_count])
 
         [event_1, event_2, event_3]
       }

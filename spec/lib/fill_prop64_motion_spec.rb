@@ -17,7 +17,7 @@ RSpec.describe FillProp64Motion do
   }
 
   let(:event) {
-    build_conviction_event(
+    build_court_event(
       name_code: name_code,
       case_number: 'MYCASE01',
       date: Date.new(1994, 1, 2),
