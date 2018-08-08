@@ -40,8 +40,6 @@ describe RapSheetProcessor do
       skywalker_motion_fields = get_fields_from_pdf(File.open('/tmp/autoclearance-outputs/skywalker_rap_sheet_motion_0.pdf'))
       expect(skywalker_motion_fields["Defendant"]).to eq "SKYWALKER,LUKE JAY"
 
-      expect(RapSheetParser::PersonalInfo.count).to eq 2
-      
       summary_expected_text = File.read('spec/fixtures/summary.csv')
       summary_actual_text = File.read('/tmp/autoclearance-outputs/summary_20110102-010444.csv')
       expect(summary_actual_text).to eq(summary_expected_text)

@@ -1,9 +1,8 @@
 GIT
   remote: https://github.com/codeforamerica/rap_sheet_parser
-  revision: eaf49c9b626d0e3cb11d7788a6d62c1324a9bf32
+  revision: 7a32db9f8987490f32dea6e5aa45ff61ba823620
   specs:
     rap_sheet_parser (0.1.0)
-      activerecord
       activesupport
       treetop
 
@@ -110,7 +109,7 @@ GEM
     globalid (0.4.1)
       activesupport (>= 4.2.0)
     hashery (2.1.2)
-    i18n (1.0.1)
+    i18n (1.1.0)
       concurrent-ruby (~> 1.0)
     ipaddress (0.8.3)
     jbuilder (2.7.0)
