@@ -114,6 +114,13 @@ class RapSheetProcessor
 
     rap_sheet = RapSheetParser::Parser.new.parse(text, logger: logger)
 
+    save_anonymized_rap_sheet(text)
+
     RapSheetWithEligibility.new(rap_sheet, logger: logger)
+  end
+
+  def save_anonymized_rap_sheet(text)
+    rap_sheet_checksum = Digest::SHA2.new.digest text
+    AnonRapSheet.find_or_create_by(checksum: rap_sheet_checksum)
   end
 end

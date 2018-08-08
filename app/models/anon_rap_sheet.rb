@@ -1,0 +1,2 @@
+class AnonRapSheet < ApplicationRecord
+end

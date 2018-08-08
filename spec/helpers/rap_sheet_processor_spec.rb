@@ -92,5 +92,23 @@ describe RapSheetProcessor do
       expect(actual_warning).to include("[not_a_valid_rap_sheet.pdf] Unrecognized event:\n[not_a_valid_rap_sheet.pdf] HI")
       expect(actual_warning).to include("[not_a_valid_rap_sheet.pdf] Unrecognized event:\n[not_a_valid_rap_sheet.pdf]   BYE")
     end
+
+    it 'saves a database entry for each rap sheet' do
+      FileUtils.cp('spec/fixtures/skywalker_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/')
+      FileUtils.cp('spec/fixtures/chewbacca_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/')
+
+      described_class.new.run
+
+      expect(AnonRapSheet.count).to eq 2
+    end
+
+    it 'saves only saves database entry if the same rap sheet is processed twice' do
+      FileUtils.cp('spec/fixtures/skywalker_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/skywalker_rap_sheet.pdf')
+      FileUtils.cp('spec/fixtures/skywalker_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/skywalker_rap_sheet_2.pdf')
+
+      described_class.new.run
+
+      expect(AnonRapSheet.count).to eq 1
+    end
   end
 end
