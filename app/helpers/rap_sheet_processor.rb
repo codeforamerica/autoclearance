@@ -2,8 +2,8 @@ require 'csv'
 require 'rap_sheet_parser'
 
 class RapSheetProcessor
-  def initialize(courthouses)
-    @courthouses = courthouses
+  def initialize(county)
+    @county = county
     @summary_csv = SummaryCSV.new
 
     @summary_errors = ''
@@ -63,7 +63,7 @@ class RapSheetProcessor
       )
     end
     input_file.destroy
-  rescue => e
+  rescue Rails.configuration.logged_exceptions => e
     error = ([e.message] + e.backtrace).join("\n")
     output_directory.files.create(
       key: input_file.key.gsub('.pdf', '.error'),
@@ -117,11 +117,20 @@ class RapSheetProcessor
 
     save_anonymized_rap_sheet(text)
 
-    RapSheetWithEligibility.new(rap_sheet: rap_sheet, courthouses: @courthouses, logger: logger)
+    RapSheetWithEligibility.new(
+      rap_sheet: rap_sheet,
+      courthouses: @county[:courthouses],
+      logger: logger
+    )
   end
 
   def save_anonymized_rap_sheet(text)
-    rap_sheet_checksum = Digest::SHA2.new.digest text
-    AnonRapSheet.find_or_create_by(checksum: rap_sheet_checksum)
+    checksum = Digest::SHA2.new.digest text
+    if AnonRapSheet.find_by(checksum: checksum).nil?
+      AnonRapSheet.create(
+        checksum: checksum,
+        county: @county[:name]
+      )
+    end
   end
 end

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe RapSheetProcessor do
   describe '#run' do
-    subject { described_class.new(Courthouses::SAN_FRANCISCO).run }
+    subject { described_class.new(Counties::SAN_FRANCISCO).run }
     
     before :each do
       Dir.mkdir '/tmp/autoclearance-rap-sheet-inputs' unless Dir.exist? '/tmp/autoclearance-rap-sheet-inputs'
@@ -96,6 +96,8 @@ describe RapSheetProcessor do
       subject
 
       expect(AnonRapSheet.count).to eq 2
+      expect(AnonRapSheet.first.county).to eq 'San Francisco'
+      expect(AnonRapSheet.second.county).to eq 'San Francisco'
     end
 
     it 'saves only saves database entry if the same rap sheet is processed twice' do

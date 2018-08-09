@@ -99,4 +99,6 @@ Rails.application.configure do
 
   config.input_bucket = 'autoclearance-rap-sheet-inputs-prod'
   config.output_bucket = 'autoclearance-outputs-prod'
+
+  config.logged_exceptions = StandardError
 end

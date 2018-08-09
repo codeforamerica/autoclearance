@@ -51,4 +51,6 @@ Rails.application.configure do
 
   config.input_bucket = 'autoclearance-rap-sheet-inputs'
   config.output_bucket = 'autoclearance-outputs'
+
+  config.logged_exceptions = RapSheetParser::RapSheetParserException
 end
