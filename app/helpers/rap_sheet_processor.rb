@@ -127,7 +127,7 @@ class RapSheetProcessor
   def save_anonymized_rap_sheet(text)
     checksum = Digest::SHA2.new.digest text
     if AnonRapSheet.find_by(checksum: checksum).nil?
-      AnonRapSheet.create(
+      AnonRapSheet.create!(
         checksum: checksum,
         county: @county[:name]
       )
