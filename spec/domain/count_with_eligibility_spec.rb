@@ -83,7 +83,7 @@ describe CountWithEligibility do
       )
 
       rap_sheet = build_rap_sheet(events: ([event]))
-      eligibility = new_rap_sheet(rap_sheet)
+      eligibility = build_rap_sheet_with_eligibility(rap_sheet: rap_sheet)
 
       expect(described_class.new(eligible_count).csv_eligibility_column(EventWithEligibility.new(event), eligibility)).to eq true
     end
@@ -103,7 +103,7 @@ describe CountWithEligibility do
       let(:section) {}
 
       it 'returns true if plea bargain' do
-        eligibility = new_rap_sheet(build_rap_sheet)
+        eligibility = build_rap_sheet_with_eligibility(rap_sheet: build_rap_sheet)
         event = EventWithEligibility.new(build_court_event)
         plea_bargain_classifier = instance_double(PleaBargainClassifier, plea_bargain?: true)
         allow(PleaBargainClassifier).to receive(:new).with(event: event, count: subject).
@@ -113,7 +113,7 @@ describe CountWithEligibility do
       end
 
       it 'returns "maybe" if possible plea bargain only' do
-        eligibility = new_rap_sheet(build_rap_sheet)
+        eligibility = build_rap_sheet_with_eligibility(rap_sheet: build_rap_sheet)
         event = EventWithEligibility.new(build_court_event)
         plea_bargain_classifier = instance_double(PleaBargainClassifier, plea_bargain?: false, possible_plea_bargain?: true)
         allow(PleaBargainClassifier).to receive(:new).with(event: event, count: subject).
@@ -135,7 +135,7 @@ describe CountWithEligibility do
       )
 
       rap_sheet = build_rap_sheet(events: ([event]))
-      eligibility = new_rap_sheet(rap_sheet)
+      eligibility = build_rap_sheet_with_eligibility(rap_sheet: rap_sheet)
 
       expect(described_class.new(eligible_count).eligible?(EventWithEligibility.new(event), eligibility)).to eq true
     end
@@ -151,7 +151,7 @@ describe CountWithEligibility do
     end
 
     it 'returns true if possible plea bargain' do
-      eligibility = new_rap_sheet(build_rap_sheet)
+      eligibility = build_rap_sheet_with_eligibility(rap_sheet: build_rap_sheet)
       event = EventWithEligibility.new(build_court_event)
       count = described_class.new(build_court_count(code: 'PC', section: '32'))
       
@@ -164,14 +164,10 @@ describe CountWithEligibility do
 
     it 'returns false if no code section' do
       event = build_court_event
-      eligibility = new_rap_sheet(build_rap_sheet(events: [event]))
+      eligibility = build_rap_sheet_with_eligibility(rap_sheet: build_rap_sheet(events: [event]))
       count = described_class.new(build_court_count(code: nil, section: nil))
 
       expect(count.eligible?(EventWithEligibility.new(event), eligibility)).to eq(false)
     end
-  end
-
-  def new_rap_sheet(rap_sheet, logger: Logger.new(StringIO.new))
-    RapSheetWithEligibility.new(rap_sheet, logger: logger)
   end
 end

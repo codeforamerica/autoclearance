@@ -1,7 +1,7 @@
 class ProcessRapSheetsJob < ApplicationJob
   queue_as :default
 
-  def perform
-    RapSheetProcessor.new.run
+  def perform(courthouses)
+    RapSheetProcessor.new(courthouses).run
   end
 end

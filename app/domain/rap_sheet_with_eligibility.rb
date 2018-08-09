@@ -1,6 +1,7 @@
 class RapSheetWithEligibility < SimpleDelegator
-  def initialize(rap_sheet, logger:)
+  def initialize(rap_sheet:, courthouses:, logger:)
     super(rap_sheet)
+    @courthouses = courthouses
 
     unless potentially_eligible_counts?
       logger.warn('No eligible prop64 convictions found')
@@ -9,7 +10,7 @@ class RapSheetWithEligibility < SimpleDelegator
 
   def eligible_events
     convictions.
-      select { |e| in_sf?(e) }.
+      select { |e| in_courthouses?(e) }.
       reject(&:dismissed_by_pc1203?).
       map { |e| EventWithEligibility.new(e) }
   end
@@ -33,11 +34,12 @@ class RapSheetWithEligibility < SimpleDelegator
       end
     end.length >= 3
   end
-  
+
   private
 
-  def in_sf?(e)
-    sf_county_courthouses = ['CASC San Francisco', 'CASC San Francisco Co', 'CAMC San Francisco']
-    sf_county_courthouses.include? e.courthouse
+  attr_reader :courthouses
+
+  def in_courthouses?(e)
+    courthouses.include? e.courthouse
   end
 end

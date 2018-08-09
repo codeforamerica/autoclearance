@@ -2,7 +2,8 @@ require 'csv'
 require 'rap_sheet_parser'
 
 class RapSheetProcessor
-  def initialize
+  def initialize(courthouses)
+    @courthouses = courthouses
     @summary_csv = SummaryCSV.new
 
     @summary_errors = ''
@@ -116,7 +117,7 @@ class RapSheetProcessor
 
     save_anonymized_rap_sheet(text)
 
-    RapSheetWithEligibility.new(rap_sheet, logger: logger)
+    RapSheetWithEligibility.new(rap_sheet: rap_sheet, courthouses: @courthouses, logger: logger)
   end
 
   def save_anonymized_rap_sheet(text)

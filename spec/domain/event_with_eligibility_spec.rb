@@ -74,7 +74,7 @@ describe EventWithEligibility do
 
   describe 'eligible_counts' do
     let(:eligible_counts) { described_class.new(event).eligible_counts(rap_sheet_with_eligibility) }
-    let(:rap_sheet_with_eligibility) { RapSheetWithEligibility.new(build_rap_sheet, logger: Logger.new(StringIO.new)) }
+    let(:rap_sheet_with_eligibility) { build_rap_sheet_with_eligibility(rap_sheet: build_rap_sheet) }
 
     context 'when event has prop 64 eligible and ineligible counts' do
       let (:event) do

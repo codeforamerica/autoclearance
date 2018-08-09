@@ -55,3 +55,11 @@ RSpec.configure do |config|
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
 end
+
+def build_rap_sheet_with_eligibility(rap_sheet:, courthouses: Courthouses::SAN_FRANCISCO, logger: Logger.new('/dev/null'))
+  RapSheetWithEligibility.new(
+    rap_sheet: rap_sheet,
+    courthouses: courthouses,
+    logger: logger
+  )
+end

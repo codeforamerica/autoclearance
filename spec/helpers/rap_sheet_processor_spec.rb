@@ -2,6 +2,8 @@ require 'rails_helper'
 
 describe RapSheetProcessor do
   describe '#run' do
+    subject { described_class.new(Courthouses::SAN_FRANCISCO).run }
+    
     before :each do
       Dir.mkdir '/tmp/autoclearance-rap-sheet-inputs' unless Dir.exist? '/tmp/autoclearance-rap-sheet-inputs'
       Dir.mkdir '/tmp/autoclearance-outputs' unless Dir.exist? '/tmp/autoclearance-outputs'
@@ -16,9 +18,7 @@ describe RapSheetProcessor do
       FileUtils.cp('spec/fixtures/skywalker_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/')
       FileUtils.cp('spec/fixtures/chewbacca_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/')
 
-      travel_to Time.new(2011, 1, 2, 01, 04, 44) do
-        described_class.new.run
-      end
+      travel_to(Time.new(2011, 1, 2, 01, 04, 44)) { subject }
 
       expect(Dir['/tmp/autoclearance-rap-sheet-inputs/*']).to eq []
       expected = [
@@ -59,9 +59,7 @@ describe RapSheetProcessor do
         end
       end
 
-      travel_to Time.new(2010, 1, 2, 01, 04, 44) do
-        described_class.new.run
-      end
+      travel_to(Time.new(2010, 1, 2, 01, 04, 44)) { subject }
 
       expect(Dir['/tmp/autoclearance-rap-sheet-inputs/*']).to eq ['/tmp/autoclearance-rap-sheet-inputs/not_a_valid_rap_sheet.pdf']
       expect(Dir['/tmp/autoclearance-outputs/*']).to contain_exactly(
@@ -83,9 +81,7 @@ describe RapSheetProcessor do
     it 'sends warnings from the parser to a warnings file' do
       FileUtils.cp('spec/fixtures/not_a_valid_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/')
 
-      travel_to Time.new(2010, 1, 2, 01, 04, 44) do
-        described_class.new.run
-      end
+      travel_to(Time.new(2010, 1, 2, 01, 04, 44)) { subject }
 
       actual_warning = File.read('/tmp/autoclearance-outputs/summary_20100102-010444.warning')
 
@@ -97,7 +93,7 @@ describe RapSheetProcessor do
       FileUtils.cp('spec/fixtures/skywalker_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/')
       FileUtils.cp('spec/fixtures/chewbacca_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/')
 
-      described_class.new.run
+      subject
 
       expect(AnonRapSheet.count).to eq 2
     end
@@ -106,7 +102,7 @@ describe RapSheetProcessor do
       FileUtils.cp('spec/fixtures/skywalker_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/skywalker_rap_sheet.pdf')
       FileUtils.cp('spec/fixtures/skywalker_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/skywalker_rap_sheet_2.pdf')
 
-      described_class.new.run
+      subject
 
       expect(AnonRapSheet.count).to eq 1
     end

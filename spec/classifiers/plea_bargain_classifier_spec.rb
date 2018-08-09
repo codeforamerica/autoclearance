@@ -3,7 +3,7 @@ require 'rails_helper'
 describe PleaBargainClassifier do
   let(:event) do
     rap_sheet = RapSheetParser::Parser.new.parse(text)
-    eligibility = RapSheetWithEligibility.new(rap_sheet, logger: Logger.new(StringIO.new))
+    eligibility = build_rap_sheet_with_eligibility(rap_sheet: rap_sheet)
     EventWithEligibility.new(eligibility.eligible_events[0])
   end
   let(:count) { CountWithEligibility.new(event.counts[0]) }

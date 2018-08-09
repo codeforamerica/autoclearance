@@ -6,21 +6,24 @@ require_relative '../../app/domain/rap_sheet_with_eligibility'
 
 describe RapSheetWithEligibility do
   describe '#eligible_events' do
-    it 'filters out events not in San Francisco' do
-      eligible_event = build_court_event(
-        courthouse: 'CASC San Francisco'
+    it 'filters out events not in given county' do
+      eligible_event_1 = build_court_event(
+        courthouse: 'Some courthouse',
+        case_number: 'abc'
+      )
+      eligible_event_2 = build_court_event(
+        courthouse: 'Another courthouse',
+        case_number: 'def'
       )
       ineligible_event = build_court_event(
-        courthouse: 'CASO San Francisco'
+        courthouse: 'ineligible courthouse'
       )
-      south_san_francisco_event = build_court_event(
-        courthouse: 'CASC South San Francisco',
-      )
-      rap_sheet = build_rap_sheet(events: [eligible_event, ineligible_event, south_san_francisco_event])
+      rap_sheet = build_rap_sheet(events: [eligible_event_1, eligible_event_2, ineligible_event])
 
-      subject = new_rap_sheet(rap_sheet).eligible_events
-      expect(subject.length).to eq 1
-      expect(subject[0].case_number).to eq '12345'
+      subject = build_rap_sheet_with_eligibility(rap_sheet: rap_sheet, courthouses: ['Some courthouse', 'Another courthouse']).eligible_events
+      expect(subject.length).to eq 2
+      expect(subject[0].case_number).to eq 'abc'
+      expect(subject[1].case_number).to eq 'def'
     end
 
     it 'filters out events dismissed by PC1203' do
@@ -37,7 +40,7 @@ describe RapSheetWithEligibility do
       )
       rap_sheet = build_rap_sheet(events: ([eligible_event, ineligible_event]))
 
-      expect(new_rap_sheet(rap_sheet).eligible_events).to eq [eligible_event]
+      expect(build_rap_sheet_with_eligibility(rap_sheet: rap_sheet).eligible_events).to eq [eligible_event]
     end
   end
 
@@ -54,7 +57,7 @@ describe RapSheetWithEligibility do
 
       rap_sheet = build_rap_sheet(events: ([event_1, event_2, event_3]))
 
-      expect(new_rap_sheet(rap_sheet).has_three_convictions_of_same_type?('PC 123')).to eq true
+      expect(build_rap_sheet_with_eligibility(rap_sheet: rap_sheet).has_three_convictions_of_same_type?('PC 123')).to eq true
     end
 
     it 'returns false if rap sheet does not contain two convictions and one dismissed count for the same code section' do
@@ -69,7 +72,7 @@ describe RapSheetWithEligibility do
 
       rap_sheet = build_rap_sheet(events: ([event_1, event_2, event_3]))
 
-      expect(new_rap_sheet(rap_sheet).has_three_convictions_of_same_type?('PC 123')).to eq false
+      expect(build_rap_sheet_with_eligibility(rap_sheet: rap_sheet).has_three_convictions_of_same_type?('PC 123')).to eq false
     end
 
     it 'returns false if rap sheet contains three convictions for the same code section in two events' do
@@ -82,7 +85,7 @@ describe RapSheetWithEligibility do
 
       rap_sheet = build_rap_sheet(events: ([event_1, event_2]))
 
-      expect(new_rap_sheet(rap_sheet).has_three_convictions_of_same_type?('PC 123')).to eq false
+      expect(build_rap_sheet_with_eligibility(rap_sheet: rap_sheet).has_three_convictions_of_same_type?('PC 123')).to eq false
     end
   end
 
@@ -93,7 +96,7 @@ describe RapSheetWithEligibility do
       rap_sheet = build_rap_sheet(events: events)
 
       warning_file = StringIO.new
-      new_rap_sheet(rap_sheet, logger: Logger.new(warning_file))
+      build_rap_sheet_with_eligibility(rap_sheet: rap_sheet, logger: Logger.new(warning_file))
 
       expect(warning_file.string).to include('No eligible prop64 convictions found')
     end
@@ -102,7 +105,7 @@ describe RapSheetWithEligibility do
   describe '#disqualifiers?' do
     let(:code_section) {}
 
-    subject { new_rap_sheet(build_rap_sheet(events: events)) }
+    subject { build_rap_sheet_with_eligibility(rap_sheet: build_rap_sheet(events: events)) }
 
     context 'sex offender registration' do
       let(:events) { [RapSheetParser::RegistrationEvent.new(date: Date.today, code_section: 'PC 290')] }
@@ -141,9 +144,5 @@ describe RapSheetWithEligibility do
         expect(subject.disqualifiers?('HS 11357')).to eq true
       end
     end
-  end
-
-  def new_rap_sheet(rap_sheet, logger: Logger.new(StringIO.new))
-    described_class.new(rap_sheet, logger: logger)
   end
 end
