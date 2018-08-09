@@ -96,17 +96,6 @@ describe RapSheetProcessor do
       subject
 
       expect(AnonRapSheet.count).to eq 2
-      expect(AnonRapSheet.first.county).to eq 'San Francisco'
-      expect(AnonRapSheet.second.county).to eq 'San Francisco'
-    end
-
-    it 'saves only saves database entry if the same rap sheet is processed twice' do
-      FileUtils.cp('spec/fixtures/skywalker_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/skywalker_rap_sheet.pdf')
-      FileUtils.cp('spec/fixtures/skywalker_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/skywalker_rap_sheet_2.pdf')
-
-      subject
-
-      expect(AnonRapSheet.count).to eq 1
     end
   end
 end

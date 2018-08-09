@@ -115,22 +115,16 @@ class RapSheetProcessor
 
     rap_sheet = RapSheetParser::Parser.new.parse(text, logger: logger)
 
-    save_anonymized_rap_sheet(text)
+    AnonRapSheet.create_from_parser(
+      text: text,
+      county: @county[:name],
+      rap_sheet: rap_sheet
+    )
 
     RapSheetWithEligibility.new(
       rap_sheet: rap_sheet,
       courthouses: @county[:courthouses],
       logger: logger
     )
-  end
-
-  def save_anonymized_rap_sheet(text)
-    checksum = Digest::SHA2.new.digest text
-    if AnonRapSheet.find_by(checksum: checksum).nil?
-      AnonRapSheet.create!(
-        checksum: checksum,
-        county: @county[:name]
-      )
-    end
   end
 end
