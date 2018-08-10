@@ -31,6 +31,16 @@ resource "aws_subnet" "public" {
   }
 }
 
+# Create a second public subnet for our analysis db
+resource "aws_subnet" "public_2" {
+  vpc_id = "${aws_vpc.default.id}"
+  cidr_block = "10.0.4.0/24"
+  availability_zone = "${var.aws_az2}"
+  tags {
+    Name = "public 2"
+  }
+}
+
 # Create an internet gateway to give our subnet access to the outside world
 resource "aws_internet_gateway" "default" {
   vpc_id = "${aws_vpc.default.id}"
@@ -468,7 +478,33 @@ resource "aws_security_group" "rds_security" {
     from_port = 5432
     to_port = 5432
     protocol = "tcp"
-    security_groups = ["${aws_security_group.application_security.id}"]
+    security_groups = [
+      "${aws_security_group.application_security.id}"
+    ]
+  }
+
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = [
+      "0.0.0.0/0"
+    ]
+  }
+}
+
+resource "aws_security_group" "analysis_rds_security" {
+  name = "analysis_rds_security"
+  vpc_id = "${aws_vpc.default.id}"
+
+  # psql access from CfA
+  ingress {
+    from_port = 5432
+    to_port = 5432
+    protocol = "tcp"
+    cidr_blocks = [
+      "0.0.0.0/0"
+    ]
   }
 
   egress {
@@ -637,6 +673,18 @@ resource "aws_db_subnet_group" "default" {
   }
 }
 
+resource "aws_db_subnet_group" "analysis_db" {
+  name = "analysis_db"
+  subnet_ids = [
+    "${aws_subnet.public.id}",
+    "${aws_subnet.public_2.id}"
+  ]
+
+  tags {
+    Name = "Analysis DB Subnet"
+  }
+}
+
 resource "aws_db_instance" "db" {
   allocated_storage = 10
   availability_zone = "${var.aws_az1}"
@@ -649,7 +697,27 @@ resource "aws_db_instance" "db" {
   password = "${var.rds_password}"
   storage_encrypted = true
   storage_type = "gp2"
-  vpc_security_group_ids = ["${aws_security_group.rds_security.id}"]
+  vpc_security_group_ids = [
+    "${aws_security_group.rds_security.id}"
+  ]
+}
+
+resource "aws_db_instance" "analysis_db" {
+  allocated_storage = 10
+  availability_zone = "${var.aws_az1}"
+  db_subnet_group_name = "${aws_db_subnet_group.analysis_db.name}"
+  engine = "postgres"
+  identifier = "analysis"
+  instance_class = "db.m3.medium"
+  kms_key_id = "${aws_kms_key.k.arn}"
+  name = "analysis"
+  username = "${var.analysis_rds_username}"
+  password = "${var.analysis_rds_password}"
+  storage_encrypted = true
+  storage_type = "gp2"
+  vpc_security_group_ids = [
+    "${aws_security_group.analysis_rds_security.id}"
+  ]
 }
 
 # Beanstalk Environment
