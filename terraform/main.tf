@@ -15,6 +15,7 @@ provider "aws" {
 # Create a VPC to launch our instances into
 resource "aws_vpc" "default" {
   cidr_block = "10.0.0.0/16"
+  enable_dns_hostnames = true
 
   tags {
     Name = "application_vpc"
@@ -60,10 +61,16 @@ resource "aws_route_table_association" "subnet_route_table" {
   route_table_id = "${aws_route_table.internet_access.id}"
 }
 
+resource "aws_route_table_association" "subnet_route_table_2" {
+  subnet_id = "${aws_subnet.public_2.id}"
+  route_table_id = "${aws_route_table.internet_access.id}"
+}
+
 resource "aws_network_acl" "default" {
   vpc_id = "${aws_vpc.default.id}"
   subnet_ids = [
-    "${aws_subnet.public.id}"
+    "${aws_subnet.public.id}",
+    "${aws_subnet.public_2.id}"
   ]
   egress {
     protocol = "-1"
@@ -113,6 +120,17 @@ resource "aws_network_acl" "default" {
     from_port = 443
     to_port = 443
   }
+
+  # Postgres
+  ingress {
+    protocol = "tcp"
+    rule_no = 500
+    action = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port = 5432
+    to_port = 5432
+  }
+
 
   tags {
     Name = "public"
@@ -173,10 +191,16 @@ resource "aws_route_table_association" "private_route_table" {
   route_table_id = "${aws_route_table.private.id}"
 }
 
+resource "aws_route_table_association" "private_route_table_2" {
+  subnet_id = "${aws_subnet.private_2.id}"
+  route_table_id = "${aws_route_table.private.id}"
+}
+
 resource "aws_network_acl" "private" {
   vpc_id = "${aws_vpc.default.id}"
   subnet_ids = [
-    "${aws_subnet.private.id}"
+    "${aws_subnet.private.id}",
+    "${aws_subnet.private_2.id}"
   ]
   egress {
     protocol = "-1"
@@ -713,6 +737,7 @@ resource "aws_db_instance" "analysis_db" {
   name = "analysis"
   username = "${var.analysis_rds_username}"
   password = "${var.analysis_rds_password}"
+  publicly_accessible = true
   storage_encrypted = true
   storage_type = "gp2"
   vpc_security_group_ids = [
