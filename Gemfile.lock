@@ -136,9 +136,11 @@ GEM
     minitest (5.11.3)
     msgpack (1.2.4)
     multi_json (1.13.1)
+    multiprocessing (0.0.2)
     nio4r (2.3.1)
     nokogiri (1.8.3)
       mini_portile2 (~> 2.3.0)
+    parallel (1.12.1)
     pdf-forms (1.1.1)
       cliver (~> 0.3.2)
       safe_shell (>= 1.0.3, < 2.0)
@@ -149,6 +151,11 @@ GEM
       ruby-rc4
       ttfunk
     pg (1.0.0)
+    pgsync (0.4.0)
+      multiprocessing
+      parallel
+      pg
+      slop (>= 4.2.0)
     polyglot (0.3.5)
     public_suffix (3.0.2)
     puma (3.11.4)
@@ -218,6 +225,7 @@ GEM
     selenium-webdriver (3.12.0)
       childprocess (~> 0.5)
       rubyzip (~> 1.2)
+    slop (4.6.2)
     spring (2.0.2)
       activesupport (>= 4.2)
     spring-watcher-listen (2.0.1)
@@ -271,6 +279,7 @@ DEPENDENCIES
   pdf-forms
   pdf-reader
   pg
+  pgsync
   puma (~> 3.7)
   rails (~> 5.2.0)
   rap_sheet_parser!

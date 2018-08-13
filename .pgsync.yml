@@ -1,0 +1,23 @@
+# source database URL
+# database URLs take the format of:
+#   postgres://user:password@host:port/dbname
+# we recommend a command which outputs a database URL
+# so sensitive information is not included in this file
+from: postgres://localhost:5432/autoclearance_development
+
+# destination database URL
+
+to: $(echo $DATABASE_URL)
+to_safe: true
+
+# define groups
+groups:
+  all:
+  - anon_rap_sheets
+  - anon_events
+  - anon_counts
+
+# exclude tables
+exclude:
+- schema_migrations
+- ar_internal_metadata

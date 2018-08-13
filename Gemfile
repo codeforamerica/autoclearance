@@ -48,6 +48,7 @@ group :development, :test do
   gem 'fog-local'
   gem 'rspec-rails'
   gem 'bundler-audit'
+  gem 'pgsync'
 end
 
 group :development do
