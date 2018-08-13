@@ -6,7 +6,7 @@ class AnonRapSheet < ApplicationRecord
     checksum = Digest::SHA2.new.digest text
     if AnonRapSheet.find_by(checksum: checksum).nil?
       events = rap_sheet.convictions.map do |event|
-        AnonEvent.build_from_parser(event)
+        AnonEvent.create_from_parser(event)
       end
       
       AnonRapSheet.create!(
