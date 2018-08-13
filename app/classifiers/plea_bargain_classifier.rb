@@ -33,7 +33,7 @@ class PleaBargainClassifier
   def unrejected_counts_for_event_cycle
     event.cycle_events.flat_map do |event|
       event.counts.reject do |count|
-        count.disposition == 'prosecutor_rejected'
+        count.disposition && count.disposition.type == 'prosecutor_rejected'
       end
     end
   end

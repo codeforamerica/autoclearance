@@ -7,7 +7,7 @@ describe EventWithEligibility do
       build_court_event(
         date: Date.today - 7.days,
         courthouse: 'CASC San Francisco',
-        sentence: sentence,
+        counts: [build_court_count(disposition_sentence: sentence)]
       )
     end
 
@@ -60,8 +60,8 @@ describe EventWithEligibility do
 
     context 'there are dismissed counts' do
       let (:event) do
-        prop64_eligible_count = build_court_count(code: 'HS', section: '11357', disposition: 'convicted')
-        prop64_ineligible_count = build_court_count(code: 'HS', section: '11360', disposition: 'dismissed')
+        prop64_eligible_count = build_court_count(code: 'HS', section: '11357', disposition_type: 'convicted')
+        prop64_ineligible_count = build_court_count(code: 'HS', section: '11360', disposition_type: 'dismissed')
         build_court_event(counts: [prop64_eligible_count, prop64_ineligible_count])
       end
 
@@ -91,8 +91,8 @@ describe EventWithEligibility do
 
     context 'there are dismissed counts' do
       let (:event) do
-        prop64_eligible_count = build_court_count(code: 'HS', section: '11357', disposition: 'convicted')
-        prop64_ineligible_count = build_court_count(code: 'HS', section: '11360', disposition: 'dismissed')
+        prop64_eligible_count = build_court_count(code: 'HS', section: '11357', disposition_type: 'convicted')
+        prop64_ineligible_count = build_court_count(code: 'HS', section: '11360', disposition_type: 'dismissed')
         build_court_event(counts: [prop64_eligible_count, prop64_ineligible_count])
       end
 

@@ -20,8 +20,7 @@ RSpec.describe FillProp64Motion do
     build_court_event(
       name_code: name_code,
       case_number: 'MYCASE01',
-      date: Date.new(1994, 1, 2),
-      sentence: RapSheetParser::ConvictionSentence.new(probation: 1.year)
+      date: Date.new(1994, 1, 2)
     )
   }
 

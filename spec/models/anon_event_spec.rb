@@ -11,7 +11,6 @@ describe AnonEvent do
       event = build_court_event(
         date: Date.new(1991, 1, 5),
         courthouse: 'Some courthouse',
-        sentence: RapSheetParser::ConvictionSentence.new(probation: 1.year),
         counts: [count_1],
         updates: [],
         name_code: nil
