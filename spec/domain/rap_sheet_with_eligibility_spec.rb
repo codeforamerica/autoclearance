@@ -108,7 +108,14 @@ describe RapSheetWithEligibility do
     subject { build_rap_sheet_with_eligibility(rap_sheet: build_rap_sheet(events: events)) }
 
     context 'sex offender registration' do
-      let(:events) { [RapSheetParser::RegistrationEvent.new(date: Date.today, code_section: 'PC 290')] }
+      let(:events) do
+        [
+          build_other_event(
+            header: 'registration',
+            counts: [build_court_count(code: 'PC', section: '290')]
+          )
+        ]
+      end
 
       it 'returns true if registered sex offender' do
         expect(subject.disqualifiers?(code_section)).to eq true
