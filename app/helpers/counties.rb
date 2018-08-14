@@ -5,6 +5,6 @@ module Counties
   }
   LOS_ANGELES = {
     name: 'Los Angeles',
-    courthouses: ['CASC Los Angeles', 'CAMC Los Angeles Metro']
+    courthouses: ['CASC Los Angeles', 'CAMC Los Angeles Metro', 'CASC West Los Angeles']
   }
 end
