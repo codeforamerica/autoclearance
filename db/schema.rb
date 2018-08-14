@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_09_233633) do
+ActiveRecord::Schema.define(version: 2018_08_14_010846) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -42,6 +42,7 @@ ActiveRecord::Schema.define(version: 2018_08_09_233633) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "county", null: false
+    t.index ["checksum"], name: "index_anon_rap_sheets_on_checksum", unique: true
   end
 
   add_foreign_key "anon_counts", "anon_events"

@@ -29,7 +29,7 @@ describe AnonRapSheet do
 
       rap_sheet = RapSheetParser::Parser.new.parse(text)
 
-      described_class.create_from_parser(
+      described_class.create_or_update(
         text: text,
         county: 'Some county',
         rap_sheet: rap_sheet
@@ -48,26 +48,35 @@ describe AnonRapSheet do
       expect(count_1.section).to eq '4056'
     end
 
-    it 'only saves entries for new rap sheet text' do
-      described_class.create_from_parser(
+    it 'when the same rap sheet is uploaded twice, it overwrites the database contents' do
+      described_class.create_or_update(
         text: 'rap sheet 1',
         county: 'Some county',
-        rap_sheet: build_rap_sheet
-      )
-      
-      described_class.create_from_parser(
-        text: 'rap sheet 1',
-        county: 'Some county',
-        rap_sheet: build_rap_sheet
+        rap_sheet: build_rap_sheet(events: [build_court_event, build_court_event])
       )
 
-      described_class.create_from_parser(
+      expect(AnonRapSheet.count).to eq 1
+      expect(AnonRapSheet.first.county).to eq 'Some county'
+      expect(AnonEvent.count).to eq 2
+
+      described_class.create_or_update(
+        text: 'rap sheet 1',
+        county: 'Different County',
+        rap_sheet: build_rap_sheet(events: [build_court_event])
+      )
+
+      expect(AnonRapSheet.count).to eq 1
+      expect(AnonRapSheet.first.county).to eq 'Different County'
+      expect(AnonEvent.count).to eq 1
+
+      described_class.create_or_update(
         text: 'rap sheet 2',
         county: 'Some county',
-        rap_sheet: build_rap_sheet
+        rap_sheet: build_rap_sheet(events: [build_court_event, build_court_event, build_court_event])
       )
 
       expect(AnonRapSheet.count).to eq 2
+      expect(AnonEvent.count).to eq 4
     end
   end
 end
