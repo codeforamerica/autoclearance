@@ -1,6 +1,6 @@
 class AnonRapSheet < ApplicationRecord
   validates_presence_of :county, :checksum
-  has_many :anon_events, dependent: :destroy
+  has_many :anon_cycles, dependent: :destroy
 
   def self.create_or_update(text:, county:, rap_sheet:)
     checksum = Digest::SHA2.new.digest text
@@ -17,8 +17,8 @@ class AnonRapSheet < ApplicationRecord
       county: county
     )
 
-    rap_sheet.convictions.map do |event|
-      AnonEvent.create_from_parser(event, anon_rap_sheet: anon_rap_sheet)
+    rap_sheet.cycles.map do |cycle|
+      AnonCycle.create_from_parser(cycle, anon_rap_sheet: anon_rap_sheet)
     end
 
     anon_rap_sheet

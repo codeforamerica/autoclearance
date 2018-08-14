@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_14_010846) do
+ActiveRecord::Schema.define(version: 2018_08_14_195919) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -27,14 +27,21 @@ ActiveRecord::Schema.define(version: 2018_08_14_010846) do
     t.index ["anon_event_id"], name: "index_anon_counts_on_anon_event_id"
   end
 
+  create_table "anon_cycles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "anon_rap_sheet_id", null: false
+    t.index ["anon_rap_sheet_id"], name: "index_anon_cycles_on_anon_rap_sheet_id"
+  end
+
   create_table "anon_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "agency"
     t.string "event_type", null: false
     t.date "date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "anon_rap_sheet_id", null: false
-    t.index ["anon_rap_sheet_id"], name: "index_anon_events_on_anon_rap_sheet_id"
+    t.uuid "anon_cycle_id", null: false
+    t.index ["anon_cycle_id"], name: "index_anon_events_on_anon_cycle_id"
   end
 
   create_table "anon_rap_sheets", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -46,5 +53,6 @@ ActiveRecord::Schema.define(version: 2018_08_14_010846) do
   end
 
   add_foreign_key "anon_counts", "anon_events"
-  add_foreign_key "anon_events", "anon_rap_sheets"
+  add_foreign_key "anon_cycles", "anon_rap_sheets"
+  add_foreign_key "anon_events", "anon_cycles"
 end

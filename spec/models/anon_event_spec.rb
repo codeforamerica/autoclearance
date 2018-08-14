@@ -4,6 +4,7 @@ describe AnonEvent do
   describe '#create_from_parser' do
     it 'creates from parser output' do
       anon_rap_sheet = AnonRapSheet.create!(county: 'san_francisco', checksum: Digest::SHA2.new.digest('foo'))
+      anon_cycle = AnonCycle.create!(anon_rap_sheet: anon_rap_sheet)
 
       count_1 = build_court_count(
         code: 'PC',
@@ -18,12 +19,12 @@ describe AnonEvent do
         name_code: nil,
       )
 
-      anon_event = described_class.create_from_parser(event, anon_rap_sheet: anon_rap_sheet)
+      anon_event = described_class.create_from_parser(event, anon_cycle: anon_cycle)
       counts = anon_event.anon_counts
 
       expect(anon_event.agency).to eq 'Some courthouse'
       expect(anon_event.date).to eq Date.new(1991, 1, 5)
-      expect(anon_event.anon_rap_sheet).to eq anon_rap_sheet
+      expect(anon_event.anon_cycle).to eq anon_cycle
       expect(counts[0].code).to eq 'PC'
       expect(counts[0].section).to eq '456'
     end
