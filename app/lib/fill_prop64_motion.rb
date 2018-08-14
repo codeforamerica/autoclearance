@@ -34,7 +34,7 @@ class FillProp64Motion
 
   def other_code_sections
     code_sections = counts.reject do |count|
-      count.code_section_starts_with(["HS 11357", "HS 11358", "HS 11359", "HS 11360"])
+      count.subsection_of?(["HS 11357", "HS 11358", "HS 11359", "HS 11360"])
     end.map(&:code_section)
 
     code_sections.uniq.map do |code|
@@ -54,7 +54,7 @@ class FillProp64Motion
   end
 
   def number_of_counts_for_code(code)
-    counts.select { |count| count.code_section_starts_with([code]) }.length
+    counts.select { |count| count.subsection_of?([code]) }.length
   end
 
   def count_multiplier(code)

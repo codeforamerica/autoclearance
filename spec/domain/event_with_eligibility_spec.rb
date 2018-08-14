@@ -54,7 +54,7 @@ describe EventWithEligibility do
 
       it 'filters out counts that are not prop 64 convictions' do
         expect(event_with_eligibility.potentially_eligible_counts.length).to eq 1
-        expect(event_with_eligibility.potentially_eligible_counts[0].section).to eq '11357'
+        expect(event_with_eligibility.potentially_eligible_counts[0].code_section).to eq 'HS 11357'
       end
     end
 
@@ -67,7 +67,7 @@ describe EventWithEligibility do
 
       it 'filters out counts without convictions' do
         expect(event_with_eligibility.potentially_eligible_counts.length).to eq 1
-        expect(event_with_eligibility.potentially_eligible_counts[0].section).to eq '11357'
+        expect(event_with_eligibility.potentially_eligible_counts[0].code_section).to eq 'HS 11357'
       end
     end
   end
@@ -85,7 +85,7 @@ describe EventWithEligibility do
 
       it 'filters out counts that are not prop 64 convictions' do
         expect(eligible_counts.length).to eq 1
-        expect(eligible_counts[0].section).to eq '11357'
+        expect(eligible_counts[0].code_section).to eq 'HS 11357'
       end
     end
 
@@ -98,7 +98,7 @@ describe EventWithEligibility do
 
       it 'filters out counts without convictions' do
         expect(eligible_counts.length).to eq 1
-        expect(eligible_counts[0].section).to eq '11357'
+        expect(eligible_counts[0].code_section).to eq 'HS 11357'
       end
     end
   end

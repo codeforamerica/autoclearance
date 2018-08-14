@@ -4,7 +4,7 @@ class CountWithEligibility < SimpleDelegator
   end
 
   def prop64_conviction?
-    code_section_starts_with(dismissible_codes) && !code_section_starts_with(ineligible_codes)
+    subsection_of?(dismissible_codes) && !subsection_of?(ineligible_codes)
   end
 
   def csv_eligibility_column(event, eligibility)

@@ -30,7 +30,7 @@ class RapSheetWithEligibility < SimpleDelegator
   def has_three_convictions_of_same_type?(code_section)
     convictions.select do |e|
       e.convicted_counts.any? do |c|
-        c.code_section_starts_with([code_section])
+        c.subsection_of?([code_section])
       end
     end.length >= 3
   end

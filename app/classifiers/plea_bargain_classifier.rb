@@ -5,11 +5,11 @@ class PleaBargainClassifier
   end
 
   def plea_bargain?
-    count.code_section_starts_with(possible_plea_bargain_codes) && code_sections_in_cycle_are_potentially_eligible
+    count.subsection_of?(possible_plea_bargain_codes) && code_sections_in_cycle_are_potentially_eligible
   end
 
   def possible_plea_bargain?
-    count.code_section_starts_with(possible_plea_bargain_codes) && cycle_contains_prop64_count
+    count.subsection_of?(possible_plea_bargain_codes) && cycle_contains_prop64_count
   end
   
   private
@@ -26,7 +26,7 @@ class PleaBargainClassifier
 
   def code_sections_in_cycle_are_potentially_eligible
     unrejected_counts_for_event_cycle.all? do |count|
-      count.code_section_starts_with(possible_plea_bargain_codes) || count.prop64_conviction?
+      count.subsection_of?(possible_plea_bargain_codes) || count.prop64_conviction?
     end
   end
 
