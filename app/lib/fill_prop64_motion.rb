@@ -45,6 +45,8 @@ class FillProp64Motion
   end
 
   def name
+    return unless personal_info.names
+
     first_name_key = personal_info.names.keys.min_by(&:to_i)
     if first_name_key != event.name_code
       "#{personal_info.names[first_name_key]} AKA #{personal_info.names[event.name_code]}"
