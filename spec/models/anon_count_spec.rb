@@ -11,7 +11,8 @@ describe AnonCount do
         disposition: RapSheetParser::Disposition.new(type: 'dismissed', sentence: nil)
       )
 
-      anon_count = described_class.build_from_parser(count)
+      anon_count = described_class.build_from_parser(count, 5)
+      expect(anon_count.count_number).to eq 5
       expect(anon_count.description).to eq 'ARMED ROBBERY'
       expect(anon_count.severity).to eq 'F'
       expect(anon_count.code).to eq 'PC'

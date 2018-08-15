@@ -2,8 +2,9 @@ class AnonCount < ApplicationRecord
   belongs_to :anon_event
   has_one :anon_disposition, dependent: :destroy
 
-  def self.build_from_parser(count)
+  def self.build_from_parser(count, index)
     AnonCount.new(
+      count_number: index,
       code: count.code,
       section: count.section,
       description: count.code_section_description,

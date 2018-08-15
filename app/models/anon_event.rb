@@ -8,8 +8,8 @@ class AnonEvent < ApplicationRecord
   default_scope { order(date: :asc) }
 
   def self.build_from_parser(event)
-    counts = event.counts.map do |count|
-      AnonCount.build_from_parser(count)
+    counts = event.counts.map.with_index(1) do |count, i|
+      AnonCount.build_from_parser(count, i)
     end
     
     AnonEvent.new(

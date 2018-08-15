@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_14_232139) do
+ActiveRecord::Schema.define(version: 2018_08_15_170521) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -24,6 +24,7 @@ ActiveRecord::Schema.define(version: 2018_08_14_232139) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "anon_event_id", null: false
+    t.integer "count_number", null: false
     t.index ["anon_event_id"], name: "index_anon_counts_on_anon_event_id"
   end
 
