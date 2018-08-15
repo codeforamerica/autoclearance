@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/codeforamerica/rap_sheet_parser
-  revision: f1639aa466028fc323880a41236998353a4d738e
+  revision: b13bd64eede0eb3149f3a5ae2f0053b60613360d
   specs:
     rap_sheet_parser (0.1.0)
       activesupport

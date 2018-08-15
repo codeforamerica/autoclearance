@@ -25,8 +25,8 @@ class AnonEvent < ApplicationRecord
   def self.event_type(event)
     if event.is_a? RapSheetParser::CourtEvent
       'court'
-    elsif event.is_a? RapSheetParser::ArrestEvent
-      'arrest'
+    elsif event.is_a? RapSheetParser::OtherEvent
+      event.header
     end
   end
 end
