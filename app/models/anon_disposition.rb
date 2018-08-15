@@ -1,11 +1,10 @@
 class AnonDisposition < ApplicationRecord
   belongs_to :anon_count
 
-  def self.create_from_parser(disposition, anon_count:)
-    AnonDisposition.create!(
+  def self.build_from_parser(disposition)
+    AnonDisposition.new(
       disposition_type: disposition.type,
-      sentence: disposition.sentence,
-      anon_count: anon_count
+      sentence: disposition.sentence
     )
   end
 end

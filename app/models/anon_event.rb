@@ -7,18 +7,16 @@ class AnonEvent < ApplicationRecord
 
   default_scope { order(date: :asc) }
 
-  def self.create_from_parser(event, anon_cycle:)
-    anon_event = AnonEvent.create!(
+  def self.build_from_parser(event)
+    counts = event.counts.map do |count|
+      AnonCount.build_from_parser(count)
+    end
+    
+    AnonEvent.new(
       agency: event.courthouse,
       event_type: 'court',
       date: event.date,
-      anon_cycle: anon_cycle
+      anon_counts: counts
     )
-
-    event.counts.map do |count|
-      AnonCount.create_from_parser(count, anon_event: anon_event)
-    end
-
-    anon_event
   end
 end

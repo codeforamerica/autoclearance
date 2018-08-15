@@ -1,10 +1,8 @@
 require 'rails_helper'
 
 describe AnonCycle do
-  describe '#create_from_parser' do
+  describe '#build_from_parser' do
     it 'creates AnonCycles and AnonEvents from parser output' do
-      anon_rap_sheet = AnonRapSheet.create!(county: 'san_francisco', checksum: Digest::SHA2.new.digest('foo'))
-
       event_1 = build_court_event(
         date: Date.new(1999, 1, 5),
         courthouse: 'Some courthouse',
@@ -17,20 +15,14 @@ describe AnonCycle do
 
       cycle = RapSheetParser::Cycle.new(events: [event_1, event_2])
 
-      described_class.create_from_parser(cycle, anon_rap_sheet: anon_rap_sheet)
+      anon_cycle = described_class.build_from_parser(cycle)
+      expect(anon_cycle.anon_events.length).to eq 2
 
-      expect(AnonCycle.count).to eq 1
-      expect(AnonEvent.count).to eq 2
-
-      expect(AnonCycle.first.anon_rap_sheet).to eq anon_rap_sheet
-      events = AnonCycle.first.anon_events
-      expect(events[0].agency).to eq 'CASC San Francisco'
-      expect(events[1].agency).to eq 'Some courthouse'
+      events = anon_cycle.anon_events
+      expect([events[0].agency, events[1].agency]).to contain_exactly('CASC San Francisco', 'Some courthouse')
     end
 
     it 'it only saves conviction events' do
-      anon_rap_sheet = AnonRapSheet.create!(county: 'san_francisco', checksum: Digest::SHA2.new.digest('foo'))
-
       conviction_court_event = build_court_event(
         date: Date.new(1999, 1, 5),
         courthouse: 'Some courthouse',
@@ -48,11 +40,9 @@ describe AnonCycle do
 
       cycle = RapSheetParser::Cycle.new(events: [conviction_court_event, arrest_event, dismissed_court_event])
 
-      described_class.create_from_parser(cycle, anon_rap_sheet: anon_rap_sheet)
+      anon_cycle = described_class.build_from_parser(cycle)
 
-      expect(AnonEvent.count).to eq 1
-
-      events = AnonCycle.first.anon_events
+      events = anon_cycle.anon_events
       expect(events[0].agency).to eq 'Some courthouse'
       expect(events[0].date).to eq Date.new(1999, 1, 5)
     end

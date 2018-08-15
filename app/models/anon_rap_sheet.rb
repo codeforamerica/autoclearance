@@ -12,15 +12,14 @@ class AnonRapSheet < ApplicationRecord
   end
 
   def self.create_from_parser(rap_sheet, county:, checksum:)
-    anon_rap_sheet = AnonRapSheet.create!(
-      checksum: checksum,
-      county: county
-    )
-
-    rap_sheet.cycles.map do |cycle|
-      AnonCycle.create_from_parser(cycle, anon_rap_sheet: anon_rap_sheet)
+    cycles = rap_sheet.cycles.map do |cycle|
+      AnonCycle.build_from_parser(cycle)
     end
-
-    anon_rap_sheet
+    
+    AnonRapSheet.create!(
+      checksum: checksum,
+      county: county,
+      anon_cycles: cycles
+    )
   end
 end
