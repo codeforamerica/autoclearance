@@ -14,8 +14,10 @@ to_safe: true
 groups:
   all:
   - anon_rap_sheets
+  - anon_cycles
   - anon_events
   - anon_counts
+  - anon_dispositions
 
 # exclude tables
 exclude:

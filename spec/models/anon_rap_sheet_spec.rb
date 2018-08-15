@@ -47,6 +47,7 @@ describe AnonRapSheet do
       expect(court_event_2.agency).to eq 'CAMC San Francisco'
       expect(count_1.code).to eq 'PC'
       expect(count_1.section).to eq '4056'
+      expect(count_1.anon_disposition.disposition_type).to eq('convicted')
     end
 
     it 'when the same rap sheet is uploaded twice, it overwrites the database contents' do

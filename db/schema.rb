@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_14_195919) do
+ActiveRecord::Schema.define(version: 2018_08_14_232139) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -34,6 +34,15 @@ ActiveRecord::Schema.define(version: 2018_08_14_195919) do
     t.index ["anon_rap_sheet_id"], name: "index_anon_cycles_on_anon_rap_sheet_id"
   end
 
+  create_table "anon_dispositions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "anon_count_id", null: false
+    t.string "disposition_type", null: false
+    t.string "sentence"
+    t.index ["anon_count_id"], name: "index_anon_dispositions_on_anon_count_id"
+  end
+
   create_table "anon_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "agency"
     t.string "event_type", null: false
@@ -54,5 +63,6 @@ ActiveRecord::Schema.define(version: 2018_08_14_195919) do
 
   add_foreign_key "anon_counts", "anon_events"
   add_foreign_key "anon_cycles", "anon_rap_sheets"
+  add_foreign_key "anon_dispositions", "anon_counts"
   add_foreign_key "anon_events", "anon_cycles"
 end
