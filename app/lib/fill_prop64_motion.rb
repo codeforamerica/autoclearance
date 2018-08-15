@@ -45,7 +45,7 @@ class FillProp64Motion
   end
 
   def name
-    return unless personal_info.names
+    return unless personal_info
 
     first_name_key = personal_info.names.keys.min_by(&:to_i)
     if first_name_key != event.name_code

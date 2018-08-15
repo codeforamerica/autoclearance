@@ -84,7 +84,7 @@ RSpec.describe FillProp64Motion do
   end
 
   context 'a redacted rap sheet' do
-    let(:personal_info) { build_personal_info(names: nil) }
+    let(:personal_info) { nil }
     let(:name_code) { '01' }
     it 'fills out fields' do
       fields = subject
