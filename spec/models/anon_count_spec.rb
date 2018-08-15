@@ -20,5 +20,18 @@ describe AnonCount do
       expect(anon_count.anon_disposition.disposition_type).to eq 'dismissed'
       expect(anon_count.anon_disposition.sentence).to be_nil
     end
+
+    it 'does not create a disposition if it does not exist' do
+      count = RapSheetParser::CourtCount.new(
+        code_section_description: 'ARMED ROBBERY',
+        severity: 'F',
+        code: 'PC',
+        section: '1505',
+        disposition: nil
+      )
+
+      anon_count = described_class.build_from_parser(count, 5)
+      expect(anon_count.anon_disposition).to be_nil
+    end
   end
 end

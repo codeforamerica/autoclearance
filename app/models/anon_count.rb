@@ -9,7 +9,15 @@ class AnonCount < ApplicationRecord
       section: count.section,
       description: count.code_section_description,
       severity: count.severity,
-      anon_disposition: AnonDisposition.build_from_parser(count.disposition)
+      anon_disposition: anon_disposition(count.disposition)
     )
+  end
+
+  private
+
+  def self.anon_disposition(disposition)
+    return unless disposition
+
+    AnonDisposition.build_from_parser(disposition)
   end
 end
