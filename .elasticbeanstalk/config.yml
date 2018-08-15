@@ -1,0 +1,11 @@
+branch-defaults:
+  master:
+    environment: autoclearance-prod
+global:
+  application_name: Autoclearance
+  default_platform: Ruby 2.5 (Puma)
+  default_region: us-gov-west-1
+  include_git_submodules: true
+  profile: autoclearance
+  sc: git
+  workspace_type: Application

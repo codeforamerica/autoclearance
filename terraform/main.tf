@@ -413,6 +413,65 @@ resource "aws_iam_policy" "s3_read_write" {
 EOF
 }
 
+resource "aws_iam_user_policy" "beanstalk_deploy" {
+  name = "beanstalk_deploy"
+  user = "${aws_iam_user.circleci.name}"
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "autoscaling:*",
+        "cloudformation:*",
+        "ec2:*"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "*"
+      ]
+    },
+    {
+      "Action": [
+        "elasticbeanstalk:*"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws-us-gov:elasticbeanstalk:*::*/*"
+      ]
+    },
+    {
+      "Action": [
+        "s3:GetObject"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "arn:aws-us-gov:s3:::elasticbeanstalk-*/*"
+      ]
+    },
+    {
+      "Action": [
+        "iam:PassRole"
+      ],
+      "Effect": "Allow",
+      "Resource": [
+        "${aws_iam_instance_profile.instance_profile.arn}"
+      ]
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_user_policy_attachment" "beanstalk_full" {
+  user = "${aws_iam_user.circleci.name}"
+  policy_arn = "arn:aws-us-gov:iam::aws:policy/AWSElasticBeanstalkFullAccess"
+}
+
+resource "aws_iam_user" "circleci" {
+  name = "circleci"
+}
+
 resource "aws_iam_group" "staff" {
   name = "staff"
 }
