@@ -20,6 +20,7 @@ class AnonRapSheet < ApplicationRecord
       checksum: checksum,
       county: county,
       year_of_birth: rap_sheet&.personal_info&.date_of_birth&.year,
+      sex: rap_sheet&.personal_info&.sex,
       anon_cycles: cycles
     )
   end

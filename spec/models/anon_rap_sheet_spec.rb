@@ -48,6 +48,7 @@ describe AnonRapSheet do
       anon_rap_sheet = AnonRapSheet.first
       expect(anon_rap_sheet.county).to eq 'Some county'
       expect(anon_rap_sheet.year_of_birth).to eq 1995
+      expect(anon_rap_sheet.sex).to eq 'M'
 
       cycle = anon_rap_sheet.anon_cycles.first
       expect(cycle.anon_events.count).to eq 3
@@ -101,6 +102,7 @@ describe AnonRapSheet do
       anon_rap_sheet = AnonRapSheet.first
       expect(anon_rap_sheet.county).to eq 'Some county'
       expect(anon_rap_sheet.year_of_birth).to eq nil
+      expect(anon_rap_sheet.sex).to eq nil
 
       cycle = anon_rap_sheet.anon_cycles.first
       expect(cycle.anon_events.count).to eq 1
