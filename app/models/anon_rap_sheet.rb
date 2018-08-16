@@ -21,6 +21,7 @@ class AnonRapSheet < ApplicationRecord
       county: county,
       year_of_birth: rap_sheet&.personal_info&.date_of_birth&.year,
       sex: rap_sheet&.personal_info&.sex,
+      race: rap_sheet&.personal_info&.race,
       anon_cycles: cycles
     )
   end

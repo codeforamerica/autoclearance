@@ -5,9 +5,7 @@ describe AnonRapSheet do
     it 'creates from parser output' do
       text = <<~TEXT
         blah
-        DOB/19950504
-        blah blah
-        SEX/M
+        DOB/19950504   SEX/M  RAC/WOOKIE
         NAM/01 BACCA, CHEW
             02 BACCA, CHEW E.
             03 WOOKIE, CHEWBACCA
@@ -49,6 +47,7 @@ describe AnonRapSheet do
       expect(anon_rap_sheet.county).to eq 'Some county'
       expect(anon_rap_sheet.year_of_birth).to eq 1995
       expect(anon_rap_sheet.sex).to eq 'M'
+      expect(anon_rap_sheet.race).to eq 'WOOKIE'
 
       cycle = anon_rap_sheet.anon_cycles.first
       expect(cycle.anon_events.count).to eq 3
@@ -103,6 +102,7 @@ describe AnonRapSheet do
       expect(anon_rap_sheet.county).to eq 'Some county'
       expect(anon_rap_sheet.year_of_birth).to eq nil
       expect(anon_rap_sheet.sex).to eq nil
+      expect(anon_rap_sheet.race).to eq nil
 
       cycle = anon_rap_sheet.anon_cycles.first
       expect(cycle.anon_events.count).to eq 1
