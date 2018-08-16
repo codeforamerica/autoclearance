@@ -4,6 +4,8 @@ describe AnonRapSheet do
   describe '#create_from_parser' do
     it 'creates from parser output' do
       text = <<~TEXT
+        blah
+        DOB/19950504
         blah blah
         SEX/M
         NAM/01 BACCA, CHEW
@@ -42,9 +44,10 @@ describe AnonRapSheet do
         county: 'Some county',
         rap_sheet: rap_sheet
       )
-      
+
       anon_rap_sheet = AnonRapSheet.first
       expect(anon_rap_sheet.county).to eq 'Some county'
+      expect(anon_rap_sheet.year_of_birth).to eq 1995
 
       cycle = anon_rap_sheet.anon_cycles.first
       expect(cycle.anon_events.count).to eq 3
@@ -72,6 +75,37 @@ describe AnonRapSheet do
       expect(arrest_count.section).to eq '11360(a)'
       expect(arrest_count.anon_disposition.disposition_type).to eq('prosecutor_rejected')
     end
+
+    it 'handles unknown personal info' do
+      text = <<~TEXT
+        blah blah
+        * * * *
+        ARR/DET/CITE:         NAM:02  DOB:19750405
+        19930407  CAPD SAN FRANCISCO
+        CNT:01     #2223334
+          11360(A) HS-GIVE/ETC MARIJ OVER 1 OZ/28.5 GRM
+          DISPO:PROS REJ-COMB W/OTHER CNTS
+        CNT:02
+          11359 HS-POSSESS MARIJUANA FOR SALE
+        * * * END OF MESSAGE * * *
+      TEXT
+
+      rap_sheet = RapSheetParser::Parser.new.parse(text)
+
+      described_class.create_or_update(
+        text: text,
+        county: 'Some county',
+        rap_sheet: rap_sheet
+      )
+
+      anon_rap_sheet = AnonRapSheet.first
+      expect(anon_rap_sheet.county).to eq 'Some county'
+      expect(anon_rap_sheet.year_of_birth).to eq nil
+
+      cycle = anon_rap_sheet.anon_cycles.first
+      expect(cycle.anon_events.count).to eq 1
+    end
+
 
     it 'when the same rap sheet is uploaded twice, it overwrites the database contents' do
       described_class.create_or_update(

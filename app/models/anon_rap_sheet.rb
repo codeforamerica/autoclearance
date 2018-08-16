@@ -15,10 +15,11 @@ class AnonRapSheet < ApplicationRecord
     cycles = rap_sheet.cycles.map do |cycle|
       AnonCycle.build_from_parser(cycle)
     end
-    
+
     AnonRapSheet.create!(
       checksum: checksum,
       county: county,
+      year_of_birth: rap_sheet&.personal_info&.date_of_birth&.year,
       anon_cycles: cycles
     )
   end
