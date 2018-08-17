@@ -41,10 +41,7 @@ which creates individual user accounts and sets up logging to CloudWatch from th
 To apply Terraform settings, run: `terraform apply -var-file varfile`
 
 To push a new revision to Beanstalk:
-First, you must have activated your virtualenv and initialized the EB CLI:
-
 ```
-. .venv/bin/activate`
 eb init -r us-gov-west-1 --profile autoclearance
 ```
 
