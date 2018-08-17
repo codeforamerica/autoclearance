@@ -22,7 +22,15 @@ class AnonRapSheet < ApplicationRecord
       year_of_birth: rap_sheet&.personal_info&.date_of_birth&.year,
       sex: rap_sheet&.personal_info&.sex,
       race: rap_sheet&.personal_info&.race,
-      anon_cycles: cycles
+      anon_cycles: cycles,
+      person_unique_id: compute_person_unique_id(rap_sheet.personal_info)
     )
+  end
+
+  private
+
+  def self.compute_person_unique_id(personal_info)
+    return unless personal_info
+    Digest::SHA2.new.digest "#{personal_info.cii}#{personal_info.names[0]}#{personal_info.date_of_birth}"
   end
 end
