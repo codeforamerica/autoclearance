@@ -4,7 +4,7 @@ class AnonCycle < ApplicationRecord
 
   def self.build_from_parser(cycle)
     events = cycle.events.map do |event|
-      if court_event?(event) || arrest_event?(event)
+      if allowed_event?(event)
         AnonEvent.build_from_parser(event)
       end
     end.compact
@@ -14,11 +14,8 @@ class AnonCycle < ApplicationRecord
 
   private
 
-  def self.arrest_event?(event)
-    event.is_a?(RapSheetParser::OtherEvent) && event.header == 'arrest'
-  end
-
-  def self.court_event?(event)
-    event.is_a?(RapSheetParser::CourtEvent)
+  def self.allowed_event?(event)
+    event.is_a?(RapSheetParser::CourtEvent) ||
+    (event.is_a?(RapSheetParser::OtherEvent) && ['arrest','applicant'].include?(event.header))
   end
 end

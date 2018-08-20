@@ -95,6 +95,18 @@ describe AnonRapSheet do
         4056 PC-BREAKING AND ENTERING
         DISPO:DISMISSED/FURTHERANCE OF JUSTICE
         MORE INFO ABOUT THIS COUNT
+        * * * *
+        APPLICANT:             NAM:01
+        
+        20021213  CASD SOCIAL SERV CCL-CRCB, SACRAMENTO
+        
+        CNT:01     #349540985
+          APPLICANT RESIDNTL CARE FACILITY FOR ELDERLY
+           COM: SCN-23475348 ATI-EIR090347KI
+
+        20160807
+         DISPO:NO LONGER INTERESTED
+           COM: ACN-12039823947
         * * * END OF MESSAGE * * *
       TEXT
 
@@ -133,6 +145,17 @@ describe AnonRapSheet do
       expect(court_event.anon_counts[0].description).to eq('BREAKING AND ENTERING')
       expect(court_event.anon_counts[0].severity).to be_nil
       expect(court_event.anon_counts[0].anon_disposition.disposition_type).to eq('dismissed')
+
+      expect(AnonEvent.where(event_type: 'applicant').count).to eq 1
+      applicant_event = AnonEvent.find_by_event_type('applicant')
+      expect(applicant_event.agency).to eq 'CASD SOCIAL SERV CCL-CRCB, SACRAMENTO'
+      expect(applicant_event.date).to eq Date.new(2002, 12, 13)
+      expect(applicant_event.anon_counts.count).to eq(1)
+      expect(applicant_event.anon_counts[0].code).to be_nil
+      expect(applicant_event.anon_counts[0].section).to be_nil
+      # expect(applicant_event.anon_counts[0].description).to eq('APPLICANT RESIDNTL CARE FACILITY FOR ELDERLY')
+      expect(applicant_event.anon_counts[0].severity).to be_nil
+      # expect(applicant_event.anon_counts[1].anon_disposition.disposition_type).to eq('other_disposition_type')
 
     end
 

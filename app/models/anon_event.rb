@@ -3,7 +3,7 @@ class AnonEvent < ApplicationRecord
   has_many :anon_counts, dependent: :destroy
 
   validates_presence_of :event_type
-  validates_inclusion_of :event_type, in: ['court', 'arrest']
+  validates_inclusion_of :event_type, in: ['court', 'arrest', 'applicant']
 
   default_scope { order(date: :asc) }
 
