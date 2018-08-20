@@ -1,6 +1,7 @@
 class AnonCount < ApplicationRecord
   belongs_to :anon_event
   has_one :anon_disposition, dependent: :destroy
+  default_scope { order(count_number: :asc) }
 
   def self.build_from_parser(count, index)
     AnonCount.new(

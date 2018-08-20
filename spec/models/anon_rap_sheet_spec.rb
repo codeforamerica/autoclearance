@@ -76,6 +76,66 @@ describe AnonRapSheet do
       expect(arrest_count.anon_disposition.disposition_type).to eq('prosecutor_rejected')
     end
 
+    it 'saves all known event types in database' do
+      text = <<~TEXT
+        blah
+        * * * *
+        ARR/DET/CITE:         NAM:02  DOB:19750405
+        19930407  CAPD SAN FRANCISCO
+        CNT:01     #2223334
+          11360(A) HS-GIVE/ETC MARIJ OVER 1 OZ/28.5 GRM
+          DISPO:PROS REJ-COMB W/OTHER CNTS
+        CNT:02
+          11359 HS-POSSESS MARIJUANA FOR SALE
+        - - - -
+        COURT:
+        19930708 CASC SAN FRANCISCO
+
+        CNT: 001 #456
+        4056 PC-BREAKING AND ENTERING
+        DISPO:DISMISSED/FURTHERANCE OF JUSTICE
+        MORE INFO ABOUT THIS COUNT
+        * * * END OF MESSAGE * * *
+      TEXT
+
+      rap_sheet = RapSheetParser::Parser.new.parse(text)
+
+      described_class.create_or_update(
+        text: text,
+        county: 'Some county',
+        rap_sheet: rap_sheet
+      )
+
+      expect(AnonEvent.where(event_type: 'arrest').count).to eq 1
+      arrest_event = AnonEvent.find_by_event_type('arrest')
+      expect(arrest_event.agency).to eq 'CAPD SAN FRANCISCO'
+      expect(arrest_event.date).to eq Date.new(1993, 4, 7)
+      expect(arrest_event.anon_counts.count).to eq(2)
+      expect(arrest_event.anon_counts[0].code).to eq('HS')
+      expect(arrest_event.anon_counts[0].section).to eq('11360(a)')
+      expect(arrest_event.anon_counts[0].description).to eq('GIVE/ETC MARIJ OVER 1 OZ/28.5 GRM')
+      expect(arrest_event.anon_counts[0].severity).to be_nil
+      expect(arrest_event.anon_counts[0].anon_disposition.disposition_type).to eq('prosecutor_rejected')
+      expect(arrest_event.anon_counts[1].code).to eq('HS')
+      expect(arrest_event.anon_counts[1].section).to eq('11359')
+      expect(arrest_event.anon_counts[1].description).to eq('POSSESS MARIJUANA FOR SALE')
+      expect(arrest_event.anon_counts[1].severity).to be_nil
+      expect(arrest_event.anon_counts[1].anon_disposition).to be_nil
+
+
+      expect(AnonEvent.where(event_type: 'court').count).to eq 1
+      court_event = AnonEvent.find_by_event_type('court')
+      expect(court_event.agency).to eq 'CASC San Francisco'
+      expect(court_event.date).to eq Date.new(1993, 7, 8)
+      expect(court_event.anon_counts.count).to eq(1)
+      expect(court_event.anon_counts[0].code).to eq('PC')
+      expect(court_event.anon_counts[0].section).to eq('4056')
+      expect(court_event.anon_counts[0].description).to eq('BREAKING AND ENTERING')
+      expect(court_event.anon_counts[0].severity).to be_nil
+      expect(court_event.anon_counts[0].anon_disposition.disposition_type).to eq('dismissed')
+
+    end
+
     it 'handles unknown personal info' do
       text = <<~TEXT
         blah blah
