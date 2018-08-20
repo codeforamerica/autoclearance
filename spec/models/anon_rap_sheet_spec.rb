@@ -107,6 +107,15 @@ describe AnonRapSheet do
         20160807
          DISPO:NO LONGER INTERESTED
            COM: ACN-12039823947
+        * * * *
+        PROBATION:             NAM:01
+        19841228  CAPR SAN FRANCISCO
+        
+        CNT:01     #976597
+          11359 HS-POSSESS MARIJUANA FOR SALE
+           SEN: 3 YEARS PROBATION
+           COM: CRT CASE NBR 547789
+
         * * * END OF MESSAGE * * *
       TEXT
 
@@ -134,7 +143,6 @@ describe AnonRapSheet do
       expect(arrest_event.anon_counts[1].severity).to be_nil
       expect(arrest_event.anon_counts[1].anon_disposition).to be_nil
 
-
       expect(AnonEvent.where(event_type: 'court').count).to eq 1
       court_event = AnonEvent.find_by_event_type('court')
       expect(court_event.agency).to eq 'CASC San Francisco'
@@ -156,6 +164,17 @@ describe AnonRapSheet do
       # expect(applicant_event.anon_counts[0].description).to eq('APPLICANT RESIDNTL CARE FACILITY FOR ELDERLY')
       expect(applicant_event.anon_counts[0].severity).to be_nil
       # expect(applicant_event.anon_counts[1].anon_disposition.disposition_type).to eq('other_disposition_type')
+
+      expect(AnonEvent.where(event_type: 'probation').count).to eq 1
+      probation_event = AnonEvent.find_by_event_type('probation')
+      expect(probation_event.agency).to eq 'CAPR SAN FRANCISCO'
+      expect(probation_event.date).to eq Date.new(1984,12,28)
+      expect(probation_event.anon_counts.count).to eq(1)
+      expect(probation_event.anon_counts[0].code).to eq('HS')
+      expect(probation_event.anon_counts[0].section).to eq('11359')
+      expect(probation_event.anon_counts[0].description).to eq("POSSESS MARIJUANA FOR SALE\n   SEN: 3 YEARS PROBATION")
+      expect(probation_event.anon_counts[0].severity).to be_nil
+      # expect(probation_event.anon_counts[0].anon_disposition.sentence).to eq('3yr probation')
 
     end
 
