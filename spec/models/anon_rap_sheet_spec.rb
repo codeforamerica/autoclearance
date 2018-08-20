@@ -115,6 +115,26 @@ describe AnonRapSheet do
           11359 HS-POSSESS MARIJUANA FOR SALE
            SEN: 3 YEARS PROBATION
            COM: CRT CASE NBR 547789
+        * * * *
+        
+        CUSTODY:CDC            NAM:01
+        19851219  CASD CORRECTIONS
+        
+        CNT:01     #5464523
+          459 PC-BURGLARY:FIRST DEGREE
+           CRT #12345
+        
+        
+        CNT:02
+           -ATTEMPTED
+          459 PC-BURGLARY:FIRST DEGREE
+           SEN FROM: SAN MATEO CO   CRT #54323
+           SEN: 32 MONTHS PRISON
+        
+        19870201
+        
+         DISPO:PAROLED FROM CDC
+           RECVD BY:CAPA SAN MATEO CO
 
         * * * END OF MESSAGE * * *
       TEXT
@@ -175,6 +195,22 @@ describe AnonRapSheet do
       expect(probation_event.anon_counts[0].description).to eq("POSSESS MARIJUANA FOR SALE\n   SEN: 3 YEARS PROBATION")
       expect(probation_event.anon_counts[0].severity).to be_nil
       # expect(probation_event.anon_counts[0].anon_disposition.sentence).to eq('3yr probation')
+
+      expect(AnonEvent.where(event_type: 'custody').count).to eq 1
+      custody_event = AnonEvent.find_by_event_type('custody')
+      expect(custody_event.agency).to eq 'CASD CORRECTIONS'
+      expect(custody_event.date).to eq Date.new(1985,12,19)
+      expect(custody_event.anon_counts.count).to eq(2)
+      expect(custody_event.anon_counts[0].code).to eq('PC')
+      expect(custody_event.anon_counts[0].section).to eq('459')
+      expect(custody_event.anon_counts[0].description).to eq("BURGLARY:FIRST DEGREE\n   CRT #12345\n\n\n")
+      expect(custody_event.anon_counts[0].severity).to be_nil
+      expect(custody_event.anon_counts[0].anon_disposition).to be_nil
+      expect(custody_event.anon_counts[1].code).to eq('PC')
+      expect(custody_event.anon_counts[1].section).to eq("attempted\n459")
+      expect(custody_event.anon_counts[1].description).to eq("BURGLARY:FIRST DEGREE\n   SEN FROM: SAN MATEO CO   CRT #54323\n   SEN: 32 MONTHS PRISON")
+      expect(custody_event.anon_counts[1].severity).to be_nil
+      # expect(custody_event.anon_counts[1].anon_disposition.disposition_type).to eq('other_disposition_type')
 
     end
 

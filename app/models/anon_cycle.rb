@@ -16,6 +16,6 @@ class AnonCycle < ApplicationRecord
 
   def self.allowed_event?(event)
     event.is_a?(RapSheetParser::CourtEvent) ||
-    (event.is_a?(RapSheetParser::OtherEvent) && ['arrest','applicant', 'probation'].include?(event.header))
+    (event.is_a?(RapSheetParser::OtherEvent) && ['arrest','applicant', 'probation', 'custody'].include?(event.header))
   end
 end
