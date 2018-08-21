@@ -4,7 +4,8 @@ class AnonDisposition < ApplicationRecord
   def self.build_from_parser(disposition)
     AnonDisposition.new(
       disposition_type: disposition.type,
-      sentence: disposition.sentence
+      sentence: disposition.sentence,
+      text: disposition.text
     )
   end
 end

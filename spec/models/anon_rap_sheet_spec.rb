@@ -61,6 +61,7 @@ describe AnonRapSheet do
       expect(count_1.code).to eq 'PC'
       expect(count_1.section).to eq '4056'
       expect(count_1.anon_disposition.disposition_type).to eq('convicted')
+      expect(count_1.anon_disposition.text).to eq('*DISPO:CONVICTED')
 
       court_event_2 = cycle.anon_events[1]
       expect(court_event_2.event_type).to eq 'court'
@@ -74,6 +75,7 @@ describe AnonRapSheet do
       expect(arrest_count.code).to eq 'HS'
       expect(arrest_count.section).to eq '11360(a)'
       expect(arrest_count.anon_disposition.disposition_type).to eq('prosecutor_rejected')
+      expect(arrest_count.anon_disposition.text).to eq('DISPO:PROS REJ-COMB W/OTHER CNTS')
     end
 
     it 'saves all known event types in database' do

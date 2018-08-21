@@ -34,7 +34,7 @@ describe RapSheetWithEligibility do
         courthouse: 'CASC San Francisco',
         updates: [
           RapSheetParser::Update.new(
-            dispositions: [RapSheetParser::Disposition.new(type: 'pc1203_dismissed', sentence: nil)]
+            dispositions: [RapSheetParser::Disposition.new(type: 'pc1203_dismissed', sentence: nil, text: '')]
           )
         ]
       )
