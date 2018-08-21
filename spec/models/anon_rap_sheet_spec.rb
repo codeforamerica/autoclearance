@@ -80,6 +80,25 @@ describe AnonRapSheet do
       text = <<~TEXT
         blah
         * * * *
+        REGISTRATION:          NAM:07
+        19840217  CAID ALAMEDA CO
+        
+        CNT:01     #EIC768
+          11590 HS-REGISTRATION OF CNTL SUB OFFENDER
+        ----
+        20060523  CASD CORR WASCO
+        
+        
+        CNT:01     #Q123445
+          290(E)(1) PC-PREREGISTRATION OF SEX OFFENDER
+        ***********************************************************************
+        **                                                                      **
+        **  FOR CURRENT REGISTRANT ADDRESS INFORMATION INQUIRE INTO             **
+        **  THE CALIFORNIA SEX AND ARSON REGISTRY (CSAR)                        **
+        **                                                                      **
+        ***********************************************************************
+        
+        * * * *
         ARR/DET/CITE:         NAM:02  DOB:19750405
         19930407  CAPD SAN FRANCISCO
         CNT:01     #2223334
@@ -212,6 +231,26 @@ describe AnonRapSheet do
       expect(custody_event.anon_counts[1].severity).to be_nil
       # expect(custody_event.anon_counts[1].anon_disposition.disposition_type).to eq('other_disposition_type')
 
+      expect(AnonEvent.where(event_type: 'registration').count).to eq 2
+      narcotics_registration = AnonEvent.where(event_type: 'registration').first
+      expect(narcotics_registration.agency).to eq 'CAID ALAMEDA CO'
+      expect(narcotics_registration.date).to eq Date.new(1984,2,17)
+      expect(narcotics_registration.anon_counts.count).to eq(1)
+      expect(narcotics_registration.anon_counts[0].code).to eq('HS')
+      expect(narcotics_registration.anon_counts[0].section).to eq('11590')
+      expect(narcotics_registration.anon_counts[0].description).to eq('REGISTRATION OF CNTL SUB OFFENDER')
+      expect(narcotics_registration.anon_counts[0].severity).to be_nil
+      expect(narcotics_registration.anon_counts[0].anon_disposition).to be_nil
+      sex_offender_registration = AnonEvent.where(event_type: 'registration').second
+      expect(sex_offender_registration.agency).to eq 'CASD CORR WASCO'
+      expect(sex_offender_registration.date).to eq Date.new(2006,5,23)
+      expect(sex_offender_registration.anon_counts.count).to eq(1)
+      expect(sex_offender_registration.anon_counts[0].code).to eq('PC')
+      expect(sex_offender_registration.anon_counts[0].section).to eq('290(e)(1)')
+      expect(sex_offender_registration.anon_counts[0].description).to include('PREREGISTRATION OF SEX OFFENDER')
+      # expect(sex_offender_registration.anon_counts[0].description).to eq('PREREGISTRATION OF SEX OFFENDER')
+      expect(sex_offender_registration.anon_counts[0].severity).to be_nil
+      expect(sex_offender_registration.anon_counts[0].anon_disposition).to be_nil
     end
 
     it 'handles unknown personal info' do
