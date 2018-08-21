@@ -202,9 +202,7 @@ describe AnonRapSheet do
       expect(applicant_event.anon_counts.count).to eq(1)
       expect(applicant_event.anon_counts[0].code).to be_nil
       expect(applicant_event.anon_counts[0].section).to be_nil
-      # expect(applicant_event.anon_counts[0].description).to eq('APPLICANT RESIDNTL CARE FACILITY FOR ELDERLY')
       expect(applicant_event.anon_counts[0].severity).to be_nil
-      # expect(applicant_event.anon_counts[1].anon_disposition.disposition_type).to eq('other_disposition_type')
 
       expect(AnonEvent.where(event_type: 'probation').count).to eq 1
       probation_event = AnonEvent.find_by_event_type('probation')
@@ -215,7 +213,6 @@ describe AnonRapSheet do
       expect(probation_event.anon_counts[0].section).to eq('11359')
       expect(probation_event.anon_counts[0].description).to eq("POSSESS MARIJUANA FOR SALE\n   SEN: 3 YEARS PROBATION")
       expect(probation_event.anon_counts[0].severity).to be_nil
-      # expect(probation_event.anon_counts[0].anon_disposition.sentence).to eq('3yr probation')
 
       expect(AnonEvent.where(event_type: 'custody').count).to eq 1
       custody_event = AnonEvent.find_by_event_type('custody')
@@ -231,7 +228,6 @@ describe AnonRapSheet do
       expect(custody_event.anon_counts[1].section).to eq("attempted\n459")
       expect(custody_event.anon_counts[1].description).to eq("BURGLARY:FIRST DEGREE\n   SEN FROM: SAN MATEO CO   CRT #54323\n   SEN: 32 MONTHS PRISON")
       expect(custody_event.anon_counts[1].severity).to be_nil
-      # expect(custody_event.anon_counts[1].anon_disposition.disposition_type).to eq('other_disposition_type')
 
       expect(AnonEvent.where(event_type: 'registration').count).to eq 2
       narcotics_registration = AnonEvent.where(event_type: 'registration').first
@@ -250,7 +246,6 @@ describe AnonRapSheet do
       expect(sex_offender_registration.anon_counts[0].code).to eq('PC')
       expect(sex_offender_registration.anon_counts[0].section).to eq('290(e)(1)')
       expect(sex_offender_registration.anon_counts[0].description).to include('PREREGISTRATION OF SEX OFFENDER')
-      # expect(sex_offender_registration.anon_counts[0].description).to eq('PREREGISTRATION OF SEX OFFENDER')
       expect(sex_offender_registration.anon_counts[0].severity).to be_nil
       expect(sex_offender_registration.anon_counts[0].anon_disposition).to be_nil
     end
