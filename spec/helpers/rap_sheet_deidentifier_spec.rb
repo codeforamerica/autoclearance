@@ -18,10 +18,11 @@ describe RapSheetDeidentifier do
       described_class.new.run
 
       expect(Dir['/tmp/autoclearance-rap-sheet-inputs/*'].length).to eq 1
-      output_files = Dir['/tmp/autoclearance-outputs/redacted_rap_sheet_*']
-      expect(output_files.length).to eq 1
+      redacted_text = Dir['/tmp/autoclearance-outputs/redacted_rap_sheet_*.txt']
+      expect(redacted_text.length).to eq 1
 
-      skywalker_actual_text = File.read(output_files[0])
+      skywalker_actual_text = File.read(redacted_text[0])
+      expect(skywalker_actual_text).to include('496 PC-RECEIVE/ETC KNOWN STOLEN PROPERTY')
       expect(skywalker_actual_text).not_to include('SKYWALKER')
       expect(skywalker_actual_text).not_to include('LUKE')
       expect(skywalker_actual_text).not_to include('JAY')
@@ -33,6 +34,34 @@ describe RapSheetDeidentifier do
       expect(skywalker_actual_text).not_to include('#2222222')
       expect(skywalker_actual_text).not_to include('#3456789')
       expect(skywalker_actual_text).not_to include('#33857493')
+
+      redacted_pdf = Dir['/tmp/autoclearance-outputs/redacted_rap_sheet_*.pdf']
+      expect(redacted_pdf.length).to eq 1
+
+      pdf_text = PDFReader.new(File.read(redacted_pdf[0])).text
+      expect(pdf_text).to include('CII/A01234557')
+      expect(pdf_text).to include('496 PC-RECEIVE/ETC KNOWN STOLEN PROPERTY')
+      expect(pdf_text).not_to include('SKYWALKER')
+      expect(pdf_text).not_to include('LUKE')
+      expect(pdf_text).not_to include('JAY')
+      expect(pdf_text).not_to include('A99000099')
+      expect(pdf_text).not_to include('19660119')
+      expect(pdf_text).not_to include('19550505')
+      expect(pdf_text).not_to include('#1111111')
+      expect(pdf_text).not_to include('#1234567')
+      expect(pdf_text).not_to include('#2222222')
+      expect(pdf_text).not_to include('#3456789')
+      expect(pdf_text).not_to include('#33857493')
+    end
+
+    it 'skip rap sheets without any cycles' do
+      File.open('/tmp/autoclearance-rap-sheet-inputs/bad_rap_sheet.pdf', 'w') {|f| f.write('Personal info') }
+
+      allow_any_instance_of(PDFReader).to receive(:text).and_return('Personal info')
+
+      described_class.new.run
+
+      expect(Dir['/tmp/autoclearance-outputs/*'].length).to eq 0
     end
   end
 end
