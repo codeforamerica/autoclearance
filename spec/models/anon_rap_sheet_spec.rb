@@ -109,6 +109,12 @@ describe AnonRapSheet do
         CNT:02
           11359 HS-POSSESS MARIJUANA FOR SALE
         - - - -
+        SUPPLEMENTAL ARR:      NAM:01
+          20110124  CASO SAN FRANCISCO
+
+          CNT:01     #024435345
+            32 PC-ACCESSORY
+        - - - -
         COURT:
         19930708 CASC SAN FRANCISCO
 
@@ -184,6 +190,17 @@ describe AnonRapSheet do
       expect(arrest_event.anon_counts[1].severity).to be_nil
       expect(arrest_event.anon_counts[1].anon_disposition).to be_nil
 
+      expect(AnonEvent.where(event_type: 'supplemental_arrest').count).to eq 1
+      arrest_event = AnonEvent.find_by_event_type('supplemental_arrest')
+      expect(arrest_event.agency).to eq 'CASO SAN FRANCISCO'
+      expect(arrest_event.date).to eq Date.new(2011, 1, 24)
+      expect(arrest_event.anon_counts.count).to eq(1)
+      expect(arrest_event.anon_counts[0].code).to eq('PC')
+      expect(arrest_event.anon_counts[0].section).to eq('32')
+      expect(arrest_event.anon_counts[0].description).to eq('ACCESSORY')
+      expect(arrest_event.anon_counts[0].severity).to be_nil
+      expect(arrest_event.anon_counts[0].anon_disposition).to be_nil
+
       expect(AnonEvent.where(event_type: 'court').count).to eq 1
       court_event = AnonEvent.find_by_event_type('court')
       expect(court_event.agency).to eq 'CASC San Francisco'
@@ -207,7 +224,7 @@ describe AnonRapSheet do
       expect(AnonEvent.where(event_type: 'probation').count).to eq 1
       probation_event = AnonEvent.find_by_event_type('probation')
       expect(probation_event.agency).to eq 'CAPR SAN FRANCISCO'
-      expect(probation_event.date).to eq Date.new(1984,12,28)
+      expect(probation_event.date).to eq Date.new(1984, 12, 28)
       expect(probation_event.anon_counts.count).to eq(1)
       expect(probation_event.anon_counts[0].code).to eq('HS')
       expect(probation_event.anon_counts[0].section).to eq('11359')
@@ -217,7 +234,7 @@ describe AnonRapSheet do
       expect(AnonEvent.where(event_type: 'custody').count).to eq 1
       custody_event = AnonEvent.find_by_event_type('custody')
       expect(custody_event.agency).to eq 'CASD CORRECTIONS'
-      expect(custody_event.date).to eq Date.new(1985,12,19)
+      expect(custody_event.date).to eq Date.new(1985, 12, 19)
       expect(custody_event.anon_counts.count).to eq(2)
       expect(custody_event.anon_counts[0].code).to eq('PC')
       expect(custody_event.anon_counts[0].section).to eq('459')
@@ -232,7 +249,7 @@ describe AnonRapSheet do
       expect(AnonEvent.where(event_type: 'registration').count).to eq 2
       narcotics_registration = AnonEvent.where(event_type: 'registration').first
       expect(narcotics_registration.agency).to eq 'CAID ALAMEDA CO'
-      expect(narcotics_registration.date).to eq Date.new(1984,2,17)
+      expect(narcotics_registration.date).to eq Date.new(1984, 2, 17)
       expect(narcotics_registration.anon_counts.count).to eq(1)
       expect(narcotics_registration.anon_counts[0].code).to eq('HS')
       expect(narcotics_registration.anon_counts[0].section).to eq('11590')
@@ -241,7 +258,7 @@ describe AnonRapSheet do
       expect(narcotics_registration.anon_counts[0].anon_disposition).to be_nil
       sex_offender_registration = AnonEvent.where(event_type: 'registration').second
       expect(sex_offender_registration.agency).to eq 'CASD CORR WASCO'
-      expect(sex_offender_registration.date).to eq Date.new(2006,5,23)
+      expect(sex_offender_registration.date).to eq Date.new(2006, 5, 23)
       expect(sex_offender_registration.anon_counts.count).to eq(1)
       expect(sex_offender_registration.anon_counts[0].code).to eq('PC')
       expect(sex_offender_registration.anon_counts[0].section).to eq('290(e)(1)')

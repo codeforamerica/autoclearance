@@ -2,7 +2,7 @@ class AnonEvent < ApplicationRecord
   belongs_to :anon_cycle
   has_many :anon_counts, dependent: :destroy
 
-  VALID_EVENT_TYPES = ['court', 'arrest', 'applicant', 'probation', 'custody', 'registration']
+  VALID_EVENT_TYPES = ['court', 'arrest', 'applicant', 'probation', 'custody', 'registration', 'supplemental_arrest']
 
   validates_presence_of :event_type
   validates_inclusion_of :event_type, in: VALID_EVENT_TYPES
@@ -16,19 +16,9 @@ class AnonEvent < ApplicationRecord
 
     AnonEvent.new(
       agency: event.agency,
-      event_type: event_type(event),
+      event_type: event.header,
       date: event.date,
       anon_counts: counts
     )
-  end
-
-  private
-
-  def self.event_type(event)
-    if event.is_a? RapSheetParser::CourtEvent
-      'court'
-    elsif event.is_a? RapSheetParser::OtherEvent
-      event.header
-    end
   end
 end
