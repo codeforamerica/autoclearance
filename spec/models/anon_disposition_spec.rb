@@ -6,11 +6,13 @@ describe AnonDisposition do
       disposition = RapSheetParser::Disposition.new(
         type: 'conviction',
         sentence: RapSheetParser::ConvictionSentence.new(jail: 10.days),
-        text: '*DISPO:CONVICTED'
+        text: '*DISPO:CONVICTED',
+        severity: 'M'
       )
       anon_disposition = described_class.build_from_parser(disposition)
       expect(anon_disposition.disposition_type).to eq 'conviction'
       expect(anon_disposition.sentence).to eq '10d jail'
+      expect(anon_disposition.severity).to eq 'M'
       expect(anon_disposition.text).to eq '*DISPO:CONVICTED'
     end
 
@@ -18,6 +20,7 @@ describe AnonDisposition do
       disposition = RapSheetParser::Disposition.new(
         type: 'dismissed',
         sentence: nil,
+        severity: 'F',
         text: 'DISPO:DISMISSED/FURTHERANCE OF JUSTICE'
       )
 

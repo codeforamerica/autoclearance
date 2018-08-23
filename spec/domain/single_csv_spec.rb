@@ -6,9 +6,11 @@ describe SingleCSV do
     court_count = build_court_count(
       code: 'HS',
       section: '11360',
-      severity: 'M',
-      disposition_type: 'convicted',
-      disposition_sentence: RapSheetParser::ConvictionSentence.new(jail: 2.days)
+      disposition: build_disposition(
+        type: 'convicted',
+        sentence: RapSheetParser::ConvictionSentence.new(jail: 2.days),
+        severity: 'M'
+      )
     )
     eligible_event = build_court_event(
       date: Date.new(1994, 1, 2),
@@ -30,9 +32,11 @@ describe SingleCSV do
     court_count = build_court_count(
       code: 'HS',
       section: '11360',
-      severity: 'M',
-      disposition_type: 'convicted',
-      disposition_sentence: RapSheetParser::ConvictionSentence.new(jail: 2.days)
+      disposition: build_disposition(
+        type: 'convicted',
+        sentence: RapSheetParser::ConvictionSentence.new(jail: 2.days),
+        severity: 'M'
+      )
     )
     eligible_event = build_court_event(
       date: Date.new(1994, 1, 2),

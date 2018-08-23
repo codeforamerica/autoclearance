@@ -25,7 +25,7 @@ class SingleCSV
       event.case_number,
       event.courthouse,
       count.code_section,
-      count.severity,
+      count.disposition.severity,
       event.sentence,
       eligibility.superstrikes.map(&:code_section).join(', '),
       eligibility.has_three_convictions_of_same_type?(count.code_section),

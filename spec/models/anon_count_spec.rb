@@ -5,16 +5,14 @@ describe AnonCount do
     it 'creates AnonCounts from parser output' do
       count = RapSheetParser::CourtCount.new(
         code_section_description: 'ARMED ROBBERY',
-        severity: 'F',
         code: 'PC',
         section: '1505',
-        disposition: RapSheetParser::Disposition.new(type: 'dismissed', sentence: nil, text: 'DISPO:DISMISSED')
+        disposition: build_disposition(type: 'dismissed', sentence: nil, text: 'DISPO:DISMISSED')
       )
 
       anon_count = described_class.build_from_parser(count, 5)
       expect(anon_count.count_number).to eq 5
       expect(anon_count.description).to eq 'ARMED ROBBERY'
-      expect(anon_count.severity).to eq 'F'
       expect(anon_count.code).to eq 'PC'
       expect(anon_count.section).to eq '1505'
       expect(anon_count.anon_disposition.disposition_type).to eq 'dismissed'
@@ -25,7 +23,6 @@ describe AnonCount do
     it 'does not create a disposition if it does not exist' do
       count = RapSheetParser::CourtCount.new(
         code_section_description: 'ARMED ROBBERY',
-        severity: 'F',
         code: 'PC',
         section: '1505',
         disposition: nil

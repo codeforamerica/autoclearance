@@ -34,7 +34,7 @@ describe RapSheetWithEligibility do
         courthouse: 'CASC San Francisco',
         updates: [
           RapSheetParser::Update.new(
-            dispositions: [RapSheetParser::Disposition.new(type: 'pc1203_dismissed', sentence: nil, text: '')]
+            dispositions: [build_disposition(type: 'pc1203_dismissed')]
           )
         ]
       )
@@ -61,13 +61,13 @@ describe RapSheetWithEligibility do
     end
 
     it 'returns false if rap sheet does not contain two convictions and one dismissed count for the same code section' do
-      count_1 = build_court_count(code: 'PC', section: '123', disposition_type: 'convicted')
+      count_1 = build_court_count(code: 'PC', section: '123', disposition: build_disposition(type: 'convicted'))
       event_1 = build_court_event(counts: [count_1])
 
-      count_2 = build_court_count(code: 'PC', section: '123', disposition_type: 'convicted')
+      count_2 = build_court_count(code: 'PC', section: '123', disposition: build_disposition(type: 'convicted'))
       event_2 = build_court_event(counts: [count_2])
 
-      count_3 = build_court_count(code: 'PC', section: '123', disposition_type: 'dismissed')
+      count_3 = build_court_count(code: 'PC', section: '123', disposition: build_disposition(type: 'dismissed'))
       event_3 = build_court_event(counts: [count_3])
 
       rap_sheet = build_rap_sheet(events: ([event_1, event_2, event_3]))

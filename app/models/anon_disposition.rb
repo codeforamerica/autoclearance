@@ -5,7 +5,8 @@ class AnonDisposition < ApplicationRecord
     AnonDisposition.new(
       disposition_type: disposition.type,
       sentence: disposition.sentence,
-      text: disposition.text
+      text: disposition.text,
+      severity: disposition.severity
     )
   end
 end

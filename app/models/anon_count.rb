@@ -9,7 +9,6 @@ class AnonCount < ApplicationRecord
       code: count.code,
       section: count.section,
       description: count.code_section_description,
-      severity: count.severity,
       anon_disposition: anon_disposition(count.disposition)
     )
   end
