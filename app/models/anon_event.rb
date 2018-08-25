@@ -2,7 +2,7 @@ class AnonEvent < ApplicationRecord
   belongs_to :anon_cycle
   has_many :anon_counts, dependent: :destroy
 
-  VALID_EVENT_TYPES = ['court', 'arrest', 'applicant', 'probation', 'custody', 'registration', 'supplemental_arrest']
+  VALID_EVENT_TYPES = ['court', 'arrest', 'applicant', 'probation', 'custody', 'registration', 'supplemental_arrest', 'deceased']
 
   validates_presence_of :event_type
   validates_inclusion_of :event_type, in: VALID_EVENT_TYPES

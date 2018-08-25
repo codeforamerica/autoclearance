@@ -35,6 +35,10 @@ class RapSheetWithEligibility < SimpleDelegator
     end.length >= 3
   end
 
+  def has_deceased_event?
+    deceased_events.any?
+  end
+
   private
 
   attr_reader :courthouses

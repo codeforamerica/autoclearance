@@ -31,7 +31,8 @@ class SingleCSV
       eligibility.has_three_convictions_of_same_type?(count.code_section),
       eligibility.sex_offender_registration?,
       event.remedy,
-      count.csv_eligibility_column(event, eligibility)
+      count.csv_eligibility_column(event, eligibility),
+      eligibility.has_deceased_event?
     ]
   end
 
@@ -54,7 +55,8 @@ class SingleCSV
       '2 prior convictions',
       'PC290',
       'Remedy',
-      'Eligible'
+      'Eligible',
+      'Deceased'
     ]
   end
 

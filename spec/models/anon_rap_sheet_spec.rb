@@ -162,7 +162,15 @@ describe AnonRapSheet do
         
          DISPO:PAROLED FROM CDC
            RECVD BY:CAPA SAN MATEO CO
+        * * * *
 
+        DECEASED:              NAM:01
+        20130817  CACO SAN FRANCISCO
+
+        CNT:01     #0064-64074-20790144
+          DECEASED
+
+            COM: SCN-L87G2300013
         * * * END OF MESSAGE * * *
       TEXT
 
@@ -189,6 +197,16 @@ describe AnonRapSheet do
       expect(arrest_event.anon_counts[1].description).to eq('POSSESS MARIJUANA FOR SALE')
       expect(arrest_event.anon_counts[1].anon_disposition).to be_nil
 
+      expect(AnonEvent.where(event_type: 'deceased').count).to eq 1
+      deceased_event = AnonEvent.find_by_event_type('deceased')
+      expect(deceased_event.agency).to eq 'CACO SAN FRANCISCO'
+      expect(deceased_event.date).to eq Date.new(2013, 8, 17)
+      expect(deceased_event.anon_counts.count).to eq(1)
+      expect(deceased_event.anon_counts[0].code).to be_nil
+      expect(deceased_event.anon_counts[0].section).to be_nil
+      expect(deceased_event.anon_counts[0].description).to be_nil
+      expect(deceased_event.anon_counts[0].anon_disposition).to be_nil
+
       expect(AnonEvent.where(event_type: 'supplemental_arrest').count).to eq 1
       arrest_event = AnonEvent.find_by_event_type('supplemental_arrest')
       expect(arrest_event.agency).to eq 'CASO SAN FRANCISCO'
@@ -198,6 +216,7 @@ describe AnonRapSheet do
       expect(arrest_event.anon_counts[0].section).to eq('32')
       expect(arrest_event.anon_counts[0].description).to eq('ACCESSORY')
       expect(arrest_event.anon_counts[0].anon_disposition).to be_nil
+
 
       expect(AnonEvent.where(event_type: 'court').count).to eq 1
       court_event = AnonEvent.find_by_event_type('court')

@@ -1,4 +1,4 @@
-Name,Date,Case Number,Courthouse,Charge,Severity,Sentence,Superstrikes,2 prior convictions,PC290,Remedy,Eligible
-"BACCA, CHEW E.",1984-09-18,1234567,CASC San Francisco,HS 11360,M,"3y probation, 30d jail, fine, restitution",PC 220,false,true,redesignation,false
-"BACCA, CHEW E.",1984-09-18,1234567,CASC San Francisco,HS 11358,M,"3y probation, 30d jail, fine, restitution",PC 220,true,true,redesignation,false
-"BACCA, CHEW",2010-04-13,34567423423,CASC San Francisco,HS 11358,F,"2y probation, 5d jail",PC 220,true,true,resentencing,false
+Name,Date,Case Number,Courthouse,Charge,Severity,Sentence,Superstrikes,2 prior convictions,PC290,Remedy,Eligible,Deceased
+"BACCA, CHEW E.",1984-09-18,1234567,CASC San Francisco,HS 11360,M,"3y probation, 30d jail, fine, restitution",PC 220,false,true,redesignation,false,false
+"BACCA, CHEW E.",1984-09-18,1234567,CASC San Francisco,HS 11358,M,"3y probation, 30d jail, fine, restitution",PC 220,true,true,redesignation,false,false
+"BACCA, CHEW",2010-04-13,34567423423,CASC San Francisco,HS 11358,F,"2y probation, 5d jail",PC 220,true,true,resentencing,false,false

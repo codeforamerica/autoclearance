@@ -152,4 +152,27 @@ describe RapSheetWithEligibility do
       end
     end
   end
+
+  describe '#has_deceased_event?'do
+    it 'returns true if rap sheet contains a deceased event' do
+      deceased_event = build_other_event(
+        header: 'deceased',
+        agency: 'CACO San Francisco'
+      )
+
+      rap_sheet = build_rap_sheet(events: [deceased_event])
+
+      expect(build_rap_sheet_with_eligibility(rap_sheet: rap_sheet).has_deceased_event?).to eq true
+    end
+
+    it 'returns false if rap sheet does not contain deceased event' do
+
+      event1_count = build_court_count(code: 'HS', section: '11357')
+      event_1 = build_court_event(case_number: '111', counts: [event1_count])
+
+      rap_sheet = build_rap_sheet(events: [event_1])
+
+      expect(build_rap_sheet_with_eligibility(rap_sheet: rap_sheet).has_deceased_event?).to eq false
+    end
+  end
 end
