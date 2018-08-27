@@ -5,22 +5,29 @@ class RapSheetProcessor
   def initialize(county)
     @county = county
     @summary_csv = SummaryCSV.new
-
     @summary_errors = ''
-
     @warning_log = StringIO.new
+    @num_motions = 0
   end
 
   def run
+    start_time = Time.now
+    num_rap_sheets = input_directory.files.count
+
     input_directory.files.to_a.sort_by { |f| f.key }.each do |input_file|
       process_one_rap_sheet(input_file)
     end
 
-    timestamp = Time.now.strftime('%Y%m%d-%H%M%S')
-
+    timestamp = start_time.strftime('%Y%m%d-%H%M%S')
     save_summary_csv(timestamp)
     save_summary_errors(timestamp)
     save_summary_warnings(timestamp)
+
+    time = (Time.now - start_time)
+
+    puts "#{num_rap_sheets} RAP #{'sheet'.pluralize(num_rap_sheets)} " +
+           "produced #{@num_motions} #{'motion'.pluralize(@num_motions)} " +
+           "in #{time} seconds"
   end
 
   private
@@ -56,6 +63,7 @@ class RapSheetProcessor
       file_name = "#{input_file.key.gsub('.pdf', '')}_motion_#{index}.pdf"
       eligible_counts = event.eligible_counts(eligibility)
 
+      @num_motions = @num_motions + 1
       output_directory.files.create(
         key: file_name,
         body: FillProp64Motion.new(eligible_counts, event, eligibility.personal_info).filled_motion,

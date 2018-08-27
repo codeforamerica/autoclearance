@@ -2,7 +2,11 @@ require 'rails_helper'
 
 describe RapSheetProcessor do
   describe '#run' do
-    subject { described_class.new(Counties::SAN_FRANCISCO).run }
+    subject do
+      travel_to(Time.new(2011, 1, 2, 1, 4, 44)) do
+        described_class.new(Counties::SAN_FRANCISCO).run
+      end
+    end
     
     before :each do
       Dir.mkdir '/tmp/autoclearance-rap-sheet-inputs' unless Dir.exist? '/tmp/autoclearance-rap-sheet-inputs'
@@ -18,7 +22,7 @@ describe RapSheetProcessor do
       FileUtils.cp('spec/fixtures/skywalker_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/')
       FileUtils.cp('spec/fixtures/chewbacca_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/')
 
-      travel_to(Time.new(2011, 1, 2, 01, 04, 44)) { subject }
+      expect {subject }.to output(/2 RAP sheets produced 1 motion in ([0-9]|\.)+ seconds/).to_stdout
 
       expect(Dir['/tmp/autoclearance-rap-sheet-inputs/*']).to eq []
       expected = [
@@ -59,19 +63,19 @@ describe RapSheetProcessor do
         end
       end
 
-      travel_to(Time.new(2010, 1, 2, 01, 04, 44)) { subject }
+      expect {subject }.to output(/2 RAP sheets produced 1 motion in ([0-9]|\.)+ seconds/).to_stdout
 
       expect(Dir['/tmp/autoclearance-rap-sheet-inputs/*']).to eq ['/tmp/autoclearance-rap-sheet-inputs/not_a_valid_rap_sheet.pdf']
       expect(Dir['/tmp/autoclearance-outputs/*']).to contain_exactly(
         '/tmp/autoclearance-outputs/not_a_valid_rap_sheet.error',
-        '/tmp/autoclearance-outputs/summary_20100102-010444.error',
+        '/tmp/autoclearance-outputs/summary_20110102-010444.error',
         '/tmp/autoclearance-outputs/skywalker_rap_sheet.csv',
-        '/tmp/autoclearance-outputs/summary_20100102-010444.csv',
+        '/tmp/autoclearance-outputs/summary_20110102-010444.csv',
         '/tmp/autoclearance-outputs/skywalker_rap_sheet_motion_0.pdf'
       )
 
       actual_error = File.read('/tmp/autoclearance-outputs/not_a_valid_rap_sheet.error')
-      actual_summary_error = File.read('/tmp/autoclearance-outputs/summary_20100102-010444.error')
+      actual_summary_error = File.read('/tmp/autoclearance-outputs/summary_20110102-010444.error')
 
       expect(actual_error).to include(expected_error_message)
       expect(actual_summary_error).to include('not_a_valid_rap_sheet.pdf:')
@@ -81,9 +85,10 @@ describe RapSheetProcessor do
     it 'sends warnings from the parser to a warnings file' do
       FileUtils.cp('spec/fixtures/not_a_valid_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/')
 
-      travel_to(Time.new(2010, 1, 2, 01, 04, 44)) { subject }
 
-      actual_warning = File.read('/tmp/autoclearance-outputs/summary_20100102-010444.warning')
+      expect {subject }.to output(/1 RAP sheet produced 0 motions in ([0-9]|\.)+ seconds/).to_stdout
+
+      actual_warning = File.read('/tmp/autoclearance-outputs/summary_20110102-010444.warning')
 
       expect(actual_warning).to include("[not_a_valid_rap_sheet.pdf] Unrecognized event:\n[not_a_valid_rap_sheet.pdf] HI")
       expect(actual_warning).to include("[not_a_valid_rap_sheet.pdf] Unrecognized event:\n[not_a_valid_rap_sheet.pdf]   BYE")
@@ -93,7 +98,7 @@ describe RapSheetProcessor do
       FileUtils.cp('spec/fixtures/skywalker_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/')
       FileUtils.cp('spec/fixtures/chewbacca_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/')
 
-      subject
+      expect {subject }.to output(/2 RAP sheets produced 1 motion in ([0-9]|\.)+ seconds/).to_stdout
 
       expect(AnonRapSheet.count).to eq 2
     end
