@@ -174,5 +174,37 @@ describe RapSheetWithEligibility do
 
       expect(build_rap_sheet_with_eligibility(rap_sheet: rap_sheet).has_deceased_event?).to eq false
     end
+
+    it 'memoizes the search for deceased events' do
+      deceased_event = build_other_event(
+        header: 'deceased',
+        agency: 'CACO San Francisco'
+      )
+
+      rap_sheet = build_rap_sheet(events: [deceased_event])
+      rap_sheet_with_eligibility = build_rap_sheet_with_eligibility(rap_sheet: rap_sheet)
+
+      expect(rap_sheet_with_eligibility).to receive(:deceased_events).and_return([deceased_event])
+
+      expect(rap_sheet_with_eligibility.has_deceased_event?).to eq true
+
+      expect(rap_sheet_with_eligibility).to_not receive(:deceased_events)
+
+      expect(rap_sheet_with_eligibility.has_deceased_event?).to eq true
+    end
+
+    it 'memoizes the search for deceased events when there are no deceased events' do
+
+      rap_sheet = build_rap_sheet()
+      rap_sheet_with_eligibility = build_rap_sheet_with_eligibility(rap_sheet: rap_sheet)
+
+      expect(rap_sheet_with_eligibility).to receive(:deceased_events).and_return([])
+
+      expect(rap_sheet_with_eligibility.has_deceased_event?).to eq false
+
+      expect(rap_sheet_with_eligibility).to_not receive(:deceased_events)
+
+      expect(rap_sheet_with_eligibility.has_deceased_event?).to eq false
+    end
   end
 end

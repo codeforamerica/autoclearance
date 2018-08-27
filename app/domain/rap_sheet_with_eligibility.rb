@@ -36,7 +36,8 @@ class RapSheetWithEligibility < SimpleDelegator
   end
 
   def has_deceased_event?
-    deceased_events.any?
+    return @has_deceased_events unless @has_deceased_events.nil?
+    @has_deceased_events = deceased_events.any?
   end
 
   private
