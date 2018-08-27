@@ -86,12 +86,4 @@ CNT:02
 
 * * **
 
-DECEASED:              NAM:01
-20130817  CACO SAN FRANCISCO
-
-CNT:01     #0064-64074-20790144
-  DECEASED
-
-  COM: SCN-L87G2300013
-
      *    *    *    END OF MESSAGE    *    *    *
