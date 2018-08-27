@@ -163,6 +163,13 @@ describe AnonRapSheet do
          DISPO:PAROLED FROM CDC
            RECVD BY:CAPA SAN MATEO CO
         * * * *
+        MENTAL HLTH CUS/SUPV   NAM:01
+
+        19910625  CAHO ATASCADERO STATE
+
+        CNT:01     #897804-2
+          1370 PC-MENTALLY INCOMPETENT
+        * * * *
 
         DECEASED:              NAM:01
         20130817  CACO SAN FRANCISCO
@@ -217,6 +224,15 @@ describe AnonRapSheet do
       expect(arrest_event.anon_counts[0].description).to eq('ACCESSORY')
       expect(arrest_event.anon_counts[0].anon_disposition).to be_nil
 
+      expect(AnonEvent.where(event_type: 'mental_health').count).to eq 1
+      arrest_event = AnonEvent.find_by_event_type('mental_health')
+      expect(arrest_event.agency).to eq 'CAHO ATASCADERO STATE'
+      expect(arrest_event.date).to eq Date.new(1991, 6, 25)
+      expect(arrest_event.anon_counts.count).to eq(1)
+      expect(arrest_event.anon_counts[0].code).to eq('PC')
+      expect(arrest_event.anon_counts[0].section).to eq('1370')
+      expect(arrest_event.anon_counts[0].description).to eq('MENTALLY INCOMPETENT')
+      expect(arrest_event.anon_counts[0].anon_disposition).to be_nil
 
       expect(AnonEvent.where(event_type: 'court').count).to eq 1
       court_event = AnonEvent.find_by_event_type('court')
