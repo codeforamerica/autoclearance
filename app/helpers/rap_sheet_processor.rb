@@ -8,11 +8,12 @@ class RapSheetProcessor
     @summary_errors = ''
     @warning_log = StringIO.new
     @num_motions = 0
+    @rap_sheets_processed = 0
   end
 
   def run
     start_time = Time.now
-    num_rap_sheets = input_directory.files.count
+    initial_rap_sheet_count = AnonRapSheet.count
 
     input_directory.files.to_a.sort_by { |f| f.key }.each do |input_file|
       process_one_rap_sheet(input_file)
@@ -25,9 +26,14 @@ class RapSheetProcessor
 
     time = (Time.now - start_time)
 
-    puts "#{num_rap_sheets} RAP #{'sheet'.pluralize(num_rap_sheets)} " +
+    puts "#{@rap_sheets_processed} RAP #{'sheet'.pluralize(@rap_sheets_processed)} " +
            "produced #{@num_motions} #{'motion'.pluralize(@num_motions)} " +
            "in #{time} seconds"
+
+    new_rap_sheets = AnonRapSheet.count - initial_rap_sheet_count
+    existing_rap_sheets = @rap_sheets_processed - new_rap_sheets
+    puts "Added #{new_rap_sheets} RAP #{'sheet'.pluralize(new_rap_sheets)} to analysis db. " +
+           "Skipped #{existing_rap_sheets} existing RAP #{'sheet'.pluralize(existing_rap_sheets)}."
   end
 
   private
@@ -123,6 +129,7 @@ class RapSheetProcessor
 
     rap_sheet = RapSheetParser::Parser.new.parse(text, logger: logger)
 
+    @rap_sheets_processed = @rap_sheets_processed + 1
     AnonRapSheet.create_or_update(
       text: text,
       county: @county[:name],
