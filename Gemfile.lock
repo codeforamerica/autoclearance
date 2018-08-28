@@ -275,7 +275,7 @@ DEPENDENCIES
   pg
   pgsync
   puma (~> 3.7)
-  rails (~> 5.2.0)
+  rails (~> 5.2.1)
   rap_sheet_parser!
   rspec-rails
   sass-rails (~> 5.0)
