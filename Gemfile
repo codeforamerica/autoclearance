@@ -40,14 +40,13 @@ gem 'pdf-forms'
 gem 'cliver'
 
 group :development, :test do
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
-  # Adds support for Capybara system testing and selenium driver
+  gem 'bundler-audit'
   gem 'capybara', '~> 2.13'
   gem 'fog-local'
-  gem 'rspec-rails'
-  gem 'bundler-audit'
   gem 'pgsync'
+  gem 'pry-byebug'
+  gem 'rspec-rails'
+  gem 'rubocop'
 end
 
 group :development do
