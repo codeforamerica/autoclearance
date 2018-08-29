@@ -3,7 +3,7 @@ require 'rails_helper'
 describe AnonCount do
   describe '#build_from_parser' do
     it 'creates AnonCounts from parser output' do
-      count = RapSheetParser::CourtCount.new(
+      count = build_court_count(
         code_section_description: 'ARMED ROBBERY',
         code: 'PC',
         section: '1505',
@@ -21,7 +21,7 @@ describe AnonCount do
     end
 
     it 'does not create a disposition if it does not exist' do
-      count = RapSheetParser::CourtCount.new(
+      count = build_court_count(
         code_section_description: 'ARMED ROBBERY',
         code: 'PC',
         section: '1505',

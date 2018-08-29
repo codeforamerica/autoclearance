@@ -36,7 +36,6 @@ Layout/EmptyLines:
   Exclude:
     - 'Gemfile'
     - 'db/migrate/20180814195919_create_anon_cycles.rb'
-    - 'spec/models/anon_rap_sheet_spec.rb'
 
 # Offense count: 3
 # Cop supports --auto-correct.
@@ -45,7 +44,6 @@ Layout/EmptyLines:
 Layout/EmptyLinesAroundBlockBody:
   Exclude:
     - 'db/schema.rb'
-    - 'spec/domain/rap_sheet_with_eligibility_spec.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.
@@ -76,12 +74,6 @@ Layout/LeadingCommentSpace:
 Layout/MultilineOperationIndentation:
   Exclude:
     - 'app/helpers/rap_sheet_processor.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Layout/SpaceAroundKeyword:
-  Exclude:
-    - 'spec/domain/rap_sheet_with_eligibility_spec.rb'
 
 # Offense count: 2
 # Cop supports --auto-correct.
@@ -124,15 +116,12 @@ Layout/TrailingBlankLines:
 # Configuration parameters: AllowInHeredoc.
 Layout/TrailingWhitespace:
   Exclude:
-    - 'app/classifiers/plea_bargain_classifier.rb'
     - 'app/domain/summary_csv.rb'
     - 'app/helpers/rap_sheet_deidentifier.rb'
     - 'config/routes.rb'
     - 'lib/tasks/process.rake'
-    - 'spec/classifiers/plea_bargain_classifier_spec.rb'
     - 'spec/domain/count_with_eligibility_spec.rb'
     - 'spec/helpers/pdf_reader_spec.rb'
-    - 'spec/models/anon_rap_sheet_spec.rb'
 
 # Offense count: 2
 # Cop supports --auto-correct.
@@ -224,10 +213,7 @@ Naming/UncommunicativeMethodParamName:
 Naming/VariableNumber:
   Exclude:
     - 'app/lib/fill_misdemeanor_petitions.rb'
-    - 'spec/domain/rap_sheet_with_eligibility_spec.rb'
     - 'spec/models/anon_cycle_spec.rb'
-    - 'spec/models/anon_event_spec.rb'
-    - 'spec/models/anon_rap_sheet_spec.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.
@@ -262,7 +248,6 @@ Style/BlockComments:
 # IgnoredMethods: lambda, proc, it
 Style/BlockDelimiters:
   Exclude:
-    - 'spec/domain/rap_sheet_with_eligibility_spec.rb'
     - 'spec/lib/fill_prop64_motion_spec.rb'
 
 # Offense count: 3
@@ -321,13 +306,6 @@ Style/IfUnlessModifier:
 Style/LineEndConcatenation:
   Exclude:
     - 'app/helpers/rap_sheet_processor.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: IgnoredMethods.
-Style/MethodCallWithoutArgsParentheses:
-  Exclude:
-    - 'spec/domain/rap_sheet_with_eligibility_spec.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.
@@ -397,7 +375,6 @@ Style/RedundantParentheses:
   Exclude:
     - 'spec/domain/count_with_eligibility_spec.rb'
     - 'spec/domain/event_with_eligibility_spec.rb'
-    - 'spec/domain/rap_sheet_with_eligibility_spec.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.
@@ -485,7 +462,6 @@ Style/TernaryParentheses:
 Style/TrailingCommaInArguments:
   Exclude:
     - 'spec/models/anon_cycle_spec.rb'
-    - 'spec/models/anon_event_spec.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.

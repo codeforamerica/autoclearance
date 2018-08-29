@@ -17,23 +17,85 @@ describe PleaBargainClassifier do
           * * * *
           ARR/DET/CITE:         NAM:01  DOB:19750101
           19980101  CAPD SAN FRANCISCO
-  
-          CNT:01     #111 
+
+          CNT:01     #111
             11360 HS-SELL/TRANSPORT/ETC MARIJUANA/HASH
-  
-          CNT:02  135 PC-DESTROY/CONCEAL EVIDENCE
-          19980101 DISPO:PROS REJ-OTHER
-  
-          CNT:03  11364 HS-POSSESS CONTROL SUBSTANCE PARAPHERNA
-          19980101 DISPO:PROS REJ-OTHER
           - - - -
           COURT:                NAM:01
           19980101  CAMC SAN FRANCISCO
-  
+
           CNT:01     #222
             32 PC-ACCESSORY
-          *DISPO:CONVICTED   
-            CONV STATUS:MISDEMEANOR   
+          *DISPO:CONVICTED
+            CONV STATUS:MISDEMEANOR
+            SEN: 12 DAYS JAIL
+        TEXT
+      end
+
+      it 'returns true' do
+        expect(subject).to be_plea_bargain
+      end
+    end
+
+    context 'rejected non-prop64 counts in the cycle' do
+      let(:text) do
+        <<-TEXT
+          NAM/01 LASTY, FIRSTY
+          * * * *
+          ARR/DET/CITE:         NAM:01  DOB:19750101
+          19980101  CAPD SAN FRANCISCO
+
+          CNT:01     #111
+            11360 HS-SELL/TRANSPORT/ETC MARIJUANA/HASH
+
+          CNT:02  135 PC-DESTROY/CONCEAL EVIDENCE
+           DISPO:PROS REJ-OTHER
+
+          CNT:03  11364 HS-POSSESS CONTROL SUBSTANCE PARAPHERNA
+           DISPO:PROS REJ-OTHER
+          - - - -
+          COURT:                NAM:01
+          19980101  CAMC SAN FRANCISCO
+
+          CNT:01     #222
+            32 PC-ACCESSORY
+          *DISPO:CONVICTED
+            CONV STATUS:MISDEMEANOR
+            SEN: 12 DAYS JAIL
+        TEXT
+      end
+
+      it 'returns true' do
+        expect(subject).to be_plea_bargain
+      end
+    end
+
+    context 'rejected non-prop64 counts due to updates in the cycle' do
+      let(:text) do
+        <<-TEXT
+          NAM/01 LASTY, FIRSTY
+          * * * *
+          ARR/DET/CITE:         NAM:01  DOB:19750101
+          19980101  CAPD SAN FRANCISCO
+
+          CNT:01     #111
+            11360 HS-SELL/TRANSPORT/ETC MARIJUANA/HASH
+
+          CNT:02  135 PC-DESTROY/CONCEAL EVIDENCE
+          19980101
+            DISPO:PROS REJ-OTHER
+
+          CNT:03  11364 HS-POSSESS CONTROL SUBSTANCE PARAPHERNA
+          19980101
+            DISPO:PROS REJ-OTHER
+          - - - -
+          COURT:                NAM:01
+          19980101  CAMC SAN FRANCISCO
+
+          CNT:01     #222
+            32 PC-ACCESSORY
+          *DISPO:CONVICTED
+            CONV STATUS:MISDEMEANOR
             SEN: 12 DAYS JAIL
         TEXT
       end
@@ -101,26 +163,28 @@ describe PleaBargainClassifier do
           * * * *
           ARR/DET/CITE:         NAM:01  DOB:19750101
           19980101  CAPD SAN FRANCISCO
-  
-          CNT:01     #111 
+
+          CNT:01     #111
             11360 HS-SELL/TRANSPORT/ETC MARIJUANA/HASH
-  
+
           CNT:02  135 PC-DESTROY/CONCEAL EVIDENCE
-          19980101 DISPO:PROS REJ-OTHER
-  
+          19980101
+            DISPO:PROS REJ-OTHER
+
           CNT:03  11364 HS-POSSESS CONTROL SUBSTANCE PARAPHERNA
-          19980101 DISPO:PROS REJ-OTHER
-  
+          19980101
+            DISPO:PROS REJ-OTHER
+
           CNT:04
             496 PC-RECEIVE/ETC KNOWN STOLEN PROPERTY
           - - - -
           COURT:                NAM:01
           19980101  CAMC SAN FRANCISCO
-  
+
           CNT:01     #222
             32 PC-ACCESSORY
-          *DISPO:CONVICTED   
-            CONV STATUS:MISDEMEANOR   
+          *DISPO:CONVICTED
+            CONV STATUS:MISDEMEANOR
             SEN: 12 DAYS JAIL
         TEXT
       end
@@ -139,20 +203,21 @@ describe PleaBargainClassifier do
           * * * *
           ARR/DET/CITE:         NAM:01  DOB:19750101
           19980101  CAPD SAN FRANCISCO
-  
-          CNT:01     #111 
+
+          CNT:01     #111
             11357 HS-BLAH
-  
+
           CNT:02  135 PC-DESTROY/CONCEAL EVIDENCE
-          19980101 DISPO:PROS REJ-OTHER
+          19980101
+            DISPO:PROS REJ-OTHER
           - - - -
           COURT:                NAM:01
           19980101  CAMC SAN FRANCISCO
-  
+
           CNT:01     #222
             32 PC-ACCESSORY
-          *DISPO:CONVICTED   
-            CONV STATUS:MISDEMEANOR   
+          *DISPO:CONVICTED
+            CONV STATUS:MISDEMEANOR
             SEN: 12 DAYS JAIL
         TEXT
       end
@@ -193,26 +258,28 @@ describe PleaBargainClassifier do
           * * * *
           ARR/DET/CITE:         NAM:01  DOB:19750101
           19980101  CAPD SAN FRANCISCO
-  
-          CNT:01     #111 
+
+          CNT:01     #111
             11360 HS-SELL/TRANSPORT/ETC MARIJUANA/HASH
-  
+
           CNT:02  135 PC-DESTROY/CONCEAL EVIDENCE
-          19980101 DISPO:PROS REJ-OTHER
-  
+          19980101
+            DISPO:PROS REJ-OTHER
+
           CNT:03  11364 HS-POSSESS CONTROL SUBSTANCE PARAPHERNA
-          19980101 DISPO:PROS REJ-OTHER
-  
+          19980101
+            DISPO:PROS REJ-OTHER
+
           CNT:04
             496 PC-RECEIVE/ETC KNOWN STOLEN PROPERTY
           - - - -
           COURT:                NAM:01
           19980101  CAMC SAN FRANCISCO
-  
+
           CNT:01     #222
             32 PC-ACCESSORY
-          *DISPO:CONVICTED   
-            CONV STATUS:MISDEMEANOR   
+          *DISPO:CONVICTED
+            CONV STATUS:MISDEMEANOR
             SEN: 12 DAYS JAIL
         TEXT
       end
@@ -226,24 +293,25 @@ describe PleaBargainClassifier do
       let(:text) do
         <<-TEXT
           NAM/01 LASTY, FIRSTY
-  
+
           * * * *
           ARR/DET/CITE:         NAM:01  DOB:19750101
           19980101  CAPD SAN FRANCISCO
-  
-          CNT:01     #111 
+
+          CNT:01     #111
             496 PC-RECEIVE/ETC KNOWN STOLEN PROPERTY
-  
+
           CNT:02  135 PC-DESTROY/CONCEAL EVIDENCE
-          19980101 DISPO:PROS REJ-OTHER
+          19980101
+            DISPO:PROS REJ-OTHER
           - - - -
           COURT:                NAM:01
           19980101  CAMC SAN FRANCISCO
-  
+
           CNT:01     #222
             32 PC-ACCESSORY
-          *DISPO:CONVICTED   
-            CONV STATUS:MISDEMEANOR   
+          *DISPO:CONVICTED
+            CONV STATUS:MISDEMEANOR
             SEN: 12 DAYS JAIL
         TEXT
       end

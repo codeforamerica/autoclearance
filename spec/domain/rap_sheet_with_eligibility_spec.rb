@@ -7,18 +7,18 @@ require_relative '../../app/domain/rap_sheet_with_eligibility'
 describe RapSheetWithEligibility do
   describe '#eligible_events' do
     it 'filters out events not in given county' do
-      eligible_event_1 = build_court_event(
+      eligible_event1 = build_court_event(
         courthouse: 'Some courthouse',
         case_number: 'abc'
       )
-      eligible_event_2 = build_court_event(
+      eligible_event2 = build_court_event(
         courthouse: 'Another courthouse',
         case_number: 'def'
       )
       ineligible_event = build_court_event(
         courthouse: 'ineligible courthouse'
       )
-      rap_sheet = build_rap_sheet(events: [eligible_event_1, eligible_event_2, ineligible_event])
+      rap_sheet = build_rap_sheet(events: [eligible_event1, eligible_event2, ineligible_event])
 
       subject = build_rap_sheet_with_eligibility(rap_sheet: rap_sheet, courthouses: ['Some courthouse', 'Another courthouse']).eligible_events
       expect(subject.length).to eq 2
@@ -32,13 +32,15 @@ describe RapSheetWithEligibility do
       )
       ineligible_event = build_court_event(
         courthouse: 'CASC San Francisco',
-        updates: [
-          RapSheetParser::Update.new(
-            dispositions: [build_disposition(type: 'pc1203_dismissed')]
+        counts: [
+          build_court_count(
+            updates: [
+              RapSheetParser::Update.new(dispositions: [build_disposition(type: 'pc1203_dismissed')])
+            ]
           )
         ]
       )
-      rap_sheet = build_rap_sheet(events: ([eligible_event, ineligible_event]))
+      rap_sheet = build_rap_sheet(events: [eligible_event, ineligible_event])
 
       expect(build_rap_sheet_with_eligibility(rap_sheet: rap_sheet).eligible_events).to eq [eligible_event]
     end
@@ -46,44 +48,35 @@ describe RapSheetWithEligibility do
 
   describe '#has_three_convictions_of_same_type?' do
     it 'returns true if rap sheet contains three convictions with the same code section' do
-      count_1 = build_court_count(code: 'PC', section: '123')
-      event_1 = build_court_event(counts: [count_1])
+      event1 = build_court_event(counts: [build_court_count(code: 'PC', section: '123')])
+      event2 = build_court_event(counts: [build_court_count(code: 'PC', section: '123')])
+      event3 = build_court_event(counts: [build_court_count(code: 'PC', section: '123')])
 
-      count_2 = build_court_count(code: 'PC', section: '123')
-      event_2 = build_court_event(counts: [count_2])
-
-      count_3 = build_court_count(code: 'PC', section: '123')
-      event_3 = build_court_event(counts: [count_3])
-
-      rap_sheet = build_rap_sheet(events: ([event_1, event_2, event_3]))
+      rap_sheet = build_rap_sheet(events: [event1, event2, event3])
 
       expect(build_rap_sheet_with_eligibility(rap_sheet: rap_sheet).has_three_convictions_of_same_type?('PC 123')).to eq true
     end
 
     it 'returns false if rap sheet does not contain two convictions and one dismissed count for the same code section' do
-      count_1 = build_court_count(code: 'PC', section: '123', disposition: build_disposition(type: 'convicted'))
-      event_1 = build_court_event(counts: [count_1])
+      event1 = build_court_event(counts: [build_court_count(code: 'PC', section: '123', disposition: build_disposition(type: 'convicted'))])
+      event2 = build_court_event(counts: [build_court_count(code: 'PC', section: '123', disposition: build_disposition(type: 'convicted'))])
+      event3 = build_court_event(counts: [build_court_count(code: 'PC', section: '123', disposition: build_disposition(type: 'dismissed'))])
 
-      count_2 = build_court_count(code: 'PC', section: '123', disposition: build_disposition(type: 'convicted'))
-      event_2 = build_court_event(counts: [count_2])
-
-      count_3 = build_court_count(code: 'PC', section: '123', disposition: build_disposition(type: 'dismissed'))
-      event_3 = build_court_event(counts: [count_3])
-
-      rap_sheet = build_rap_sheet(events: ([event_1, event_2, event_3]))
+      rap_sheet = build_rap_sheet(events: [event1, event2, event3])
 
       expect(build_rap_sheet_with_eligibility(rap_sheet: rap_sheet).has_three_convictions_of_same_type?('PC 123')).to eq false
     end
 
     it 'returns false if rap sheet contains three convictions for the same code section in two events' do
-      count_1 = build_court_count(code: 'PC', section: '123')
-      count_2 = build_court_count(code: 'PC', section: '123')
-      event_1 = build_court_event(counts: [count_1, count_2])
+      event1 = build_court_event(
+        counts: [
+          build_court_count(code: 'PC', section: '123'),
+          build_court_count(code: 'PC', section: '123')
+        ]
+      )
+      event2 = build_court_event(counts: [build_court_count(code: 'PC', section: '123')])
 
-      count_3 = build_court_count(code: 'PC', section: '123')
-      event_2 = build_court_event(counts: [count_3])
-
-      rap_sheet = build_rap_sheet(events: ([event_1, event_2]))
+      rap_sheet = build_rap_sheet(events: [event1, event2])
 
       expect(build_rap_sheet_with_eligibility(rap_sheet: rap_sheet).has_three_convictions_of_same_type?('PC 123')).to eq false
     end
@@ -123,10 +116,10 @@ describe RapSheetWithEligibility do
     end
 
     context 'superstrike on rap sheet' do
-      let(:events) {
+      let(:events) do
         superstrike = build_court_count(code: 'PC', section: '187')
         [build_court_event(counts: [superstrike])]
-      }
+      end
 
       it 'returns true if superstrike' do
         expect(subject.disqualifiers?(code_section)).to eq true
@@ -134,18 +127,18 @@ describe RapSheetWithEligibility do
     end
 
     context 'three distinct conviction events which include the same eligible code_section' do
-      let(:events) {
+      let(:events) do
         event1_count = build_court_count(code: 'HS', section: '11357')
-        event_1 = build_court_event(case_number: '111', counts: [event1_count])
+        event1 = build_court_event(case_number: '111', counts: [event1_count])
 
         event2_count = build_court_count(code: 'HS', section: '11357')
-        event_2 = build_court_event(case_number: '222', counts: [event2_count])
+        event2 = build_court_event(case_number: '222', counts: [event2_count])
 
         event3_count = build_court_count(code: 'HS', section: '11357')
-        event_3 = build_court_event(case_number: '333', counts: [event3_count])
+        event3 = build_court_event(case_number: '333', counts: [event3_count])
 
-        [event_1, event_2, event_3]
-      }
+        [event1, event2, event3]
+      end
 
       it 'returns true' do
         expect(subject.disqualifiers?('HS 11357')).to eq true
@@ -153,7 +146,7 @@ describe RapSheetWithEligibility do
     end
   end
 
-  describe '#has_deceased_event?'do
+  describe '#has_deceased_event?' do
     it 'returns true if rap sheet contains a deceased event' do
       deceased_event = build_other_event(
         header: 'deceased',
@@ -166,11 +159,10 @@ describe RapSheetWithEligibility do
     end
 
     it 'returns false if rap sheet does not contain deceased event' do
-
       event1_count = build_court_count(code: 'HS', section: '11357')
-      event_1 = build_court_event(case_number: '111', counts: [event1_count])
+      event1 = build_court_event(case_number: '111', counts: [event1_count])
 
-      rap_sheet = build_rap_sheet(events: [event_1])
+      rap_sheet = build_rap_sheet(events: [event1])
 
       expect(build_rap_sheet_with_eligibility(rap_sheet: rap_sheet).has_deceased_event?).to eq false
     end
@@ -194,8 +186,7 @@ describe RapSheetWithEligibility do
     end
 
     it 'memoizes the search for deceased events when there are no deceased events' do
-
-      rap_sheet = build_rap_sheet()
+      rap_sheet = build_rap_sheet
       rap_sheet_with_eligibility = build_rap_sheet_with_eligibility(rap_sheet: rap_sheet)
 
       expect(rap_sheet_with_eligibility).to receive(:deceased_events).and_return([])
