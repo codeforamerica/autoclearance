@@ -274,7 +274,7 @@ describe AnonRapSheet do
       expect(custody_event.anon_counts[0].description).to eq("BURGLARY:FIRST DEGREE\n   CRT #12345\n\n\n")
       expect(custody_event.anon_counts[0].anon_disposition).to be_nil
       expect(custody_event.anon_counts[1].code).to eq('PC')
-      expect(custody_event.anon_counts[1].section).to eq("attempted\n459")
+      expect(custody_event.anon_counts[1].section).to eq('459')
       expect(custody_event.anon_counts[1].description).to eq("BURGLARY:FIRST DEGREE\n   SEN FROM: SAN MATEO CO   CRT #54323\n   SEN: 32 MONTHS PRISON")
       expect(custody_event.anon_counts[1].anon_disposition).to be_nil
 
