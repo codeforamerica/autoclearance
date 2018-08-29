@@ -12,7 +12,7 @@ class SummaryCSV < SingleCSV
   end
 
   private
-  
+
   def header
     ['Filename'] + super
   end

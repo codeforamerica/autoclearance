@@ -9,10 +9,10 @@ class RapSheetWithEligibility < SimpleDelegator
   end
 
   def eligible_events
-    convictions.
-      select { |e| in_courthouses?(e) }.
-      reject(&:dismissed_by_pc1203?).
-      map { |e| EventWithEligibility.new(e) }
+    convictions
+      .select { |e| in_courthouses?(e) }
+      .reject(&:dismissed_by_pc1203?)
+      .map { |e| EventWithEligibility.new(e) }
   end
 
   def potentially_eligible_counts?

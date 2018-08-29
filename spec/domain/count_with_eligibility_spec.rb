@@ -46,8 +46,9 @@ describe CountWithEligibility do
 
         before do
           plea_bargain_classifier = instance_double(PleaBargainClassifier, possible_plea_bargain?: true)
-          allow(PleaBargainClassifier).to receive(:new).with(event: event, count: subject).
-            and_return(plea_bargain_classifier)
+          allow(PleaBargainClassifier).to receive(:new)
+            .with(event: event, count: subject)
+            .and_return(plea_bargain_classifier)
         end
 
         it 'returns true' do
@@ -61,8 +62,9 @@ describe CountWithEligibility do
 
         before do
           plea_bargain_classifier = instance_double(PleaBargainClassifier, possible_plea_bargain?: false)
-          allow(PleaBargainClassifier).to receive(:new).with(event: event, count: subject).
-            and_return(plea_bargain_classifier)
+          allow(PleaBargainClassifier).to receive(:new)
+            .with(event: event, count: subject)
+            .and_return(plea_bargain_classifier)
         end
 
         it 'returns false' do
@@ -106,8 +108,9 @@ describe CountWithEligibility do
         eligibility = build_rap_sheet_with_eligibility(rap_sheet: build_rap_sheet)
         event = EventWithEligibility.new(build_court_event)
         plea_bargain_classifier = instance_double(PleaBargainClassifier, plea_bargain?: true)
-        allow(PleaBargainClassifier).to receive(:new).with(event: event, count: subject).
-          and_return(plea_bargain_classifier)
+        allow(PleaBargainClassifier).to receive(:new)
+          .with(event: event, count: subject)
+          .and_return(plea_bargain_classifier)
 
         expect(subject.csv_eligibility_column(event, eligibility)).to eq(true)
       end
@@ -116,8 +119,9 @@ describe CountWithEligibility do
         eligibility = build_rap_sheet_with_eligibility(rap_sheet: build_rap_sheet)
         event = EventWithEligibility.new(build_court_event)
         plea_bargain_classifier = instance_double(PleaBargainClassifier, plea_bargain?: false, possible_plea_bargain?: true)
-        allow(PleaBargainClassifier).to receive(:new).with(event: event, count: subject).
-          and_return(plea_bargain_classifier)
+        allow(PleaBargainClassifier).to receive(:new)
+          .with(event: event, count: subject)
+          .and_return(plea_bargain_classifier)
 
         expect(subject.csv_eligibility_column(event, eligibility)).to eq('maybe')
       end
@@ -154,10 +158,11 @@ describe CountWithEligibility do
       eligibility = build_rap_sheet_with_eligibility(rap_sheet: build_rap_sheet)
       event = EventWithEligibility.new(build_court_event)
       count = described_class.new(build_court_count(code: 'PC', section: '32'))
-      
+
       plea_bargain_classifier = instance_double(PleaBargainClassifier, possible_plea_bargain?: true)
-      allow(PleaBargainClassifier).to receive(:new).with(event: event, count: count).
-        and_return(plea_bargain_classifier)
+      allow(PleaBargainClassifier).to receive(:new)
+        .with(event: event, count: count)
+        .and_return(plea_bargain_classifier)
 
       expect(count.eligible?(event, eligibility)).to eq(true)
     end

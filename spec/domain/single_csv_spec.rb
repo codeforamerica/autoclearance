@@ -19,7 +19,7 @@ describe SingleCSV do
       counts: [court_count],
       name_code: '001'
     )
-    personal_info = build_personal_info(names: {'001' => 'defendant'})
+    personal_info = build_personal_info(names: { '001' => 'defendant' })
     rap_sheet = build_rap_sheet(events: [eligible_event], personal_info: personal_info)
     eligibility = build_rap_sheet_with_eligibility(rap_sheet: rap_sheet)
 
@@ -76,7 +76,7 @@ describe SingleCSV do
       name_code: '001'
     )
 
-    personal_info = build_personal_info(names: {'001' => 'defendant'})
+    personal_info = build_personal_info(names: { '001' => 'defendant' })
     rap_sheet = build_rap_sheet(events: [eligible_event, deceased_event], personal_info: personal_info)
     eligibility = build_rap_sheet_with_eligibility(rap_sheet: rap_sheet)
 

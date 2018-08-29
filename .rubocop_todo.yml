@@ -6,122 +6,12 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 4
-# Cop supports --auto-correct.
-# Configuration parameters: Include, TreatCommentsAsGroupSeparators.
-# Include: **/*.gemfile, **/Gemfile, **/gems.rb
-Bundler/OrderedGems:
-  Exclude:
-    - 'Gemfile'
-
-# Offense count: 8
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: leading, trailing
-Layout/DotPosition:
-  Exclude:
-    - 'app/domain/rap_sheet_with_eligibility.rb'
-    - 'spec/domain/count_with_eligibility_spec.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: AllowAdjacentOneLineDefs, NumberOfEmptyLines.
-Layout/EmptyLineBetweenDefs:
-  Exclude:
-    - 'db/migrate/20180814195919_create_anon_cycles.rb'
-
-# Offense count: 4
-# Cop supports --auto-correct.
-Layout/EmptyLines:
-  Exclude:
-    - 'Gemfile'
-    - 'db/migrate/20180814195919_create_anon_cycles.rb'
-
-# Offense count: 3
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: empty_lines, no_empty_lines
-Layout/EmptyLinesAroundBlockBody:
-  Exclude:
-    - 'db/schema.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, IndentationWidth.
-# SupportedStyles: consistent, consistent_relative_to_receiver, special_for_inner_method_call, special_for_inner_method_call_in_parentheses
-Layout/FirstParameterIndentation:
-  Exclude:
-    - 'spec/helpers/rap_sheet_processor_spec.rb'
-
 # Offense count: 6
 # Cop supports --auto-correct.
 # Configuration parameters: IndentationWidth.
 # SupportedStyles: special_inside_parentheses, consistent, align_braces
 Layout/IndentHash:
   EnforcedStyle: consistent
-
-# Offense count: 5
-# Cop supports --auto-correct.
-Layout/LeadingCommentSpace:
-  Exclude:
-    - 'Gemfile'
-    - 'app/domain/count_with_eligibility.rb'
-
-# Offense count: 3
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, IndentationWidth.
-# SupportedStyles: aligned, indented
-Layout/MultilineOperationIndentation:
-  Exclude:
-    - 'app/helpers/rap_sheet_processor.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, EnforcedStyleForEmptyBrackets.
-# SupportedStyles: space, no_space, compact
-# SupportedStylesForEmptyBrackets: space, no_space
-Layout/SpaceInsideArrayLiteralBrackets:
-  Exclude:
-    - 'config/environments/production.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, EnforcedStyleForEmptyBraces, SpaceBeforeBlockParameters.
-# SupportedStyles: space, no_space
-# SupportedStylesForEmptyBraces: space, no_space
-Layout/SpaceInsideBlockBraces:
-  Exclude:
-    - 'spec/helpers/rap_sheet_deidentifier_spec.rb'
-
-# Offense count: 4
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, EnforcedStyleForEmptyBraces.
-# SupportedStyles: space, no_space, compact
-# SupportedStylesForEmptyBraces: space, no_space
-Layout/SpaceInsideHashLiteralBraces:
-  Exclude:
-    - 'spec/domain/single_csv_spec.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: final_newline, final_blank_line
-Layout/TrailingBlankLines:
-  Exclude:
-    - 'Rakefile'
-    - 'app/domain/event_with_eligibility.rb'
-
-# Offense count: 66
-# Cop supports --auto-correct.
-# Configuration parameters: AllowInHeredoc.
-Layout/TrailingWhitespace:
-  Exclude:
-    - 'app/domain/summary_csv.rb'
-    - 'app/helpers/rap_sheet_deidentifier.rb'
-    - 'config/routes.rb'
-    - 'lib/tasks/process.rake'
-    - 'spec/domain/count_with_eligibility_spec.rb'
-    - 'spec/helpers/pdf_reader_spec.rb'
 
 # Offense count: 2
 # Cop supports --auto-correct.
@@ -140,10 +30,6 @@ Lint/IneffectiveAccessModifier:
     - 'app/models/anon_count.rb'
     - 'app/models/anon_rap_sheet.rb'
 
-# Offense count: 7
-Lint/ParenthesesAsGroupedExpression:
-  Exclude:
-    - 'spec/domain/event_with_eligibility_spec.rb'
 
 # Offense count: 3
 # Cop supports --auto-correct.
@@ -214,24 +100,6 @@ Naming/VariableNumber:
   Exclude:
     - 'app/lib/fill_misdemeanor_petitions.rb'
     - 'spec/models/anon_cycle_spec.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Performance/RedundantMatch:
-  Exclude:
-    - 'app/helpers/rap_sheet_deidentifier.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Performance/RegexpMatch:
-  Exclude:
-    - 'app/helpers/rap_sheet_deidentifier.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Performance/StringReplacement:
-  Exclude:
-    - 'app/lib/fill_misdemeanor_petitions.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.
@@ -340,13 +208,6 @@ Style/MutableConstant:
 Style/Next:
   Exclude:
     - 'app/helpers/rap_sheet_deidentifier.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: MinDigits, Strict.
-Style/NumericLiterals:
-  Exclude:
-    - 'db/schema.rb'
 
 # Offense count: 4
 # Cop supports --auto-correct.

@@ -16,4 +16,3 @@ begin
 rescue NameError, LoadError
   # bundler-audit is not available
 end
-

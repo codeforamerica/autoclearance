@@ -23,7 +23,7 @@ describe PDFReader do
     it 'removes blank lines and whitespace at the beginning of page' do
       input_text = <<~INPUT_TEXT
 
-            
+
               \t
 
         document begin here
@@ -38,7 +38,7 @@ describe PDFReader do
         document begin here
         another line
 
-            
+
               \t
 
       INPUT_TEXT
@@ -61,7 +61,7 @@ describe PDFReader do
     it 'removes lines beginning with "Route" from beginning of page' do
       input_text = <<~INPUT_TEXT
 
-                  
+
           Route  Print
 
         document begin here

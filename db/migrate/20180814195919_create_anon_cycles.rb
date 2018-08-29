@@ -25,8 +25,6 @@ class CreateAnonCycles < ActiveRecord::Migration[5.2]
     change_column_null :anon_events, :anon_cycle_id, false
   end
 
-
-
   def down
     add_reference :anon_events, :anon_rap_sheet, type: :uuid, foreign_key: true
 

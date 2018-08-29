@@ -64,7 +64,7 @@ class RapSheetDeidentifier
       case_number_string = m[0]
       chars = case_number_string.chars
       chars.each_with_index do |c, i|
-        if c.match(/\d/)
+        if /\d/.match?(c)
           digit = c.to_i
           digit = (digit + rand(10)) % 10
           chars[i] = digit
@@ -91,9 +91,9 @@ def fake_personal_info
     FROM: CLET   ISN: 00003 DATE: 02/05/01 TIME: 09:36:27 RESP MSG
     TO:   CT032474  OSN: 00003 DATE: 05/15/12 TIME: 09:36:30
     USERID: OBI_WAN
-    
+
     IH
-    
+
     RE: QHY.CA0313113A.10243565.PM,PM,P      DATE:20010205 TIME:09:36:26
     RESTRICTED-DO NOT USE FOR EMPLOYMENT,LICENSING OR CERTIFICATION PURPOSES
     ATTN:PM,PM,P,O,1954249,
@@ -101,9 +101,9 @@ def fake_personal_info
     ************************************************************************
     FOR CALIFORNIA AGENCIES ONLY - HAS PREVIOUS QUALIFYING OFFENSE. COLLECT DNA IF INCARCERATED, CONFINED, OR ON PROBATION OR PAROLE FOLLOWING ANY MISDEMEANOR OR FELONY CONVICTION. REQUEST KITS AND INFO AT (510) 310- 3000 OR PC296.PC296@DOJ.CA.GOV.
     ************************************************************************
-    
+
     ** III MULTIPLE SOURCE RECORD
-    
+
     CII/A01234557
     DOB/19681122    SEX/M  RAC/WHITE
     HGT/511  WGT/265  EYE/BLU  HAI/BRO  POB/CA

@@ -68,12 +68,12 @@ describe RapSheetProcessor do
       expect(Dir['/tmp/autoclearance-rap-sheet-inputs/*']).to eq ['/tmp/autoclearance-rap-sheet-inputs/not_a_valid_rap_sheet.pdf']
       expect(Dir['/tmp/autoclearance-outputs/*'])
         .to contain_exactly(
-              '/tmp/autoclearance-outputs/not_a_valid_rap_sheet.error',
-              '/tmp/autoclearance-outputs/summary_20110102-010444.error',
-              '/tmp/autoclearance-outputs/skywalker_rap_sheet.csv',
-              '/tmp/autoclearance-outputs/summary_20110102-010444.csv',
-              '/tmp/autoclearance-outputs/skywalker_rap_sheet_motion_0.pdf'
-            )
+          '/tmp/autoclearance-outputs/not_a_valid_rap_sheet.error',
+          '/tmp/autoclearance-outputs/summary_20110102-010444.error',
+          '/tmp/autoclearance-outputs/skywalker_rap_sheet.csv',
+          '/tmp/autoclearance-outputs/summary_20110102-010444.csv',
+          '/tmp/autoclearance-outputs/skywalker_rap_sheet_motion_0.pdf'
+        )
 
       actual_error = File.read('/tmp/autoclearance-outputs/not_a_valid_rap_sheet.error')
       actual_summary_error = File.read('/tmp/autoclearance-outputs/summary_20110102-010444.error')

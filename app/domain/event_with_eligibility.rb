@@ -30,4 +30,3 @@ class EventWithEligibility < SimpleDelegator
     end
   end
 end
-

@@ -64,7 +64,7 @@ class FillMisdemeanorPetitions
         "date": Date.today
       }
 
-      fill_petition("#{name.gsub('/', '_')}_#{court_number}", sf_number(row), fields)
+      fill_petition("#{name.tr('/', '_')}_#{court_number}", sf_number(row), fields)
     end
   end
 

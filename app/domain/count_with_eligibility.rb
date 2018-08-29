@@ -35,10 +35,10 @@ class CountWithEligibility < SimpleDelegator
 
   def dismissible_codes
     [
-      'HS 11357', #simple possession
-      'HS 11358', #cultivation
-      'HS 11359', #possession for sale
-      'HS 11360', #transportation for sale
+      'HS 11357', # simple possession
+      'HS 11358', # cultivation
+      'HS 11359', # possession for sale
+      'HS 11360', # transportation for sale
     ]
   end
 
