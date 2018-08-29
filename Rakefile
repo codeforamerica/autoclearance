@@ -5,13 +5,13 @@ require_relative 'config/application'
 require 'rubocop/rake_task'
 
 Rails.application.load_tasks
-RuboCop::RakeTask.new(:rubocop)
 
 begin
   require 'bundler/audit/task'
   Bundler::Audit::Task.new
+  RuboCop::RakeTask.new(:rubocop)
 
-  task default: ['bundle:audit', 'rubocop']
+  task default: %w[bundle:audit rubocop]
 rescue NameError, LoadError
   # bundler-audit is not available
 end
