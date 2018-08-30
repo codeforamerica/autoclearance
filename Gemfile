@@ -44,7 +44,7 @@ group :development, :test do
   gem 'pgsync'
   gem 'pry-byebug'
   gem 'rspec-rails'
-  gem 'rubocop'
+  gem 'rubocop', '~> 0.58.2'
 end
 
 group :development do
