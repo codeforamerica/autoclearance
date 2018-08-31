@@ -31,13 +31,6 @@ Lint/IneffectiveAccessModifier:
     - 'app/models/anon_rap_sheet.rb'
 
 
-# Offense count: 3
-# Cop supports --auto-correct.
-# Configuration parameters: IgnoreEmptyBlocks, AllowUnusedKeywordArguments.
-Lint/UnusedBlockArgument:
-  Exclude:
-    - 'app/helpers/rap_sheet_processor.rb'
-
 # Offense count: 2
 # Configuration parameters: ContextCreatingMethods, MethodCreatingMethods.
 Lint/UselessAccessModifier:
@@ -149,8 +142,6 @@ Style/FrozenStringLiteralComment:
 Style/GuardClause:
   Exclude:
     - 'app/domain/rap_sheet_with_eligibility.rb'
-    - 'app/helpers/rap_sheet_processor.rb'
-    - 'spec/helpers/rap_sheet_processor_spec.rb'
 
 # Offense count: 6
 # Cop supports --auto-correct.
@@ -161,19 +152,12 @@ Style/HashSyntax:
     - 'Gemfile'
     - 'app/controllers/application_controller.rb'
     - 'db/migrate/20180814010846_add_index_to_rap_sheet_checksum.rb'
-    - 'spec/helpers/rap_sheet_processor_spec.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.
 Style/IfUnlessModifier:
   Exclude:
     - 'app/domain/rap_sheet_with_eligibility.rb'
-
-# Offense count: 3
-# Cop supports --auto-correct.
-Style/LineEndConcatenation:
-  Exclude:
-    - 'app/helpers/rap_sheet_processor.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.
@@ -188,11 +172,6 @@ Style/MixinUsage:
   Exclude:
     - 'bin/setup'
     - 'bin/update'
-
-# Offense count: 1
-Style/MultilineBlockChain:
-  Exclude:
-    - 'app/helpers/rap_sheet_processor.rb'
 
 # Offense count: 3
 # Cop supports --auto-correct.
@@ -261,12 +240,6 @@ Style/SafeNavigation:
 
 # Offense count: 2
 # Cop supports --auto-correct.
-Style/SelfAssignment:
-  Exclude:
-    - 'app/helpers/rap_sheet_processor.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
 Style/StderrPuts:
   Exclude:
     - 'bin/yarn'
@@ -287,7 +260,6 @@ Style/StringLiterals:
     - 'config/puma.rb'
     - 'db/schema.rb'
     - 'lib/tasks/rap_sheet.rake'
-    - 'spec/helpers/rap_sheet_processor_spec.rb'
     - 'spec/lib/fill_misdemeanor_petitions_spec.rb'
     - 'spec/lib/fill_prop64_motion_spec.rb'
     - 'spec/rails_helper.rb'
@@ -306,7 +278,6 @@ Style/SymbolArray:
 Style/SymbolProc:
   Exclude:
     - 'app/helpers/rap_sheet_deidentifier.rb'
-    - 'app/helpers/rap_sheet_processor.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.

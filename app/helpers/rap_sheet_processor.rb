@@ -15,7 +15,7 @@ class RapSheetProcessor
     start_time = Time.now
     initial_rap_sheet_count = AnonRapSheet.count
 
-    input_directory.files.to_a.sort_by { |f| f.key }.each do |input_file|
+    input_directory.files.to_a.sort_by(&:key).each do |input_file|
       process_one_rap_sheet(input_file)
     end
 
@@ -26,13 +26,13 @@ class RapSheetProcessor
 
     time = (Time.now - start_time)
 
-    puts "#{@rap_sheets_processed} RAP #{'sheet'.pluralize(@rap_sheets_processed)} " +
-         "produced #{@num_motions} #{'motion'.pluralize(@num_motions)} " +
+    puts "#{@rap_sheets_processed} RAP #{'sheet'.pluralize(@rap_sheets_processed)} " \
+         "produced #{@num_motions} #{'motion'.pluralize(@num_motions)} " \
          "in #{time} seconds"
 
     new_rap_sheets = AnonRapSheet.count - initial_rap_sheet_count
     existing_rap_sheets = @rap_sheets_processed - new_rap_sheets
-    puts "Added #{new_rap_sheets} RAP #{'sheet'.pluralize(new_rap_sheets)} to analysis db. " +
+    puts "Added #{new_rap_sheets} RAP #{'sheet'.pluralize(new_rap_sheets)} to analysis db. " \
          "Skipped #{existing_rap_sheets} existing RAP #{'sheet'.pluralize(existing_rap_sheets)}."
   end
 
@@ -43,7 +43,7 @@ class RapSheetProcessor
   def process_one_rap_sheet(input_file)
     warning_logger = Logger.new(
       @warning_log,
-      formatter: proc { |severity, datetime, progname, msg| "[#{input_file.key}] #{msg}\n" }
+      formatter: proc { |_severity, _datetime, _progname, msg| "[#{input_file.key}] #{msg}\n" }
     )
 
     eligibility = rap_sheet_with_eligibility(input_file, warning_logger)
@@ -55,21 +55,15 @@ class RapSheetProcessor
 
     summary_csv.append(input_file.key, eligibility)
 
-    # Upload CSV for this rap sheet to Amazon
-    output_directory.files.create(
-      key: input_file.key.gsub('.pdf', '.csv'),
-      body: SingleCSV.new(eligibility).text,
-      content_type: 'text/csv'
-    )
-
     # Create a bunch of PDFs
-    eligibility.eligible_events.select do |event|
-      event.eligible_counts(eligibility).any?
-    end.each_with_index do |event, index|
+    eligibility
+      .eligible_events
+      .select { |event| event.eligible_counts(eligibility).any? }
+      .each_with_index do |event, index|
       file_name = "#{input_file.key.gsub('.pdf', '')}_motion_#{index}.pdf"
       eligible_counts = event.eligible_counts(eligibility)
 
-      @num_motions = @num_motions + 1
+      @num_motions += 1
       output_directory.files.create(
         key: file_name,
         body: FillProp64Motion.new(eligible_counts, event, eligibility.personal_info).filled_motion,
@@ -87,21 +81,21 @@ class RapSheetProcessor
   end
 
   def save_summary_errors(timestamp)
-    unless summary_errors.blank?
-      output_directory.files.create(
-        key: "summary_#{timestamp}.error",
-        body: summary_errors
-      )
-    end
+    return if summary_errors.blank?
+
+    output_directory.files.create(
+      key: "summary_#{timestamp}.error",
+      body: summary_errors
+    )
   end
 
   def save_summary_warnings(timestamp)
-    unless @warning_log.string.blank?
-      output_directory.files.create(
-        key: "summary_#{timestamp}.warning",
-        body: @warning_log.string
-      )
-    end
+    return if @warning_log.string.blank?
+
+    output_directory.files.create(
+      key: "summary_#{timestamp}.warning",
+      body: @warning_log.string
+    )
   end
 
   def save_summary_csv(timestamp)
@@ -129,7 +123,7 @@ class RapSheetProcessor
 
     rap_sheet = RapSheetParser::Parser.new.parse(text, logger: logger)
 
-    @rap_sheets_processed = @rap_sheets_processed + 1
+    @rap_sheets_processed += 1
     AnonRapSheet.create_or_update(
       text: text,
       county: @county[:name],

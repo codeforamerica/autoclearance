@@ -1,4 +1,0 @@
-Name,Date,Case Number,Courthouse,Charge,Severity,Sentence,Superstrikes,2 prior convictions,PC290,Remedy,Eligible,Deceased
-"SKYWALKER,LUKE JAY",1984-09-18,1234567,CASC San Francisco,HS 11357,M,"3y probation, 30d jail, fine, restitution","",false,false,redesignation,true,false
-"SKYWALKER,LUKE JAY",1984-09-18,1234567,CASC San Francisco,HS 11358,M,"3y probation, 30d jail, fine, restitution","",true,false,redesignation,false,false
-"SKYWALKER,LUKE JAY",1990-04-13,33857493,CASC San Francisco,HS 11358,M,"2y probation, 30d jail","",true,false,redesignation,false,false

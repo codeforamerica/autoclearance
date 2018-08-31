@@ -24,25 +24,15 @@ describe RapSheetProcessor do
 
       expect { subject }.to output(/2 RAP sheets produced 1 motion in ([0-9]|\.)+ seconds\nAdded 2 RAP sheets to analysis db. Skipped 0 existing RAP sheets./).to_stdout
 
-      expect(Dir['/tmp/autoclearance-rap-sheet-inputs/*']).to eq []
-      expected = [
-        '/tmp/autoclearance-outputs/skywalker_rap_sheet.csv',
-        '/tmp/autoclearance-outputs/chewbacca_rap_sheet.csv',
-        '/tmp/autoclearance-outputs/summary_20110102-010444.csv',
-        '/tmp/autoclearance-outputs/skywalker_rap_sheet_motion_0.pdf'
-      ]
-      expect(Dir['/tmp/autoclearance-outputs/*']).to contain_exactly(*expected)
-
-      skywalker_expected_text = File.read('spec/fixtures/skywalker_rap_sheet.csv')
-      skywalker_actual_text = File.read('/tmp/autoclearance-outputs/skywalker_rap_sheet.csv')
-      expect(skywalker_actual_text).to eq(skywalker_expected_text)
-
-      chewbacca_expected_text = File.read('spec/fixtures/chewbacca_rap_sheet.csv')
-      chewbacca_actual_text = File.read('/tmp/autoclearance-outputs/chewbacca_rap_sheet.csv')
-      expect(chewbacca_actual_text).to eq(chewbacca_expected_text)
+      expect(Dir['/tmp/autoclearance-rap-sheet-inputs/*']).to be_empty
+      expect(Dir['/tmp/autoclearance-outputs/*'])
+        .to contain_exactly(
+          '/tmp/autoclearance-outputs/summary_20110102-010444.csv',
+          '/tmp/autoclearance-outputs/skywalker_rap_sheet_motion_0.pdf'
+        )
 
       skywalker_motion_fields = get_fields_from_pdf(File.open('/tmp/autoclearance-outputs/skywalker_rap_sheet_motion_0.pdf'))
-      expect(skywalker_motion_fields["Defendant"]).to eq "SKYWALKER,LUKE JAY"
+      expect(skywalker_motion_fields['Defendant']).to eq 'SKYWALKER,LUKE JAY'
 
       summary_expected_text = File.read('spec/fixtures/summary.csv')
       summary_actual_text = File.read('/tmp/autoclearance-outputs/summary_20110102-010444.csv')
@@ -53,24 +43,25 @@ describe RapSheetProcessor do
       FileUtils.cp('spec/fixtures/not_a_valid_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/')
       FileUtils.cp('spec/fixtures/skywalker_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/')
 
-      expected_error_message = 'Error: Not a valid RAP sheet'
+      fake_exception = RapSheetParser::RapSheetParserException.new(
+        double('parser', failure_reason: 'Error: Not a valid RAP sheet'),
+        ''
+      )
 
       allow_any_instance_of(RapSheetParser::Parser).to receive(:parse).and_wrap_original do |m, *args|
-        if args[0].include? 'not_a_valid_rap_sheet'
-          raise RapSheetParser::RapSheetParserException.new(double('parser', :failure_reason => expected_error_message), '')
-        else
-          m.call(*args)
-        end
+        raise fake_exception if args[0].include? 'not_a_valid_rap_sheet'
+
+        m.call(*args)
       end
 
       expect { subject }.to output(/1 RAP sheet produced 1 motion in ([0-9]|\.)+ seconds\nAdded 1 RAP sheet to analysis db. Skipped 0 existing RAP sheets./).to_stdout
 
-      expect(Dir['/tmp/autoclearance-rap-sheet-inputs/*']).to eq ['/tmp/autoclearance-rap-sheet-inputs/not_a_valid_rap_sheet.pdf']
+      expect(Dir['/tmp/autoclearance-rap-sheet-inputs/*'])
+        .to contain_exactly('/tmp/autoclearance-rap-sheet-inputs/not_a_valid_rap_sheet.pdf')
       expect(Dir['/tmp/autoclearance-outputs/*'])
         .to contain_exactly(
           '/tmp/autoclearance-outputs/not_a_valid_rap_sheet.error',
           '/tmp/autoclearance-outputs/summary_20110102-010444.error',
-          '/tmp/autoclearance-outputs/skywalker_rap_sheet.csv',
           '/tmp/autoclearance-outputs/summary_20110102-010444.csv',
           '/tmp/autoclearance-outputs/skywalker_rap_sheet_motion_0.pdf'
         )
@@ -78,9 +69,9 @@ describe RapSheetProcessor do
       actual_error = File.read('/tmp/autoclearance-outputs/not_a_valid_rap_sheet.error')
       actual_summary_error = File.read('/tmp/autoclearance-outputs/summary_20110102-010444.error')
 
-      expect(actual_error).to include(expected_error_message)
+      expect(actual_error).to include('Error: Not a valid RAP sheet')
       expect(actual_summary_error).to include('not_a_valid_rap_sheet.pdf:')
-      expect(actual_summary_error).to include(expected_error_message)
+      expect(actual_summary_error).to include('Error: Not a valid RAP sheet')
     end
 
     it 'sends warnings from the parser to a warnings file' do
