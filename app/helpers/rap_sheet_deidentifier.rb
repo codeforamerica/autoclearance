@@ -44,17 +44,17 @@ class RapSheetDeidentifier
   end
 
   def randomize_dob(text)
-    dob_offset_days = rand(-1800..1799)
     dob_regex = %r{DOB[:\/](\d{8})}
     matches = text.scan(dob_regex)
     matches.uniq.each do |m|
       date_string = m[0]
-      date = Date.parse(date_string, 'YYYYMMDD')
-      new_date = date + dob_offset_days.days
-      new_date_string = new_date.strftime('%Y%m%d')
-      text = text.gsub(date_string, new_date_string)
+      text = text.gsub(date_string, random_date)
     end
     text
+  end
+
+  def random_date
+    Time.at(rand * Time.now.to_i).strftime('%Y%m%d')
   end
 
   def randomize_case_numbers(text)

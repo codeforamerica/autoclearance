@@ -75,11 +75,30 @@ describe RapSheetDeidentifier do
         * * * END OF MESSAGE * * *
       TEXT
 
-      allow_any_instance_of(PDFReader).to receive(:text).and_return(rap_sheet_text)
+      expect_any_instance_of(PDFReader).to receive(:text).and_return(rap_sheet_text)
 
       described_class.new.run
 
       expect(Dir['/tmp/autoclearance-outputs/*.txt'].length).to eq 1
+    end
+
+    it 'allows for invalid dates of birth' do
+      File.open('/tmp/autoclearance-rap-sheet-inputs/example_rap_sheet.pdf', 'w')
+
+      rap_sheet_text = <<~TEXT
+        personal info
+        * * * *
+        DOB:19910000
+        * * * END OF MESSAGE * * *
+      TEXT
+
+      expect_any_instance_of(PDFReader).to receive(:text).and_return(rap_sheet_text)
+
+      described_class.new.run
+      output_text_files = Dir['/tmp/autoclearance-outputs/*.txt']
+      expect(output_text_files.length).to eq 1
+      actual_text = File.read(output_text_files[0])
+      expect(actual_text).not_to include('19910000')
     end
   end
 end
