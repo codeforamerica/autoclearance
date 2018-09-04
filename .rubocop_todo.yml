@@ -180,14 +180,6 @@ Style/MutableConstant:
     - 'app/helpers/counties.rb'
     - 'app/models/anon_event.rb'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, MinBodyLength.
-# SupportedStyles: skip_modifier_ifs, always
-Style/Next:
-  Exclude:
-    - 'app/helpers/rap_sheet_deidentifier.rb'
-
 # Offense count: 4
 # Cop supports --auto-correct.
 # Configuration parameters: AutoCorrect, EnforcedStyle.
@@ -196,12 +188,6 @@ Style/NumericPredicate:
   Exclude:
     - 'spec/**/*'
     - 'app/lib/fill_prop64_motion.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/RandomWithOffset:
-  Exclude:
-    - 'app/helpers/rap_sheet_deidentifier.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.
@@ -221,14 +207,6 @@ Style/RedundantParentheses:
 Style/RedundantSelf:
   Exclude:
     - 'app/models/anon_rap_sheet.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, AllowInnerSlashes.
-# SupportedStyles: slashes, percent_r, mixed
-Style/RegexpLiteral:
-  Exclude:
-    - 'app/helpers/rap_sheet_deidentifier.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.
@@ -270,14 +248,6 @@ Style/StringLiterals:
 # SupportedStyles: percent, brackets
 Style/SymbolArray:
   EnforcedStyle: brackets
-
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: IgnoredMethods.
-# IgnoredMethods: respond_to, define_method
-Style/SymbolProc:
-  Exclude:
-    - 'app/helpers/rap_sheet_deidentifier.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.

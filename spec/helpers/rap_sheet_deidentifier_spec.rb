@@ -55,13 +55,31 @@ describe RapSheetDeidentifier do
     end
 
     it 'skip rap sheets without any cycles' do
-      File.open('/tmp/autoclearance-rap-sheet-inputs/bad_rap_sheet.pdf', 'w') { |f| f.write('Personal info') }
+      File.open('/tmp/autoclearance-rap-sheet-inputs/bad_rap_sheet.pdf', 'w')
 
-      allow_any_instance_of(PDFReader).to receive(:text).and_return('Personal info')
+      expect_any_instance_of(PDFReader).to receive(:text).and_return('Personal info')
 
       described_class.new.run
 
       expect(Dir['/tmp/autoclearance-outputs/*'].length).to eq 0
+    end
+
+    it 'allows for nbsp in cycle delimiters' do
+      File.open('/tmp/autoclearance-rap-sheet-inputs/example_rap_sheet.pdf', 'w')
+
+      # cycle delimiter below contains invisible nbsp characters
+      rap_sheet_text = <<~TEXT
+        personal info
+        * * * *
+        cycle text
+        * * * END OF MESSAGE * * *
+      TEXT
+
+      allow_any_instance_of(PDFReader).to receive(:text).and_return(rap_sheet_text)
+
+      described_class.new.run
+
+      expect(Dir['/tmp/autoclearance-outputs/*.txt'].length).to eq 1
     end
   end
 end

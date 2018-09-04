@@ -6,7 +6,7 @@ class RapSheetDeidentifier
   end
 
   def run
-    @input_directory.files.to_a.sort_by { |f| f.key }.each do |input_file|
+    @input_directory.files.to_a.sort_by(&:key).each do |input_file|
       text = PDFReader.new(input_file.body).text
       next unless first_cycle_delimiter_index(text)
 
@@ -44,8 +44,8 @@ class RapSheetDeidentifier
   end
 
   def randomize_dob(text)
-    dob_offset_days = rand(3600) - 1800
-    dob_regex = /DOB[:\/](\d{8})/
+    dob_offset_days = rand(-1800..1799)
+    dob_regex = %r{DOB[:\/](\d{8})}
     matches = text.scan(dob_regex)
     matches.uniq.each do |m|
       date_string = m[0]
@@ -64,11 +64,11 @@ class RapSheetDeidentifier
       case_number_string = m[0]
       chars = case_number_string.chars
       chars.each_with_index do |c, i|
-        if /\d/.match?(c)
-          digit = c.to_i
-          digit = (digit + rand(10)) % 10
-          chars[i] = digit
-        end
+        next unless /\d/.match?(c)
+
+        digit = c.to_i
+        digit = (digit + rand(10)) % 10
+        chars[i] = digit
       end
       new_case_number = chars.join
       text = text.gsub(case_number_string, new_case_number)
@@ -82,7 +82,7 @@ class RapSheetDeidentifier
   end
 
   def first_cycle_delimiter_index(text)
-    text.index(/^\s*(\*\s?){4}$/)
+    text.index(/^(\s| )*(\*(\s| )?){4}$/)
   end
 end
 
