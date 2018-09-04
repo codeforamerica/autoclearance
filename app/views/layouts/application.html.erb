@@ -1,11 +1,35 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Autoclearance</title>
-    <%= csrf_meta_tags %>
-  </head>
+<head>
+  <title>Autoclearance</title>
+  <%= csrf_meta_tags %>
 
-  <body>
-    <%= yield %>
-  </body>
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+</head>
+
+<body>
+<div class="page-wrapper">
+  <div class="main-header with-padding-med">
+    <div class="toolbar">
+      <div class="toolbar__left">
+        <h1 class="main-header__title">Clear My Record</h1>
+      </div>
+    </div>
+  </div>
+  <%= yield %>
+</div>
+<footer class="main-footer">
+  <div class="grid">
+    <div class="grid__item width-two-thirds">
+      <p class="text--small">Clear My Record is a service delivered by <a class="link--subtle" href="https://www.codeforamerica.org">Code for America</a> on behalf of the people of California.</p>
+    </div>
+    <div class="grid__item width-one-fourth shift-one-twelfth">
+      <div class="main-footer__cfa-logo">
+        <a href="https://www.codeforamerica.org"><div class="illustration illustration--cfa-logo"><span class="sr-only">Code for America</span></div></a>
+      </div>
+    </div>
+  </div>
+</footer>
+</body>
 </html>

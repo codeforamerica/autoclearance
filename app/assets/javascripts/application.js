@@ -12,4 +12,6 @@
 //
 //= require rails-ujs
 //= require turbolinks
+//= require cfa_styleguide_main
+
 //= require_tree .

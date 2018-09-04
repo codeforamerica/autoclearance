@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 git_source(:github) do |repo_name|
-  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
+  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?('/')
   "https://github.com/#{repo_name}.git"
 end
 
@@ -31,11 +31,13 @@ gem 'jbuilder', '~> 2.5'
 # gem 'capistrano-rails', group: :development
 gem 'fog-aws'
 gem 'pdf-reader'
-gem 'rap_sheet_parser', :git => 'https://github.com/codeforamerica/rap_sheet_parser'
+gem 'rap_sheet_parser', git: 'https://github.com/codeforamerica/rap_sheet_parser'
 # gem 'rap_sheet_parser', :path => '../rap_sheet_parser'
 
 gem 'cliver'
 gem 'pdf-forms'
+
+gem 'cfa-styleguide', git: 'https://github.com/codeforamerica/cfa-styleguide-gem'
 
 group :development, :test do
   gem 'bundler-audit'
