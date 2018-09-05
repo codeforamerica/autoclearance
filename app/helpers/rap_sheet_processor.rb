@@ -12,7 +12,7 @@ class RapSheetProcessor
   end
 
   def run
-    start_time = Time.now
+    start_time = Time.zone.now
     initial_rap_sheet_count = AnonRapSheet.count
 
     input_directory.files.to_a.sort_by(&:key).each do |input_file|
@@ -24,8 +24,9 @@ class RapSheetProcessor
     save_summary_errors(timestamp)
     save_summary_warnings(timestamp)
 
-    time = (Time.now - start_time)
+    time = (Time.zone.now - start_time)
 
+    # rubocop:disable Rails/Output
     puts "#{@rap_sheets_processed} RAP #{'sheet'.pluralize(@rap_sheets_processed)} " \
          "produced #{@num_motions} #{'motion'.pluralize(@num_motions)} " \
          "in #{time} seconds"
@@ -34,6 +35,7 @@ class RapSheetProcessor
     existing_rap_sheets = @rap_sheets_processed - new_rap_sheets
     puts "Added #{new_rap_sheets} RAP #{'sheet'.pluralize(new_rap_sheets)} to analysis db. " \
          "Skipped #{existing_rap_sheets} existing RAP #{'sheet'.pluralize(existing_rap_sheets)}."
+    # rubocop:enable Rails/Output
   end
 
   private

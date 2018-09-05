@@ -4,3 +4,9 @@ AllCops:
   Exclude:
     - 'db/schema.rb'
     - 'vendor/**/*'
+
+Rails:
+  Enabled: true
+
+Rails/NotNullColumn:
+  Enabled: false

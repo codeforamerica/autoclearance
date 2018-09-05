@@ -3,7 +3,7 @@ require 'rails_helper'
 describe RapSheetProcessor do
   describe '#run' do
     subject do
-      travel_to(Time.new(2011, 1, 2, 1, 4, 44)) do
+      travel_to(Time.zone.local(2011, 1, 2, 1, 4, 44)) do
         described_class.new(Counties::SAN_FRANCISCO).run
       end
     end

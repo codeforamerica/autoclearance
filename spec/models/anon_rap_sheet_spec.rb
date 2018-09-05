@@ -190,7 +190,7 @@ describe AnonRapSheet do
       )
 
       expect(AnonEvent.where(event_type: 'arrest').count).to eq 1
-      arrest_event = AnonEvent.find_by_event_type('arrest')
+      arrest_event = AnonEvent.find_by(event_type: 'arrest')
       expect(arrest_event.agency).to eq 'CAPD SAN FRANCISCO'
       expect(arrest_event.date).to eq Date.new(1993, 4, 7)
       expect(arrest_event.anon_counts.count).to eq(2)
@@ -205,7 +205,7 @@ describe AnonRapSheet do
       expect(arrest_event.anon_counts[1].anon_disposition).to be_nil
 
       expect(AnonEvent.where(event_type: 'deceased').count).to eq 1
-      deceased_event = AnonEvent.find_by_event_type('deceased')
+      deceased_event = AnonEvent.find_by(event_type: 'deceased')
       expect(deceased_event.agency).to eq 'CACO SAN FRANCISCO'
       expect(deceased_event.date).to eq Date.new(2013, 8, 17)
       expect(deceased_event.anon_counts.count).to eq(1)
@@ -215,7 +215,7 @@ describe AnonRapSheet do
       expect(deceased_event.anon_counts[0].anon_disposition).to be_nil
 
       expect(AnonEvent.where(event_type: 'supplemental_arrest').count).to eq 1
-      arrest_event = AnonEvent.find_by_event_type('supplemental_arrest')
+      arrest_event = AnonEvent.find_by(event_type: 'supplemental_arrest')
       expect(arrest_event.agency).to eq 'CASO SAN FRANCISCO'
       expect(arrest_event.date).to eq Date.new(2011, 1, 24)
       expect(arrest_event.anon_counts.count).to eq(1)
@@ -225,7 +225,7 @@ describe AnonRapSheet do
       expect(arrest_event.anon_counts[0].anon_disposition).to be_nil
 
       expect(AnonEvent.where(event_type: 'mental_health').count).to eq 1
-      arrest_event = AnonEvent.find_by_event_type('mental_health')
+      arrest_event = AnonEvent.find_by(event_type: 'mental_health')
       expect(arrest_event.agency).to eq 'CAHO ATASCADERO STATE'
       expect(arrest_event.date).to eq Date.new(1991, 6, 25)
       expect(arrest_event.anon_counts.count).to eq(1)
@@ -235,7 +235,7 @@ describe AnonRapSheet do
       expect(arrest_event.anon_counts[0].anon_disposition).to be_nil
 
       expect(AnonEvent.where(event_type: 'court').count).to eq 1
-      court_event = AnonEvent.find_by_event_type('court')
+      court_event = AnonEvent.find_by(event_type: 'court')
       expect(court_event.agency).to eq 'CASC San Francisco'
       expect(court_event.date).to eq Date.new(1993, 7, 8)
       expect(court_event.anon_counts.count).to eq(1)
@@ -246,7 +246,7 @@ describe AnonRapSheet do
       expect(court_event.anon_counts[0].anon_disposition.disposition_type).to eq('dismissed')
 
       expect(AnonEvent.where(event_type: 'applicant').count).to eq 1
-      applicant_event = AnonEvent.find_by_event_type('applicant')
+      applicant_event = AnonEvent.find_by(event_type: 'applicant')
       expect(applicant_event.agency).to eq 'CASD SOCIAL SERV CCL-CRCB, SACRAMENTO'
       expect(applicant_event.date).to eq Date.new(2002, 12, 13)
       expect(applicant_event.anon_counts.count).to eq(1)
@@ -255,7 +255,7 @@ describe AnonRapSheet do
       expect(applicant_event.anon_counts[0].anon_disposition).to be_nil
 
       expect(AnonEvent.where(event_type: 'probation').count).to eq 1
-      probation_event = AnonEvent.find_by_event_type('probation')
+      probation_event = AnonEvent.find_by(event_type: 'probation')
       expect(probation_event.agency).to eq 'CAPR SAN FRANCISCO'
       expect(probation_event.date).to eq Date.new(1984, 12, 28)
       expect(probation_event.anon_counts.count).to eq(1)
@@ -265,7 +265,7 @@ describe AnonRapSheet do
       expect(probation_event.anon_counts[0].anon_disposition).to be_nil
 
       expect(AnonEvent.where(event_type: 'custody').count).to eq 1
-      custody_event = AnonEvent.find_by_event_type('custody')
+      custody_event = AnonEvent.find_by(event_type: 'custody')
       expect(custody_event.agency).to eq 'CASD CORRECTIONS'
       expect(custody_event.date).to eq Date.new(1985, 12, 19)
       expect(custody_event.anon_counts.count).to eq(2)

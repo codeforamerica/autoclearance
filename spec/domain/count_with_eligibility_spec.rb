@@ -79,7 +79,7 @@ describe CountWithEligibility do
       eligible_count = build_court_count(code: 'HS', section: '11357')
 
       event = build_court_event(
-        date: Date.today - 7.days,
+        date: Time.zone.today - 7.days,
         case_number: '1',
         counts: [eligible_count]
       )
@@ -133,7 +133,7 @@ describe CountWithEligibility do
       eligible_count = build_court_count(code: 'HS', section: '11357')
 
       event = build_court_event(
-        date: Date.today - 7.days,
+        date: Time.zone.today - 7.days,
         case_number: '1',
         counts: [eligible_count]
       )

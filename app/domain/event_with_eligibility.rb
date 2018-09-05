@@ -22,7 +22,7 @@ class EventWithEligibility < SimpleDelegator
   def remedy
     return 'redesignation' if sentence.nil?
 
-    sentence_still_active = date + sentence.total_duration > Date.today
+    sentence_still_active = date + sentence.total_duration > Time.zone.today
     if sentence_still_active
       'resentencing'
     else

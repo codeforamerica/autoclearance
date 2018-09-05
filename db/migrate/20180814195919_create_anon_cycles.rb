@@ -1,8 +1,8 @@
 class CreateAnonCycles < ActiveRecord::Migration[5.2]
-  class AnonEvent < ActiveRecord::Base
+  class AnonEvent < ApplicationRecord
   end
 
-  class AnonCycle < ActiveRecord::Base
+  class AnonCycle < ApplicationRecord
   end
 
   def up

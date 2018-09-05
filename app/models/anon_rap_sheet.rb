@@ -1,5 +1,5 @@
 class AnonRapSheet < ApplicationRecord
-  validates_presence_of :county, :checksum
+  validates :county, :checksum, presence: true
   has_many :anon_cycles, dependent: :destroy
 
   def self.create_or_update(text:, county:, rap_sheet:)

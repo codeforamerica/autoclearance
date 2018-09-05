@@ -54,7 +54,7 @@ class RapSheetDeidentifier
   end
 
   def random_date
-    Time.at(rand * Time.now.to_i).strftime('%Y%m%d')
+    Time.zone.at(rand * Time.zone.now.to_i).strftime('%Y%m%d')
   end
 
   def randomize_case_numbers(text)

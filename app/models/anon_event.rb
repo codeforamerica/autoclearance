@@ -4,8 +4,8 @@ class AnonEvent < ApplicationRecord
 
   VALID_EVENT_TYPES = ['court', 'arrest', 'applicant', 'probation', 'custody', 'registration', 'supplemental_arrest', 'deceased', 'mental_health']
 
-  validates_presence_of :event_type
-  validates_inclusion_of :event_type, in: VALID_EVENT_TYPES
+  validates :event_type, presence: true
+  validates :event_type, inclusion: { in: VALID_EVENT_TYPES }
 
   default_scope { order(date: :asc) }
 

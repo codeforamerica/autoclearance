@@ -61,7 +61,7 @@ class FillMisdemeanorPetitions
         "11360b": "No", # ignored right now since column always empty
         "others": yes(other_charges.present?),
         "other_charges_description": other_charges.join(', '),
-        "date": Date.today
+        "date": Time.zone.today
       }
 
       fill_petition("#{name.tr('/', '_')}_#{court_number}", sf_number(row), fields)

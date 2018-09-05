@@ -5,7 +5,7 @@ describe EventWithEligibility do
   describe 'remedy' do
     let(:event) do
       build_court_event(
-        date: Date.today - 7.days,
+        date: Time.zone.today - 7.days,
         courthouse: 'CASC San Francisco',
         counts: [build_court_count(disposition: build_disposition(sentence: sentence))]
       )
