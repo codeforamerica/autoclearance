@@ -5,3 +5,13 @@
 .main-footer__cfa-logo {
   margin-top: 0em;
 }
+
+.file-list {
+  &:last-child {
+    padding-bottom: -20px;
+  }
+
+  li {
+    border-top: 2px solid #EAEAE9;
+  }
+}
