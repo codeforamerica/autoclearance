@@ -13,5 +13,6 @@
 //= require rails-ujs
 //= require turbolinks
 //= require cfa_styleguide_main
+//= require vue/dist/vue
 
 //= require_tree .

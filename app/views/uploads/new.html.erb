@@ -1,4 +1,4 @@
-<div class="grid">
+<div id="vue-app-div" class="grid">
   <div class="grid__item width-two-thirds shift-one-sixth">
     <div class="form-card">
       <header class="form-card__header">
@@ -8,22 +8,18 @@
         <div class="form-group">
           <label class="form-question">Select or drag and drop the RAP sheets you'd like to upload.</label>
           <div class="file-upload">
-            <!-- <input type="file" class="file&#45;upload__input"> -->
-            <!-- <label class="button">Select files -->
-              <!-- <i class="button__icon icon&#45;file_upload"></i> -->
-            <!-- </label> -->
             <%= form_tag(multipart: true) do %>
               <%= label_tag 'Select files', nil, class: 'button' do %>
                 Select Files <i class="button__icon icon-file_upload"></i>
               <% end %>
-              <%= file_field_tag 'Select files', class: 'file-upload__input' %>
+              <%= file_field_tag 'Select files', { accept: 'application/pdf', class: 'file-upload__input', multiple: true, 'v-on:change': 'fileInputChanged' } %>
             <% end %>
           </div>
         </div>
       </div>
       <div class="form-card__content">
         <ul class="file-list">
-          <li>some file name</li>
+          <li v-for="file in selectedFiles">file name: {{ file.name }}</li>
         </ul>
       </div>
       <div class="form-card__footer">

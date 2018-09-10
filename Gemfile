@@ -42,11 +42,13 @@ gem 'cfa-styleguide', git: 'https://github.com/codeforamerica/cfa-styleguide-gem
 group :development, :test do
   gem 'bundler-audit'
   gem 'capybara', '~> 2.13'
+  gem 'capybara-selenium'
   gem 'fog-local'
   gem 'pgsync'
   gem 'pry-byebug'
   gem 'rspec-rails'
   gem 'rubocop', '~> 0.58.2'
+  gem 'selenium-webdriver'
 end
 
 group :development do

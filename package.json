@@ -1,5 +1,7 @@
 {
   "name": "autoclearance",
   "private": true,
-  "dependencies": {}
+  "dependencies": {
+    "vue": "^2.5.17"
+  }
 }
