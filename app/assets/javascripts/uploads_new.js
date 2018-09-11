@@ -2,7 +2,7 @@ var store = {
     selectedFiles: null
 };
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function () {
     new Vue({
         el: '#vue-app-div',
         data: store,
