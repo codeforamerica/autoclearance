@@ -38,7 +38,7 @@ gem 'cliver'
 gem 'pdf-forms'
 
 gem 'cfa-styleguide', git: 'https://github.com/codeforamerica/cfa-styleguide-gem'
-
+gem 'ruby-prof'
 group :development, :test do
   gem 'bundler-audit'
   gem 'capybara', '~> 2.13'
