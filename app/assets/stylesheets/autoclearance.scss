@@ -13,5 +13,11 @@
 
   li {
     border-top: 2px solid #EAEAE9;
+    padding: 10px;
+    .truncated-filename {
+      max-width: 25ch;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 }

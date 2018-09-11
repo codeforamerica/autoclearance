@@ -19,11 +19,13 @@
       </div>
       <div class="form-card__content">
         <ul class="file-list">
-          <li v-for="file in selectedFiles">file name: {{ file.name }}</li>
+          <li v-for="file in selectedFiles">
+            <div class="truncated-filename">{{ file.name }}</div>
+          </li>
         </ul>
       </div>
       <div class="form-card__footer">
-        <button class="button button--disabled">Continue <i class="icon icon-arrow_forward"></i></button>
+        <button class="button button--primary" v-bind:class="{'button--disabled': selectedFiles==null}" v-bind:disabled="selectedFiles==null">Upload<i class="icon icon-arrow_forward"></i></button>
       </div>
     </div>
   </div>
