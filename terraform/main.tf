@@ -656,7 +656,6 @@ resource "aws_iam_instance_profile" "bastion_profile" {
 }
 
 
-# Beanstalk Application
 resource "aws_elastic_beanstalk_application" "ng_beanstalk_application" {
   name = "Autoclearance"
 }
@@ -804,7 +803,6 @@ resource "aws_db_instance" "analysis_db" {
   ]
 }
 
-# Beanstalk Environment
 resource "aws_elastic_beanstalk_environment" "beanstalk_application_environment" {
   name = "autoclearance-prod"
   application = "${aws_elastic_beanstalk_application.ng_beanstalk_application.name}"
@@ -1340,4 +1338,13 @@ resource "aws_cloudwatch_log_group" "log_access_logs" {
 
 resource "aws_cloudwatch_log_group" "management_logs" {
   name = "management_logs"
+}
+
+module "metabase" {
+  source = "./metabase"
+
+  vpc_id = "${aws_vpc.default.id}"
+  subnet_1_id = "${aws_subnet.public.id}"
+  subnet_2_id = "${aws_subnet.public_2.id}"
+  db_subnet_group_name = "${aws_db_subnet_group.default.name}"
 }
