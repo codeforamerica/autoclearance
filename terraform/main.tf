@@ -66,7 +66,7 @@ resource "aws_route_table_association" "subnet_route_table_2" {
   route_table_id = "${aws_route_table.internet_access.id}"
 }
 
-resource "aws_network_acl" "default" {
+resource "aws_network_acl" "public" {
   vpc_id = "${aws_vpc.default.id}"
   subnet_ids = [
     "${aws_subnet.public.id}",
@@ -131,6 +131,15 @@ resource "aws_network_acl" "default" {
     to_port = 5432
   }
 
+  # Mailgun for Metabase
+  ingress {
+    protocol = "tcp"
+    rule_no = 600
+    action = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port = 587
+    to_port = 587
+  }
 
   tags {
     Name = "public"
@@ -656,7 +665,6 @@ resource "aws_iam_instance_profile" "bastion_profile" {
 }
 
 
-# Beanstalk Application
 resource "aws_elastic_beanstalk_application" "ng_beanstalk_application" {
   name = "Autoclearance"
 }
@@ -804,11 +812,10 @@ resource "aws_db_instance" "analysis_db" {
   ]
 }
 
-# Beanstalk Environment
 resource "aws_elastic_beanstalk_environment" "beanstalk_application_environment" {
   name = "autoclearance-prod"
   application = "${aws_elastic_beanstalk_application.ng_beanstalk_application.name}"
-  solution_stack_name = "64bit Amazon Linux 2018.03 v2.8.1 running Ruby 2.5 (Puma)"
+  solution_stack_name = "64bit Amazon Linux 2018.03 v2.8.3 running Ruby 2.5 (Puma)"
   tier = "WebServer"
 
   setting {
@@ -1340,4 +1347,15 @@ resource "aws_cloudwatch_log_group" "log_access_logs" {
 
 resource "aws_cloudwatch_log_group" "management_logs" {
   name = "management_logs"
+}
+
+module "metabase" {
+  source = "./metabase"
+
+  vpc_id = "${aws_vpc.default.id}"
+  public_subnet_id = "${aws_subnet.public.id}"
+  private_subnet_id = "${aws_subnet.private.id}"
+  db_subnet_group_name = "${aws_db_subnet_group.default.name}"
+  role_name = "${aws_iam_role.beanstalk_role.name}"
+  profile_name = "${aws_iam_instance_profile.instance_profile.name}"
 }
