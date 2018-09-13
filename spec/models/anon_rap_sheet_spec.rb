@@ -36,11 +36,16 @@ describe AnonRapSheet do
       TEXT
 
       rap_sheet = RapSheetParser::Parser.new.parse(text)
+      rap_sheet_with_eligibility = RapSheetWithEligibility.new(
+        rap_sheet: rap_sheet,
+        courthouses: Counties::SAN_FRANCISCO[:courthouses],
+        logger: Logger.new('/dev/null')
+      )
 
       described_class.create_or_update(
         text: text,
         county: 'Some county',
-        rap_sheet: rap_sheet
+        rap_sheet_with_eligibility: rap_sheet_with_eligibility
       )
 
       anon_rap_sheet = AnonRapSheet.first
@@ -48,6 +53,11 @@ describe AnonRapSheet do
       expect(anon_rap_sheet.year_of_birth).to eq 1995
       expect(anon_rap_sheet.sex).to eq 'M'
       expect(anon_rap_sheet.race).to eq 'WOOKIE'
+
+      rap_sheet_properties = anon_rap_sheet.rap_sheet_properties
+      expect(rap_sheet_properties.deceased).to eq false
+      expect(rap_sheet_properties.has_sex_offender_registration).to eq false
+      expect(rap_sheet_properties.has_superstrikes).to eq false
 
       cycle = anon_rap_sheet.anon_cycles.first
       expect(cycle.anon_events.count).to eq 3
@@ -183,10 +193,15 @@ describe AnonRapSheet do
 
       rap_sheet = RapSheetParser::Parser.new.parse(text)
 
+      rap_sheet_with_eligibility = RapSheetWithEligibility.new(
+        rap_sheet: rap_sheet,
+        courthouses: Counties::SAN_FRANCISCO[:courthouses],
+        logger: Logger.new('/dev/null')
+      )
       described_class.create_or_update(
         text: text,
         county: 'Some county',
-        rap_sheet: rap_sheet
+        rap_sheet_with_eligibility: rap_sheet_with_eligibility
       )
 
       expect(AnonEvent.where(event_type: 'arrest').count).to eq 1
@@ -313,10 +328,16 @@ describe AnonRapSheet do
 
       rap_sheet = RapSheetParser::Parser.new.parse(text)
 
+      rap_sheet_with_eligibility = RapSheetWithEligibility.new(
+        rap_sheet: rap_sheet,
+        courthouses: Counties::SAN_FRANCISCO[:courthouses],
+        logger: Logger.new('/dev/null')
+      )
+
       described_class.create_or_update(
         text: text,
         county: 'Some county',
-        rap_sheet: rap_sheet
+        rap_sheet_with_eligibility: rap_sheet_with_eligibility
       )
 
       anon_rap_sheet = AnonRapSheet.first
@@ -331,10 +352,28 @@ describe AnonRapSheet do
     end
 
     it 'when the same rap sheet is uploaded twice, it overwrites the database contents' do
+      rap_sheet = build_rap_sheet(
+        events: [build_court_event, build_court_event]
+      )
+
+      rap_sheet_with_eligibility = build_rap_sheet_with_eligibility(
+        rap_sheet: rap_sheet,
+        courthouses: Counties::SAN_FRANCISCO[:courthouses],
+        logger: Logger.new('/dev/null')
+      )
+
       described_class.create_or_update(
         text: 'rap sheet 1',
         county: 'Some county',
-        rap_sheet: build_rap_sheet(events: [build_court_event, build_court_event])
+        rap_sheet_with_eligibility: rap_sheet_with_eligibility
+      )
+
+      rap_sheet = build_rap_sheet(events: [build_court_event])
+
+      rap_sheet_with_eligibility = build_rap_sheet_with_eligibility(
+        rap_sheet: rap_sheet,
+        courthouses: Counties::SAN_FRANCISCO[:courthouses],
+        logger: Logger.new('/dev/null')
       )
 
       expect(AnonRapSheet.count).to eq 1
@@ -344,17 +383,24 @@ describe AnonRapSheet do
       described_class.create_or_update(
         text: 'rap sheet 1',
         county: 'Different County',
-        rap_sheet: build_rap_sheet(events: [build_court_event])
+        rap_sheet_with_eligibility: rap_sheet_with_eligibility
       )
 
       expect(AnonRapSheet.count).to eq 1
       expect(AnonRapSheet.first.county).to eq 'Different County'
       expect(AnonEvent.count).to eq 1
 
+      rap_sheet = build_rap_sheet(events: [build_court_event, build_court_event, build_court_event])
+
+      rap_sheet_with_eligibility = build_rap_sheet_with_eligibility(
+        rap_sheet: rap_sheet,
+        courthouses: Counties::SAN_FRANCISCO[:courthouses],
+        logger: Logger.new('/dev/null')
+      )
       described_class.create_or_update(
         text: 'rap sheet 2',
         county: 'Some county',
-        rap_sheet: build_rap_sheet(events: [build_court_event, build_court_event, build_court_event])
+        rap_sheet_with_eligibility: rap_sheet_with_eligibility
       )
 
       expect(AnonRapSheet.count).to eq 2
@@ -428,22 +474,40 @@ describe AnonRapSheet do
         * * * END OF MESSAGE * * *
       TEXT
 
+      rap_sheet_with_eligibility_1 = build_rap_sheet_with_eligibility(
+        rap_sheet: RapSheetParser::Parser.new.parse(text1),
+        courthouses: Counties::SAN_FRANCISCO[:courthouses],
+        logger: Logger.new('/dev/null')
+      )
+
       rap1 = described_class.create_or_update(
         text: text1,
         county: 'Some county',
-        rap_sheet: RapSheetParser::Parser.new.parse(text1)
+        rap_sheet_with_eligibility: rap_sheet_with_eligibility_1
+      )
+
+      rap_sheet_with_eligibility_2 = build_rap_sheet_with_eligibility(
+        rap_sheet: RapSheetParser::Parser.new.parse(text2),
+        courthouses: Counties::SAN_FRANCISCO[:courthouses],
+        logger: Logger.new('/dev/null')
       )
 
       rap2 = described_class.create_or_update(
         text: text2,
         county: 'Some county',
-        rap_sheet: RapSheetParser::Parser.new.parse(text2)
+        rap_sheet_with_eligibility: rap_sheet_with_eligibility_2
+      )
+
+      rap_sheet_with_eligibility_3 = build_rap_sheet_with_eligibility(
+        rap_sheet: RapSheetParser::Parser.new.parse(text3),
+        courthouses: Counties::SAN_FRANCISCO[:courthouses],
+        logger: Logger.new('/dev/null')
       )
 
       rap3 = described_class.create_or_update(
         text: text3,
         county: 'Some county',
-        rap_sheet: RapSheetParser::Parser.new.parse(text3)
+        rap_sheet_with_eligibility: rap_sheet_with_eligibility_3
       )
 
       expect(rap1.person_unique_id).to eq(rap2.person_unique_id)

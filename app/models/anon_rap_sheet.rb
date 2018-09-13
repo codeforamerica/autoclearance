@@ -1,20 +1,23 @@
 class AnonRapSheet < ApplicationRecord
   validates :county, :checksum, presence: true
   has_many :anon_cycles, dependent: :destroy
+  has_one :rap_sheet_properties, dependent: :destroy
 
-  def self.create_or_update(text:, county:, rap_sheet:)
+  def self.create_or_update(text:, county:, rap_sheet_with_eligibility:)
     checksum = Digest::SHA2.new.digest text
 
     existing_rap_sheet = AnonRapSheet.find_by(checksum: checksum)
     existing_rap_sheet.destroy! if existing_rap_sheet
 
-    self.create_from_parser(rap_sheet, county: county, checksum: checksum)
+    self.create_from_parser(rap_sheet_with_eligibility, county: county, checksum: checksum)
   end
 
   def self.create_from_parser(rap_sheet, county:, checksum:)
     cycles = rap_sheet.cycles.map do |cycle|
       AnonCycle.build_from_parser(cycle)
     end
+
+    rap_sheet_properties = RapSheetProperties.build_from_eligibility(rap_sheet_with_eligibility: rap_sheet)
 
     AnonRapSheet.create!(
       checksum: checksum,
@@ -23,7 +26,8 @@ class AnonRapSheet < ApplicationRecord
       sex: rap_sheet&.personal_info&.sex,
       race: rap_sheet&.personal_info&.race,
       anon_cycles: cycles,
-      person_unique_id: compute_person_unique_id(rap_sheet.personal_info)
+      person_unique_id: compute_person_unique_id(rap_sheet.personal_info),
+      rap_sheet_properties: rap_sheet_properties
     )
   end
 

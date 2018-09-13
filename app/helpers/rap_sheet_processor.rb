@@ -126,16 +126,19 @@ class RapSheetProcessor
     rap_sheet = RapSheetParser::Parser.new.parse(text, logger: logger)
 
     @rap_sheets_processed += 1
-    AnonRapSheet.create_or_update(
-      text: text,
-      county: @county[:name],
-      rap_sheet: rap_sheet
-    )
 
-    RapSheetWithEligibility.new(
+    rap_sheet_with_eligibility = RapSheetWithEligibility.new(
       rap_sheet: rap_sheet,
       courthouses: @county[:courthouses],
       logger: logger
     )
+
+    AnonRapSheet.create_or_update(
+      text: text,
+      county: @county[:name],
+      rap_sheet_with_eligibility: rap_sheet_with_eligibility
+    )
+
+    rap_sheet_with_eligibility
   end
 end
