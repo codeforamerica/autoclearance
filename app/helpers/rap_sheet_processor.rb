@@ -34,7 +34,7 @@ class RapSheetProcessor
     new_rap_sheets = AnonRapSheet.count - initial_rap_sheet_count
     existing_rap_sheets = @rap_sheets_processed - new_rap_sheets
     puts "Added #{new_rap_sheets} RAP #{'sheet'.pluralize(new_rap_sheets)} to analysis db. " \
-         "Skipped #{existing_rap_sheets} existing RAP #{'sheet'.pluralize(existing_rap_sheets)}."
+         "Overwrote #{existing_rap_sheets} existing RAP #{'sheet'.pluralize(existing_rap_sheets)}."
     # rubocop:enable Rails/Output
   end
 

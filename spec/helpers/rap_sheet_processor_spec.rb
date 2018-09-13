@@ -22,7 +22,7 @@ describe RapSheetProcessor do
       FileUtils.cp('spec/fixtures/skywalker_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/')
       FileUtils.cp('spec/fixtures/chewbacca_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/')
 
-      expect { subject }.to output(/2 RAP sheets produced 1 motion in ([0-9]|\.)+ seconds\nAdded 2 RAP sheets to analysis db. Skipped 0 existing RAP sheets./).to_stdout
+      expect { subject }.to output(/2 RAP sheets produced 1 motion in ([0-9]|\.)+ seconds\nAdded 2 RAP sheets to analysis db. Overwrote 0 existing RAP sheets./).to_stdout
 
       expect(Dir['/tmp/autoclearance-rap-sheet-inputs/*']).to be_empty
       expect(Dir['/tmp/autoclearance-outputs/*'])
@@ -54,7 +54,7 @@ describe RapSheetProcessor do
         m.call(*args)
       end
 
-      expect { subject }.to output(/1 RAP sheet produced 1 motion in ([0-9]|\.)+ seconds\nAdded 1 RAP sheet to analysis db. Skipped 0 existing RAP sheets./).to_stdout
+      expect { subject }.to output(/1 RAP sheet produced 1 motion in ([0-9]|\.)+ seconds\nAdded 1 RAP sheet to analysis db. Overwrote 0 existing RAP sheets./).to_stdout
 
       expect(Dir['/tmp/autoclearance-rap-sheet-inputs/*'])
         .to contain_exactly('/tmp/autoclearance-rap-sheet-inputs/not_a_valid_rap_sheet.pdf')
@@ -77,7 +77,7 @@ describe RapSheetProcessor do
     it 'sends warnings from the parser to a warnings file' do
       FileUtils.cp('spec/fixtures/not_a_valid_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/')
 
-      expect { subject }.to output(/1 RAP sheet produced 0 motions in ([0-9]|\.)+ seconds\nAdded 1 RAP sheet to analysis db. Skipped 0 existing RAP sheets./).to_stdout
+      expect { subject }.to output(/1 RAP sheet produced 0 motions in ([0-9]|\.)+ seconds\nAdded 1 RAP sheet to analysis db. Overwrote 0 existing RAP sheets./).to_stdout
 
       actual_warning = File.read('/tmp/autoclearance-outputs/summary_20110102-010444.warning')
 
@@ -89,13 +89,13 @@ describe RapSheetProcessor do
       FileUtils.cp('spec/fixtures/skywalker_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/')
 
       expect { described_class.new(Counties::SAN_FRANCISCO).run }
-        .to output(/1 RAP sheet produced 1 motion in ([0-9]|\.)+ seconds\nAdded 1 RAP sheet to analysis db. Skipped 0 existing RAP sheets./).to_stdout
+        .to output(/1 RAP sheet produced 1 motion in ([0-9]|\.)+ seconds\nAdded 1 RAP sheet to analysis db. Overwrote 0 existing RAP sheets./).to_stdout
 
       FileUtils.cp('spec/fixtures/skywalker_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/')
       FileUtils.cp('spec/fixtures/chewbacca_rap_sheet.pdf', '/tmp/autoclearance-rap-sheet-inputs/')
 
       expect { described_class.new(Counties::SAN_FRANCISCO).run }
-        .to output(/2 RAP sheets produced 1 motion in ([0-9]|\.)+ seconds\nAdded 1 RAP sheet to analysis db. Skipped 1 existing RAP sheet./).to_stdout
+        .to output(/2 RAP sheets produced 1 motion in ([0-9]|\.)+ seconds\nAdded 1 RAP sheet to analysis db. Overwrote 1 existing RAP sheet./).to_stdout
 
       expect(AnonRapSheet.count).to eq 2
     end
