@@ -10,3 +10,9 @@ Rails:
 
 Rails/NotNullColumn:
   Enabled: false
+
+Naming/VariableNumber:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
