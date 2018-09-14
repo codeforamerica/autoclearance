@@ -15,11 +15,12 @@ describe AnonCycle do
 
       cycle = RapSheetParser::Cycle.new(events: [event_1, event_2])
 
-      anon_cycle = described_class.build_from_parser(cycle)
-      expect(anon_cycle.anon_events.length).to eq 2
+      rap_sheet = build_rap_sheet(events: [event_1, event_2])
 
+      anon_cycle = described_class.build_from_parser(cycle: cycle, rap_sheet: rap_sheet)
       events = anon_cycle.anon_events
-      expect([events[0].agency, events[1].agency]).to contain_exactly('CASC San Francisco', 'Some courthouse')
+      expect(events.length).to eq 2
+      expect(events.map(&:agency)).to contain_exactly('CASC San Francisco', 'Some courthouse')
     end
   end
 end

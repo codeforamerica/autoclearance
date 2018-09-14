@@ -24,14 +24,17 @@ describe AnonRapSheet do
         CNT: 001 #456
         4056 PC-BREAKING AND ENTERING
         *DISPO:CONVICTED
-        MORE INFO ABOUT THIS COUNT
+        CONV STATUS:FELONY
+        SEN: 3 YEARS PRISON
         - - - -
         COURT:
         19820915 CAMC SAN FRANCISCO
 
         CNT: 001 #456
-        bla bla
+        123 PC-PETTY THEFT
         DISPO:CONVICTED
+        CONV STATUS:MISDEMEANOR
+        SEN: 3 MONTHS PROBATION,6 MONTHS JAIL
         * * * END OF MESSAGE * * *
       TEXT
 
@@ -62,21 +65,35 @@ describe AnonRapSheet do
       cycle = anon_rap_sheet.anon_cycles.first
       expect(cycle.anon_events.count).to eq 3
 
-      court_event1 = cycle.anon_events[0]
-      expect(court_event1.event_type).to eq 'court'
-      expect(court_event1.agency).to eq 'CASC San Francisco'
-      expect(court_event1.date).to eq Date.new(1982, 7, 8)
+      court_event_1 = cycle.anon_events[0]
+      expect(court_event_1.event_type).to eq 'court'
+      expect(court_event_1.agency).to eq 'CASC San Francisco'
+      expect(court_event_1.date).to eq Date.new(1982, 7, 8)
 
-      count1 = court_event1.anon_counts[0]
-      expect(count1.code).to eq 'PC'
-      expect(count1.section).to eq '4056'
-      expect(count1.anon_disposition.disposition_type).to eq('convicted')
-      expect(count1.anon_disposition.text).to eq('*DISPO:CONVICTED')
+      event_properties_1 = court_event_1.event_properties
+      expect(event_properties_1.has_felonies).to eq true
+      expect(event_properties_1.has_probation).to eq false
+      expect(event_properties_1.has_probation_violations).to eq false
+      expect(event_properties_1.has_prison).to eq true
+      expect(event_properties_1.dismissed_by_pc1203).to eq false
 
-      court_event2 = cycle.anon_events[1]
-      expect(court_event2.event_type).to eq 'court'
-      count2 = court_event2.anon_counts[0]
-      expect(count2.anon_disposition.disposition_type).to eq('convicted')
+      count_1 = court_event_1.anon_counts[0]
+      expect(count_1.code).to eq 'PC'
+      expect(count_1.section).to eq '4056'
+      expect(count_1.anon_disposition.disposition_type).to eq('convicted')
+      expect(count_1.anon_disposition.text).to eq('*DISPO:CONVICTED')
+
+      court_event_2 = cycle.anon_events[1]
+      expect(court_event_2.event_type).to eq 'court'
+      count_2 = court_event_2.anon_counts[0]
+      expect(count_2.anon_disposition.disposition_type).to eq('convicted')
+
+      event_properties_2 = court_event_2.event_properties
+      expect(event_properties_2.has_felonies).to eq false
+      expect(event_properties_2.has_probation).to eq true
+      expect(event_properties_2.has_probation_violations).to eq false
+      expect(event_properties_2.has_prison).to eq false
+      expect(event_properties_1.dismissed_by_pc1203).to eq false
 
       arrest_event = cycle.anon_events[2]
       expect(arrest_event.event_type).to eq 'arrest'

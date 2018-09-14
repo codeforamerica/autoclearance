@@ -14,7 +14,7 @@ class AnonRapSheet < ApplicationRecord
 
   def self.create_from_parser(rap_sheet, county:, checksum:)
     cycles = rap_sheet.cycles.map do |cycle|
-      AnonCycle.build_from_parser(cycle)
+      AnonCycle.build_from_parser(cycle: cycle, rap_sheet: rap_sheet)
     end
 
     rap_sheet_properties = RapSheetProperties.build_from_eligibility(rap_sheet_with_eligibility: rap_sheet)
