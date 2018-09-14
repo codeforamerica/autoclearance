@@ -15,4 +15,5 @@ Naming/VariableNumber:
   Enabled: false
 
 Metrics/BlockLength:
-  Enabled: false
+  Exclude:
+  - 'spec/**/*'
