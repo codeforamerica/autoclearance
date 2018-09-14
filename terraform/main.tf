@@ -806,7 +806,7 @@ resource "aws_db_instance" "analysis_db" {
 resource "aws_elastic_beanstalk_environment" "beanstalk_application_environment" {
   name = "autoclearance-prod"
   application = "${aws_elastic_beanstalk_application.ng_beanstalk_application.name}"
-  solution_stack_name = "64bit Amazon Linux 2018.03 v2.8.1 running Ruby 2.5 (Puma)"
+  solution_stack_name = "64bit Amazon Linux 2018.03 v2.8.3 running Ruby 2.5 (Puma)"
   tier = "WebServer"
 
   setting {
@@ -1347,4 +1347,6 @@ module "metabase" {
   subnet_1_id = "${aws_subnet.public.id}"
   subnet_2_id = "${aws_subnet.public_2.id}"
   db_subnet_group_name = "${aws_db_subnet_group.default.name}"
+  role_name = "${aws_iam_role.beanstalk_role.name}"
+  profile_name = "${aws_iam_instance_profile.instance_profile.name}"
 }
