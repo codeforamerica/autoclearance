@@ -111,7 +111,7 @@ describe RapSheetWithEligibility do
       end
 
       it 'returns true if registered sex offender' do
-        expect(subject.disqualifiers?(code_section)).to eq true
+        expect(subject.disqualifiers?).to eq true
       end
     end
 
@@ -122,26 +122,18 @@ describe RapSheetWithEligibility do
       end
 
       it 'returns true if superstrike' do
-        expect(subject.disqualifiers?(code_section)).to eq true
+        expect(subject.disqualifiers?).to eq true
       end
     end
 
-    context 'three distinct conviction events which include the same eligible code_section' do
+    context 'none of the above' do
       let(:events) do
         event1_count = build_court_count(code: 'HS', section: '11357')
-        event1 = build_court_event(case_number: '111', counts: [event1_count])
-
-        event2_count = build_court_count(code: 'HS', section: '11357')
-        event2 = build_court_event(case_number: '222', counts: [event2_count])
-
-        event3_count = build_court_count(code: 'HS', section: '11357')
-        event3 = build_court_event(case_number: '333', counts: [event3_count])
-
-        [event1, event2, event3]
+        [build_court_event(case_number: '111', counts: [event1_count])]
       end
 
-      it 'returns true' do
-        expect(subject.disqualifiers?('HS 11357')).to eq true
+      it 'returns false' do
+        expect(subject.disqualifiers?).to eq false
       end
     end
   end

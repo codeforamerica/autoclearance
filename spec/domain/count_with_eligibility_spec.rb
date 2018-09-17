@@ -107,7 +107,7 @@ describe CountWithEligibility do
       it 'returns true if plea bargain' do
         eligibility = build_rap_sheet_with_eligibility(rap_sheet: build_rap_sheet)
         event = EventWithEligibility.new(build_court_event)
-        plea_bargain_classifier = instance_double(PleaBargainClassifier, plea_bargain?: true)
+        plea_bargain_classifier = instance_double(PleaBargainClassifier, plea_bargain?: true, possible_plea_bargain?: true)
         allow(PleaBargainClassifier).to receive(:new)
           .with(event: event, count: subject)
           .and_return(plea_bargain_classifier)
@@ -124,6 +124,37 @@ describe CountWithEligibility do
           .and_return(plea_bargain_classifier)
 
         expect(subject.csv_eligibility_column(event, eligibility)).to eq('maybe')
+      end
+    end
+  end
+  describe '#has_2_prop_64_priors?' do
+    let(:count) { build_court_count(code: 'HS', section: '11358') }
+    let(:event) { build_court_event(counts: [count]) }
+    let(:rap_sheet_with_eligibility) { build_rap_sheet_with_eligibility(rap_sheet: build_rap_sheet(events: events)) }
+    let(:result) { CountWithEligibility.new(count).has_2_prop_64_priors?(rap_sheet_with_eligibility) }
+
+    context 'if there are fewer than 3 of a prop-64 two-priors relevant code' do
+      let(:events) { [event, event] }
+
+      it 'returns false' do
+        expect(result).to be false
+      end
+    end
+
+    context 'if there 3 or more of a prop-64 two-priors relevant code' do
+      let(:events) { [event, event, event] }
+
+      it 'returns true' do
+        expect(result).to be true
+      end
+    end
+
+    context 'if there 3 or more of a non-relevant code' do
+      let(:count) { build_court_count(code: 'HS', section: '11357') }
+      let(:events) { [event, event, event] }
+
+      it 'returns false' do
+        expect(result).to be false
       end
     end
   end
@@ -145,11 +176,21 @@ describe CountWithEligibility do
     end
 
     it 'returns false if rap sheet level disqualifiers' do
-      eligible_count = build_court_count(code: 'HS', section: '11357')
+      eligible_count = build_court_count(code: 'HS', section: '11358')
 
       event = build_court_event(counts: [eligible_count])
 
       eligibility = double(disqualifiers?: true)
+
+      expect(described_class.new(eligible_count).eligible?(EventWithEligibility.new(event), eligibility)).to eq false
+    end
+
+    it 'returns false if it has 2 prop 64 priors' do
+      eligible_count = build_court_count(code: 'HS', section: '11358')
+
+      event = build_court_event(counts: [eligible_count])
+
+      eligibility = double(has_three_convictions_of_same_type?: true, disqualifiers?: false)
 
       expect(described_class.new(eligible_count).eligible?(EventWithEligibility.new(event), eligibility)).to eq false
     end

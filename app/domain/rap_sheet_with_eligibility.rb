@@ -21,10 +21,8 @@ class RapSheetWithEligibility < SimpleDelegator
     end
   end
 
-  def disqualifiers?(code_section)
-    sex_offender_registration? ||
-      superstrikes.any? ||
-      has_three_convictions_of_same_type?(code_section)
+  def disqualifiers?
+    sex_offender_registration? || superstrikes.any?
   end
 
   def has_three_convictions_of_same_type?(code_section)
