@@ -1,6 +1,6 @@
 variable "vpc_id" {}
-variable "subnet_1_id" {}
-variable "subnet_2_id" {}
+variable "public_subnet_id" {}
+variable "private_subnet_id" {}
 variable "db_subnet_group_name" {}
 variable "role_name" {}
 variable "profile_name" {}
@@ -9,12 +9,12 @@ data "aws_vpc" "host" {
   id = "${var.vpc_id}"
 }
 
-data "aws_subnet" "subnet_1" {
-  id = "${var.subnet_1_id}"
+data "aws_subnet" "public_subnet" {
+  id = "${var.public_subnet_id}"
 }
 
-data "aws_subnet" "subnet_2" {
-  id = "${var.subnet_2_id}"
+data "aws_subnet" "private_subnet" {
+  id = "${var.private_subnet_id}"
 }
 
 resource "aws_elastic_beanstalk_application" "beanstalk_application" {
@@ -40,7 +40,7 @@ resource "aws_security_group" "metabase_security" {
     to_port = 80
     protocol = "tcp"
     cidr_blocks = [
-      //"${aws_vpc.default.cidr_block}"
+      "${data.aws_vpc.host.cidr_block}"
       // THE ELB SECURITY GROUP FOR METABASE
     ]
   }
@@ -90,7 +90,7 @@ resource "aws_security_group" "rds_security" {
 
 resource "aws_db_instance" "metabase_db" {
   allocated_storage = 10
-  availability_zone = "${data.aws_subnet.subnet_1.availability_zone}"
+  availability_zone = "${data.aws_subnet.public_subnet.availability_zone}"
   db_subnet_group_name = "${var.db_subnet_group_name}"
   engine = "postgres"
   instance_class = "db.m3.medium"
@@ -151,13 +151,13 @@ resource "aws_elastic_beanstalk_environment" "environment" {
   setting {
     namespace = "aws:ec2:vpc"
     name = "Subnets"
-    value = "${data.aws_subnet.subnet_1.id}"
+    value = "${data.aws_subnet.private_subnet.id}"
   }
 
   setting {
     namespace = "aws:ec2:vpc"
     name = "ELBSubnets"
-    value = "${data.aws_subnet.subnet_1.id}"
+    value = "${data.aws_subnet.public_subnet.id}"
   }
 
   setting {
