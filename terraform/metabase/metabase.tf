@@ -189,7 +189,7 @@ resource "aws_elastic_beanstalk_environment" "environment" {
   }
 
   setting {
-    namespace = "aws:elb:listener"
+    namespace = "aws:elb:listener:80"
     name = "ListenerEnabled"
     value = "false"
   }
