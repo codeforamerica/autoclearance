@@ -43,7 +43,9 @@ module Counties
   CONTRA_COSTA = {
     name: 'Contra Costa',
     courthouses: [
+      'CAMC Richmond',
       'CAMC Walnut Creek',
+      'CASC Richmond',
       'CASC Walnut Creek'
     ]
   }
