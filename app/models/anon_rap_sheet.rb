@@ -3,13 +3,13 @@ class AnonRapSheet < ApplicationRecord
   has_many :anon_cycles, dependent: :destroy
   has_one :rap_sheet_properties, dependent: :destroy
 
-  def self.create_or_update(text:, county:, rap_sheet_with_eligibility:)
+  def self.create_or_update(text:, county:, rap_sheet:)
     checksum = Digest::SHA2.new.digest text
 
     existing_rap_sheet = AnonRapSheet.find_by(checksum: checksum)
     existing_rap_sheet.destroy! if existing_rap_sheet
 
-    self.create_from_parser(rap_sheet_with_eligibility, county: county, checksum: checksum)
+    self.create_from_parser(rap_sheet, county: county, checksum: checksum)
   end
 
   def self.create_from_parser(rap_sheet, county:, checksum:)
@@ -17,7 +17,7 @@ class AnonRapSheet < ApplicationRecord
       AnonCycle.build_from_parser(cycle: cycle, rap_sheet: rap_sheet)
     end
 
-    rap_sheet_properties = RapSheetProperties.build_from_eligibility(rap_sheet_with_eligibility: rap_sheet)
+    rap_sheet_properties = RapSheetProperties.build(rap_sheet: rap_sheet)
 
     AnonRapSheet.create!(
       checksum: checksum,
