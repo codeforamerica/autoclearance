@@ -52,6 +52,7 @@ RSpec.describe FillProp64Motion do
       expect(fields["11360 Count"]).to eq('')
       expect(fields["Other Health and Safety Code Section"]).to eq 'Off'
       expect(fields["Text2"]).to eq ''
+      expect(fields["The District Attorney finds that defendant is eligible for relief and now requests the court to recall and resentence"]).to eq 'On'
     end
   end
 

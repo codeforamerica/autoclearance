@@ -24,7 +24,8 @@ class FillProp64Motion
       "11359 Count" => count_multiplier("HS 11359"),
       "11360 Count" => count_multiplier("HS 11360"),
       "Other Health and Safety Code Section" => on_or_off(other_code_sections.any?),
-      "Text2" => other_code_sections.join(', ')
+      "Text2" => other_code_sections.join(', '),
+      "The District Attorney finds that defendant is eligible for relief and now requests the court to recall and resentence" => "On"
     }
 
     tempfile
