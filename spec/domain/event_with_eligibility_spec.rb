@@ -11,7 +11,7 @@ describe EventWithEligibility do
       )
     end
 
-    let((:event_with_eligibility)) { described_class.new(event) }
+    let(:event_with_eligibility) { described_class.new(event) }
 
     context 'when the sentence is still active' do
       let(:sentence) do
@@ -34,7 +34,7 @@ describe EventWithEligibility do
     end
 
     context 'when there is no sentence' do
-      let((:sentence)) { nil }
+      let(:sentence) { nil }
 
       it 'returns redisgnation' do
         expect(event_with_eligibility.remedy).to eq 'redesignation'

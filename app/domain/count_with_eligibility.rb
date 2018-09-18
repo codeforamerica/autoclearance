@@ -7,15 +7,11 @@ class CountWithEligibility < SimpleDelegator
     subsection_of?(dismissible_codes) && !subsection_of?(ineligible_codes)
   end
 
-  def csv_eligibility_column(event, eligibility)
-    return 'no' unless eligible?(event, eligibility)
+  def eligible?(event, eligibility)
+    return 'no' unless potentially_eligible?(event) && !has_disqualifiers?(eligibility) && !has_two_prop_64_priors?(eligibility)
     return 'yes' if plea_bargain_classifier(event).plea_bargain?
     return 'maybe' if plea_bargain_classifier(event).possible_plea_bargain?
     'yes'
-  end
-
-  def eligible?(event, eligibility)
-    potentially_eligible?(event) && !has_disqualifiers?(eligibility) && !has_two_prop_64_priors?(eligibility)
   end
 
   def has_two_prop_64_priors?(eligibility)
@@ -23,7 +19,7 @@ class CountWithEligibility < SimpleDelegator
     two_priors_codes.include?(code_section) && eligibility.has_three_convictions_of_same_type?(code_section)
   end
 
-  def is_plea_bargain(event)
+  def plea_bargain(event)
     return 'yes' if plea_bargain_classifier(event).plea_bargain?
     return 'maybe' if plea_bargain_classifier(event).possible_plea_bargain?
     'no'

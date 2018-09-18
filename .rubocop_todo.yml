@@ -76,7 +76,6 @@ Metrics/MethodLength:
 Naming/PredicateName:
   Exclude:
     - 'spec/**/*'
-    - 'app/domain/count_with_eligibility.rb'
     - 'app/domain/rap_sheet_with_eligibility.rb'
 
 # Offense count: 1
@@ -193,13 +192,6 @@ Style/NumericPredicate:
 Style/RedundantBegin:
   Exclude:
     - 'bin/yarn'
-
-# Offense count: 8
-# Cop supports --auto-correct.
-Style/RedundantParentheses:
-  Exclude:
-    - 'spec/domain/count_with_eligibility_spec.rb'
-    - 'spec/domain/event_with_eligibility_spec.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.

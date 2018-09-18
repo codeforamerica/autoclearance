@@ -17,3 +17,6 @@ Naming/VariableNumber:
 Metrics/BlockLength:
   Exclude:
   - 'spec/**/*'
+
+Naming/PredicateName:
+  NamePrefix: ['is_']

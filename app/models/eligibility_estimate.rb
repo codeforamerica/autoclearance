@@ -6,7 +6,7 @@ class EligibilityEstimate < ApplicationRecord
     count_with_eligibility:,
     rap_sheet_with_eligibility:
   )
-    prop_64_eligible = count_with_eligibility.csv_eligibility_column(
+    prop_64_eligible = count_with_eligibility.eligible?(
       event_with_eligibility,
       rap_sheet_with_eligibility
     )

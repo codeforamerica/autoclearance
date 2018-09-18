@@ -12,7 +12,9 @@ class EventWithEligibility < SimpleDelegator
   end
 
   def eligible_counts(eligibility)
-    convicted_counts.select { |count| count.eligible?(self, eligibility) }
+    convicted_counts.select do |count|
+      %w[yes maybe].include?(count.eligible?(self, eligibility))
+    end
   end
 
   def cycle_events

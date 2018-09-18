@@ -52,7 +52,7 @@ class SummaryCSV
       eligibility.has_three_convictions_of_same_type?(count.code_section),
       eligibility.sex_offender_registration?,
       event.remedy,
-      count.csv_eligibility_column(event, eligibility),
+      count.eligible?(event, eligibility),
       eligibility.has_deceased_event?
     ]
   end

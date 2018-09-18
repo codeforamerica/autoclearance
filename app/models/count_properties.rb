@@ -13,7 +13,7 @@ class CountProperties < ApplicationRecord
     CountProperties.new(
       has_prop_64_code: count_with_eligibility.prop64_conviction?,
       has_two_prop_64_priors: count_with_eligibility.has_two_prop_64_priors?(rap_sheet_with_eligibility),
-      prop_64_plea_bargain: count_with_eligibility.is_plea_bargain(event_with_eligibility),
+      prop_64_plea_bargain: count_with_eligibility.plea_bargain(event_with_eligibility),
       eligibility_estimate: eligibility_estimate(
         event_with_eligibility: event_with_eligibility,
         count_with_eligibility: count_with_eligibility,
