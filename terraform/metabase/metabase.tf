@@ -66,25 +66,6 @@ resource "aws_iam_instance_profile" "instance_profile" {
 resource "aws_security_group" "elb_security" {
   name = "metabase_elb_security"
   vpc_id = "${data.aws_vpc.host.id}"
-
-  # HTTP access from the VPC
-  ingress {
-    from_port = 80
-    to_port = 80
-    protocol = "tcp"
-    cidr_blocks = [
-      "0.0.0.0/0"
-    ]
-  }
-
-  egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    cidr_blocks = [
-      "0.0.0.0/0"
-    ]
-  }
 }
 
 resource "aws_security_group" "metabase_security" {

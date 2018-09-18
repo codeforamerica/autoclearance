@@ -527,18 +527,17 @@ resource "aws_security_group" "application_security" {
     from_port = 22
     to_port = 22
     protocol = "tcp"
-    cidr_blocks = [
-      "${aws_vpc.default.cidr_block}"
+    security_groups = [
+      "${aws_security_group.bastion_security.id}"
     ]
   }
 
-  # HTTP access from the VPC
   ingress {
     from_port = 80
     to_port = 80
     protocol = "tcp"
-    cidr_blocks = [
-      "${aws_vpc.default.cidr_block}"
+    security_groups = [
+      "${aws_security_group.elb_security.id}"
     ]
   }
 
@@ -812,6 +811,11 @@ resource "aws_db_instance" "analysis_db" {
   ]
 }
 
+resource "aws_security_group" "elb_security" {
+  name = "autoclearance_elb_security"
+  vpc_id = "${aws_vpc.default.id}"
+}
+
 resource "aws_elastic_beanstalk_environment" "beanstalk_application_environment" {
   name = "autoclearance-prod"
   application = "${aws_elastic_beanstalk_application.ng_beanstalk_application.name}"
@@ -842,6 +846,12 @@ resource "aws_elastic_beanstalk_environment" "beanstalk_application_environment"
     namespace = "aws:autoscaling:launchconfiguration"
     name = "SecurityGroups"
     value = "${aws_security_group.application_security.id}"
+  }
+
+  setting {
+    namespace = "aws:elb:loadbalancer"
+    name = "SecurityGroups"
+    value = "${aws_security_group.elb_security.id}"
   }
 
   setting {
@@ -1123,7 +1133,7 @@ resource "aws_iam_policy" "cloudwatch_s3_policy" {
       "Sid": "AWSCloudTrailCreateAndUpdateS3LogStream",
       "Effect": "Allow",
       "Action": [
-        "logs:CreateLogStream",      
+        "logs:CreateLogStream",
         "logs:PutLogEvents"
       ],
       "Resource": [
