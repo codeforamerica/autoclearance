@@ -12,7 +12,12 @@ class AnonEvent < ApplicationRecord
 
   def self.build_from_parser(event:, rap_sheet:)
     counts = event.counts.map.with_index(1) do |count, i|
-      AnonCount.build_from_parser(count, i)
+      AnonCount.build_from_parser(
+        index: i,
+        count: count,
+        event: event,
+        rap_sheet: rap_sheet
+      )
     end
 
     AnonEvent.new(

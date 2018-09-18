@@ -127,11 +127,11 @@ describe CountWithEligibility do
       end
     end
   end
-  describe '#has_2_prop_64_priors?' do
+  describe '#has_two_prop_64_priors?' do
     let(:count) { build_court_count(code: 'HS', section: '11358') }
     let(:event) { build_court_event(counts: [count]) }
     let(:rap_sheet_with_eligibility) { build_rap_sheet_with_eligibility(rap_sheet: build_rap_sheet(events: events)) }
-    let(:result) { CountWithEligibility.new(count).has_2_prop_64_priors?(rap_sheet_with_eligibility) }
+    let(:result) { CountWithEligibility.new(count).has_two_prop_64_priors?(rap_sheet_with_eligibility) }
 
     context 'if there are fewer than 3 of a prop-64 two-priors relevant code' do
       let(:events) { [event, event] }

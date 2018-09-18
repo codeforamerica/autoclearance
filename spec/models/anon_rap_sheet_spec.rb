@@ -31,7 +31,7 @@ describe AnonRapSheet do
         19820915 CAMC SAN FRANCISCO
 
         CNT: 001 #456
-        123 PC-PETTY THEFT
+        11358 HS-CULTIVATION OF MARIJUANA
         DISPO:CONVICTED
         CONV STATUS:MISDEMEANOR
         SEN: 3 MONTHS PROBATION,6 MONTHS JAIL
@@ -76,10 +76,20 @@ describe AnonRapSheet do
       expect(count_1.anon_disposition.disposition_type).to eq('convicted')
       expect(count_1.anon_disposition.text).to eq('*DISPO:CONVICTED')
 
+      count_properties_1 = count_1.count_properties
+      expect(count_properties_1.has_prop_64_code).to eq false
+      expect(count_properties_1.has_two_prop_64_priors).to eq false
+      expect(count_properties_1.prop_64_plea_bargain).to eq 'no'
+
       court_event_2 = cycle.anon_events[1]
       expect(court_event_2.event_type).to eq 'court'
       count_2 = court_event_2.anon_counts[0]
       expect(count_2.anon_disposition.disposition_type).to eq('convicted')
+
+      count_properties_2 = count_2.count_properties
+      expect(count_properties_2.has_prop_64_code).to eq true
+      expect(count_properties_2.has_two_prop_64_priors).to eq false
+      expect(count_properties_2.prop_64_plea_bargain).to eq 'no'
 
       event_properties_2 = court_event_2.event_properties
       expect(event_properties_2.has_felonies).to eq false

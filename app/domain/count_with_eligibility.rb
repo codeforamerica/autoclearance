@@ -15,12 +15,18 @@ class CountWithEligibility < SimpleDelegator
   end
 
   def eligible?(event, eligibility)
-    potentially_eligible?(event) && !has_disqualifiers?(eligibility) && !has_2_prop_64_priors?(eligibility)
+    potentially_eligible?(event) && !has_disqualifiers?(eligibility) && !has_two_prop_64_priors?(eligibility)
   end
 
-  def has_2_prop_64_priors?(eligibility)
+  def has_two_prop_64_priors?(eligibility)
     two_priors_codes = ['HS 11358', 'HS 11359', 'HS 11360']
     two_priors_codes.include?(code_section) && eligibility.has_three_convictions_of_same_type?(code_section)
+  end
+
+  def is_plea_bargain(event)
+    return 'yes' if plea_bargain_classifier(event).plea_bargain?
+    return 'maybe' if plea_bargain_classifier(event).possible_plea_bargain?
+    'no'
   end
 
   private
