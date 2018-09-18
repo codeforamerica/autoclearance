@@ -87,7 +87,7 @@ describe CountWithEligibility do
       rap_sheet = build_rap_sheet(events: ([event]))
       eligibility = build_rap_sheet_with_eligibility(rap_sheet: rap_sheet)
 
-      expect(described_class.new(eligible_count).csv_eligibility_column(EventWithEligibility.new(event), eligibility)).to eq true
+      expect(described_class.new(eligible_count).csv_eligibility_column(EventWithEligibility.new(event), eligibility)).to eq 'yes'
     end
 
     it 'returns false if rap sheet level disqualifiers' do
@@ -97,7 +97,7 @@ describe CountWithEligibility do
 
       eligibility = double(disqualifiers?: true)
 
-      expect(described_class.new(eligible_count).csv_eligibility_column(EventWithEligibility.new(event), eligibility)).to eq false
+      expect(described_class.new(eligible_count).csv_eligibility_column(EventWithEligibility.new(event), eligibility)).to eq 'no'
     end
 
     context 'plea bargain detection' do
@@ -112,7 +112,7 @@ describe CountWithEligibility do
           .with(event: event, count: subject)
           .and_return(plea_bargain_classifier)
 
-        expect(subject.csv_eligibility_column(event, eligibility)).to eq(true)
+        expect(subject.csv_eligibility_column(event, eligibility)).to eq('yes')
       end
 
       it 'returns "maybe" if possible plea bargain only' do

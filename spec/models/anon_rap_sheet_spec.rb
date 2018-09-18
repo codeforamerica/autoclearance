@@ -81,8 +81,13 @@ describe AnonRapSheet do
       expect(count_properties_1.has_two_prop_64_priors).to eq false
       expect(count_properties_1.prop_64_plea_bargain).to eq 'no'
 
+      eligibility_estimate_1 = count_properties_1.eligibility_estimate
+      expect(eligibility_estimate_1.prop_64_eligible).to eq 'no'
+      expect(eligibility_estimate_1.count_properties).to eq count_properties_1
+
       court_event_2 = cycle.anon_events[1]
       expect(court_event_2.event_type).to eq 'court'
+
       count_2 = court_event_2.anon_counts[0]
       expect(count_2.anon_disposition.disposition_type).to eq('convicted')
 
@@ -97,6 +102,10 @@ describe AnonRapSheet do
       expect(event_properties_2.has_probation_violations).to eq false
       expect(event_properties_2.has_prison).to eq false
       expect(event_properties_1.dismissed_by_pc1203).to eq false
+
+      eligibility_estimate_2 = count_properties_2.eligibility_estimate
+      expect(eligibility_estimate_2.prop_64_eligible).to eq 'yes'
+      expect(eligibility_estimate_2.count_properties).to eq count_properties_2
 
       arrest_event = cycle.anon_events[2]
       expect(arrest_event.event_type).to eq 'arrest'

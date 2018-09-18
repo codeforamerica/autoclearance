@@ -61,8 +61,8 @@ describe SummaryCSV do
 
     subject = summary_csv.text
 
-    expect(subject).to include 'filename1,defendant,1994-01-02,DEF,CASC San Francisco,HS 11360,M,2d jail,"",false,false,redesignation,true,false'
-    expect(subject).to include 'filename2,n a m e,1994-01-02,ABC,CASC San Francisco Co,HS 11357,M,5d jail,"",false,false,redesignation,true,false'
+    expect(subject).to include 'filename1,defendant,1994-01-02,DEF,CASC San Francisco,HS 11360,M,2d jail,"",false,false,redesignation,yes,false'
+    expect(subject).to include 'filename2,n a m e,1994-01-02,ABC,CASC San Francisco Co,HS 11357,M,5d jail,"",false,false,redesignation,yes,false'
   end
 
   context 'missing personal info' do
@@ -74,7 +74,7 @@ describe SummaryCSV do
 
       subject = summary_csv.text
 
-      expect(subject).to include 'filename1,,1994-01-02,DEF,CASC San Francisco,HS 11360,M,2d jail,"",false,false,redesignation,true,false'
+      expect(subject).to include 'filename1,,1994-01-02,DEF,CASC San Francisco,HS 11360,M,2d jail,"",false,false,redesignation,yes,false'
     end
   end
 
@@ -104,6 +104,6 @@ describe SummaryCSV do
 
     subject = summary_csv.text
 
-    expect(subject).to include 'filename1,defendant,1994-01-02,DEF,CASC San Francisco,HS 11360,M,2d jail,"",false,false,redesignation,true,true'
+    expect(subject).to include 'filename1,defendant,1994-01-02,DEF,CASC San Francisco,HS 11360,M,2d jail,"",false,false,redesignation,yes,true'
   end
 end

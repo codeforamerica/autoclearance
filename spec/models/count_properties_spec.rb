@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe CountProperties do
-  describe '#build_from_eligibility' do
+  describe '#build' do
     it 'populates eligibility fields for prop 64 code sections' do
       count = build_court_count(code: 'HS', section: '11357')
 
@@ -19,6 +19,7 @@ describe CountProperties do
       expect(count_properties.has_prop_64_code).to eq true
       expect(count_properties.has_two_prop_64_priors).to eq false
       expect(count_properties.prop_64_plea_bargain).to eq 'no'
+      expect(count_properties.eligibility_estimate.prop_64_eligible).to eq 'yes'
     end
 
     it 'populates eligibility fields for plea bargained counts' do

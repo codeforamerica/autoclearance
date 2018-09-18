@@ -8,10 +8,10 @@ class CountWithEligibility < SimpleDelegator
   end
 
   def csv_eligibility_column(event, eligibility)
-    return false unless eligible?(event, eligibility)
-    return true if plea_bargain_classifier(event).plea_bargain?
+    return 'no' unless eligible?(event, eligibility)
+    return 'yes' if plea_bargain_classifier(event).plea_bargain?
     return 'maybe' if plea_bargain_classifier(event).possible_plea_bargain?
-    true
+    'yes'
   end
 
   def eligible?(event, eligibility)

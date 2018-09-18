@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_17_172255) do
+ActiveRecord::Schema.define(version: 2018_09_18_213324) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -77,6 +77,14 @@ ActiveRecord::Schema.define(version: 2018_09_17_172255) do
     t.index ["anon_count_id"], name: "index_count_properties_on_anon_count_id"
   end
 
+  create_table "eligibility_estimates", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "count_properties_id", null: false
+    t.string "prop_64_eligible", null: false
+    t.index ["count_properties_id"], name: "index_eligibility_estimates_on_count_properties_id"
+  end
+
   create_table "event_properties", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -104,6 +112,7 @@ ActiveRecord::Schema.define(version: 2018_09_17_172255) do
   add_foreign_key "anon_dispositions", "anon_counts"
   add_foreign_key "anon_events", "anon_cycles"
   add_foreign_key "count_properties", "anon_counts"
+  add_foreign_key "eligibility_estimates", "count_properties", column: "count_properties_id"
   add_foreign_key "event_properties", "anon_events"
   add_foreign_key "rap_sheet_properties", "anon_rap_sheets"
 end
