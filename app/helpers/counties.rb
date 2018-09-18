@@ -29,4 +29,30 @@ module Counties
       'CASC Los Angeles Central'
     ]
   }
+  SAN_JOAQUIN = {
+    name: 'San Juaquin',
+    courthouses: [
+      'CAMC Lodi',
+      'CAMC Stockton',
+      'CASC Lodi',
+      'CASC Manteca',
+      'CASC Stockton',
+      'CASC Tracy'
+    ]
+  }
+  CONTRA_COSTA = {
+    name: 'Contra Costa',
+    courthouses: [
+      'CAMC Walnut Creek',
+      'CASC Walnut Creek'
+    ]
+  }
+  SACRAMENTO = {
+    name: 'Sacramento',
+    courthouses: [
+      'CAJV Sacramento',
+      'CASC MC Sacramento',
+      'CASC Sacramento'
+    ]
+  }
 end
