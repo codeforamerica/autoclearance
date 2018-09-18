@@ -1356,6 +1356,5 @@ module "metabase" {
   public_subnet_id = "${aws_subnet.public.id}"
   private_subnet_id = "${aws_subnet.private.id}"
   db_subnet_group_name = "${aws_db_subnet_group.default.name}"
-  role_name = "${aws_iam_role.beanstalk_role.name}"
-  profile_name = "${aws_iam_instance_profile.instance_profile.name}"
+  beanstalk_role_name = "${aws_iam_role.beanstalk_role.name}"
 }

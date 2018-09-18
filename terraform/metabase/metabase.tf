@@ -2,8 +2,7 @@ variable "vpc_id" {}
 variable "public_subnet_id" {}
 variable "private_subnet_id" {}
 variable "db_subnet_group_name" {}
-variable "role_name" {}
-variable "profile_name" {}
+variable "beanstalk_role_name" {}
 
 data "aws_vpc" "host" {
   id = "${var.vpc_id}"
@@ -28,6 +27,40 @@ resource "aws_kms_key" "k" {
 resource "random_string" "rds_password" {
   length = 32
   special = false
+}
+
+resource "aws_iam_role" "instance_role" {
+  name = "metabase_instance_role"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2008-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "container" {
+  role = "${aws_iam_role.instance_role.name}"
+  policy_arn = "arn:aws-us-gov:iam::aws:policy/AWSElasticBeanstalkMulticontainerDocker"
+}
+
+resource "aws_iam_role_policy_attachment" "web_tier" {
+  role = "${aws_iam_role.instance_role.name}"
+  policy_arn = "arn:aws-us-gov:iam::aws:policy/AWSElasticBeanstalkWebTier"
+}
+
+resource "aws_iam_instance_profile" "instance_profile" {
+  name = "metabase_instance_profile"
+  role = "${aws_iam_role.instance_role.name}"
 }
 
 resource "aws_security_group" "elb_security" {
@@ -156,6 +189,30 @@ resource "aws_elastic_beanstalk_environment" "environment" {
   }
 
   setting {
+    namespace = "aws:elb:listener"
+    name = "ListenerEnabled"
+    value = "false"
+  }
+
+  setting {
+    namespace = "aws:elb:listener:443"
+    name = "InstancePort"
+    value = "80"
+  }
+
+  setting {
+    namespace = "aws:elb:listener:443"
+    name = "ListenerProtocol"
+    value = "HTTPS"
+  }
+
+  setting {
+    namespace = "aws:elb:listener:443"
+    name = "SSLCertificateId"
+    value = "${aws_acm_certificate.metabase_cert.arn}"
+  }
+
+  setting {
     namespace = "aws:elb:loadbalancer"
     name = "SecurityGroups"
     value = "${aws_security_group.elb_security.id}"
@@ -164,13 +221,13 @@ resource "aws_elastic_beanstalk_environment" "environment" {
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name = "IamInstanceProfile"
-    value = "${var.profile_name}"
+    value = "${aws_iam_instance_profile.instance_profile.name}"
   }
 
   setting {
     namespace = "aws:elasticbeanstalk:environment"
     name = "ServiceRole"
-    value = "${var.role_name}"
+    value = "${var.beanstalk_role_name}"
   }
 
   setting {
