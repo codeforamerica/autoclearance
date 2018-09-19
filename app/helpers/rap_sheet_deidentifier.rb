@@ -40,6 +40,7 @@ class RapSheetDeidentifier
   def deidentify(text)
     t = remove_personal_info_section(text)
     t = randomize_dob(t)
+    t = strip_addresses(t)
     randomize_case_numbers(t)
   end
 
@@ -51,6 +52,11 @@ class RapSheetDeidentifier
       text = text.gsub(date_string, random_date)
     end
     text
+  end
+
+  def strip_addresses(text)
+    address_regex = /COM: ADR-[\d]{8} \(.*\)/m
+    text.gsub(address_regex, 'COM: [ADDRESS REDACTED]')
   end
 
   def random_date

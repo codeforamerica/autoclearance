@@ -34,6 +34,7 @@ describe RapSheetDeidentifier do
       expect(skywalker_actual_text).not_to include('#2222222')
       expect(skywalker_actual_text).not_to include('#3456789')
       expect(skywalker_actual_text).not_to include('#33857493')
+      expect(skywalker_actual_text).not_to include('300,NEWT AV, , ,OAKLAND,CA,94612')
 
       redacted_pdf = Dir['/tmp/autoclearance-outputs/redacted_rap_sheet_*.pdf']
       expect(redacted_pdf.length).to eq 1
@@ -52,6 +53,7 @@ describe RapSheetDeidentifier do
       expect(pdf_text).not_to include('#2222222')
       expect(pdf_text).not_to include('#3456789')
       expect(pdf_text).not_to include('#33857493')
+      expect(pdf_text).not_to include('300,NEWT AV, , ,OAKLAND,CA,94612')
     end
 
     it 'skip rap sheets without any cycles' do
