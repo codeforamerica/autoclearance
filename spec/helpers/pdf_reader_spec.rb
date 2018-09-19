@@ -112,7 +112,7 @@ describe PDFReader do
     end
   end
 
-  def strip_whitespace str
+  def strip_whitespace(str)
     str.gsub(/[\s\n]/, '')
   end
 end

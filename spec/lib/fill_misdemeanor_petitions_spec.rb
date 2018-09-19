@@ -21,7 +21,7 @@ describe FillMisdemeanorPetitions do
 
     fields = get_fields_from_pdf(File.new("#{output_dir}/with_sf_number/petition_SMITH_AGENT_123.pdf"))
 
-    expect(fields).to eq({
+    expect(fields).to eq(
       "defendant" => "SMITH/AGENT (DOB 1/1/99)",
       "sf_number" => "010101",
       "court_number" => "123",
@@ -39,10 +39,10 @@ describe FillMisdemeanorPetitions do
       "court_sealed" => "Yes",
       "record_sealed" => "Yes",
       "dismissal" => "Yes"
-    })
+    )
 
     fields = get_fields_from_pdf(File.new("#{output_dir}/with_sf_number/petition_CANDY_AGENT_456.pdf"))
-    expect(fields).to eq({
+    expect(fields).to eq(
       "defendant" => "CANDY/AGENT (DOB 1/1/99)",
       "sf_number" => "293848",
       "court_number" => "456",
@@ -60,7 +60,7 @@ describe FillMisdemeanorPetitions do
       "court_sealed" => "Yes",
       "record_sealed" => "Yes",
       "dismissal" => "Yes"
-    })
+    )
   end
 
   it 'does not fill in sf number if it is zero' do

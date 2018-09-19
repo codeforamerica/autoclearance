@@ -4,6 +4,7 @@ AllCops:
   Exclude:
     - 'db/schema.rb'
     - 'vendor/**/*'
+    - 'bin/*'
 
 Rails:
   Enabled: true

@@ -10,23 +10,22 @@ class FillProp64Motion
 
     pdftk = PdfForms.new(Cliver.detect('pdftk'))
 
-    pdftk.fill_form 'app/assets/motions/prop64.pdf', tempfile.path, {
-      "Defendant" => name,
-      "SCN" => event.case_number,
-      "FOR RESENTENCING OR DISMISSAL HS  113618b" => on_or_off(event.remedy == 'resentencing'),
-      "FOR REDESIGNATION OR DISMISSALSEALING HS  113618f" => on_or_off(event.remedy == 'redesignation'),
-      "11357  Possession of Marijuana" => on_or_off(number_of_counts_for_code("HS 11357") > 0),
-      "11358  Cultivation of Marijuana" => on_or_off(number_of_counts_for_code("HS 11358") > 0),
-      "11359  Possession of Marijuana for Sale" => on_or_off(number_of_counts_for_code("HS 11359") > 0),
-      "11360  Transportation Distribution or" => on_or_off(number_of_counts_for_code("HS 11360") > 0),
-      "11357 Count" => count_multiplier("HS 11357"),
-      "11358 Count" => count_multiplier("HS 11358"),
-      "11359 Count" => count_multiplier("HS 11359"),
-      "11360 Count" => count_multiplier("HS 11360"),
-      "Other Health and Safety Code Section" => on_or_off(other_code_sections.any?),
-      "Text2" => other_code_sections.join(', '),
-      "The District Attorney finds that defendant is eligible for relief and now requests the court to recall and resentence" => "On"
-    }
+    pdftk.fill_form 'app/assets/motions/prop64.pdf', tempfile.path,
+                    "Defendant" => name,
+                    "SCN" => event.case_number,
+                    "FOR RESENTENCING OR DISMISSAL HS  113618b" => on_or_off(event.remedy == 'resentencing'),
+                    "FOR REDESIGNATION OR DISMISSALSEALING HS  113618f" => on_or_off(event.remedy == 'redesignation'),
+                    "11357  Possession of Marijuana" => on_or_off(number_of_counts_for_code("HS 11357") > 0),
+                    "11358  Cultivation of Marijuana" => on_or_off(number_of_counts_for_code("HS 11358") > 0),
+                    "11359  Possession of Marijuana for Sale" => on_or_off(number_of_counts_for_code("HS 11359") > 0),
+                    "11360  Transportation Distribution or" => on_or_off(number_of_counts_for_code("HS 11360") > 0),
+                    "11357 Count" => count_multiplier("HS 11357"),
+                    "11358 Count" => count_multiplier("HS 11358"),
+                    "11359 Count" => count_multiplier("HS 11359"),
+                    "11360 Count" => count_multiplier("HS 11360"),
+                    "Other Health and Safety Code Section" => on_or_off(other_code_sections.any?),
+                    "Text2" => other_code_sections.join(', '),
+                    "The District Attorney finds that defendant is eligible for relief and now requests the court to recall and resentence" => "On"
 
     tempfile
   end

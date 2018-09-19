@@ -3,7 +3,7 @@ class AnonEvent < ApplicationRecord
   has_many :anon_counts, dependent: :destroy
   has_one :event_properties, dependent: :destroy
 
-  VALID_EVENT_TYPES = ['court', 'arrest', 'applicant', 'probation', 'custody', 'registration', 'supplemental_arrest', 'deceased', 'mental_health']
+  VALID_EVENT_TYPES = %w[court arrest applicant probation custody registration supplemental_arrest deceased mental_health].freeze
 
   validates :event_type, presence: true
   validates :event_type, inclusion: { in: VALID_EVENT_TYPES }

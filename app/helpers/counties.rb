@@ -2,7 +2,7 @@ module Counties
   SAN_FRANCISCO = {
     name: 'San Francisco',
     courthouses: ['CASC San Francisco', 'CASC San Francisco Co', 'CAMC San Francisco']
-  }
+  }.freeze
   LOS_ANGELES = {
     name: 'Los Angeles',
     courthouses: [
@@ -28,7 +28,7 @@ module Counties
       'CASC West LA Airport',
       'CASC Los Angeles Central'
     ]
-  }
+  }.freeze
   SAN_JOAQUIN = {
     name: 'San Joaquin',
     courthouses: [
@@ -39,7 +39,7 @@ module Counties
       'CASC Stockton',
       'CASC Tracy'
     ]
-  }
+  }.freeze
   CONTRA_COSTA = {
     name: 'Contra Costa',
     courthouses: [
@@ -48,7 +48,7 @@ module Counties
       'CASC Richmond',
       'CASC Walnut Creek'
     ]
-  }
+  }.freeze
   SACRAMENTO = {
     name: 'Sacramento',
     courthouses: [
@@ -56,5 +56,5 @@ module Counties
       'CASC MC Sacramento',
       'CASC Sacramento'
     ]
-  }
+  }.freeze
 end

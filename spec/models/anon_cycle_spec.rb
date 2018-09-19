@@ -5,12 +5,12 @@ describe AnonCycle do
     it 'creates AnonCycles and AnonEvents from parser output' do
       event_1 = build_court_event(
         date: Date.new(1999, 1, 5),
-        courthouse: 'Some courthouse',
+        courthouse: 'Some courthouse'
       )
 
       event_2 = build_court_event(
         date: Date.new(1991, 3, 14),
-        courthouse: 'CASC San Francisco',
+        courthouse: 'CASC San Francisco'
       )
 
       cycle = RapSheetParser::Cycle.new(events: [event_1, event_2])
