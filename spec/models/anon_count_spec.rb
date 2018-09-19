@@ -15,7 +15,7 @@ describe AnonCount do
 
     context 'for a count with disposition convicted' do
       let(:count) do
-        build_court_count(
+        build_count(
           code_section_description: 'ARMED ROBBERY',
           code: 'HS',
           section: '11358',
@@ -38,7 +38,7 @@ describe AnonCount do
 
     context 'for a count with disposition other than convicted' do
       let(:count) do
-        build_court_count(
+        build_count(
           code_section_description: 'ARMED ROBBERY',
           code: 'PC',
           section: '1505',
@@ -59,7 +59,7 @@ describe AnonCount do
 
     context 'for a count with no disposition' do
       let(:count) do
-        build_court_count(
+        build_count(
           code_section_description: 'ARMED ROBBERY',
           code: 'PC',
           section: '1505',

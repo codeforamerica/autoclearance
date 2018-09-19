@@ -10,7 +10,7 @@ describe RapSheetProperties do
 
     let(:events) do
       [
-        build_court_event(counts: [build_court_count(code: 'HS', section: '11358')]),
+        build_court_event(counts: [build_count(code: 'HS', section: '11358')]),
         event
       ]
     end
@@ -26,7 +26,7 @@ describe RapSheetProperties do
     end
 
     context 'when there are superstrikes' do
-      let(:event) { build_court_event(counts: [build_court_count(code: 'PC', section: '187')]) }
+      let(:event) { build_court_event(counts: [build_count(code: 'PC', section: '187')]) }
 
       it 'creates RapSheetProperties with superstrikes true' do
         expect(subject.has_superstrikes).to eq true
@@ -34,7 +34,7 @@ describe RapSheetProperties do
     end
 
     context 'when there is a deceased event' do
-      let(:event) { build_other_event(header: 'deceased') }
+      let(:event) { build_other_event(event_type: 'deceased') }
 
       it 'creates RapSheetProperties deceased true' do
         expect(subject.deceased).to eq true
@@ -42,7 +42,7 @@ describe RapSheetProperties do
     end
 
     context 'when there is a sex offense registration' do
-      let(:event) { build_other_event(header: 'registration', counts: [build_court_count(code: 'PC', section: '290')]) }
+      let(:event) { build_other_event(event_type: 'registration', counts: [build_count(code: 'PC', section: '290')]) }
 
       it 'creates RapSheetProperties with sex offender registration true' do
         expect(subject.has_sex_offender_registration).to eq true

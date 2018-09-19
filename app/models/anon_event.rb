@@ -22,7 +22,7 @@ class AnonEvent < ApplicationRecord
 
     AnonEvent.new(
       agency: event.agency,
-      event_type: event.header,
+      event_type: event.event_type,
       date: event.date,
       anon_counts: counts,
       event_properties: event_properties(event: event, rap_sheet: rap_sheet)

@@ -7,7 +7,7 @@ describe EventWithEligibility do
       build_court_event(
         date: Time.zone.today - 7.days,
         courthouse: 'CASC San Francisco',
-        counts: [build_court_count(disposition: build_disposition(sentence: sentence))]
+        counts: [build_count(disposition: build_disposition(sentence: sentence))]
       )
     end
 
@@ -47,8 +47,8 @@ describe EventWithEligibility do
 
     context 'when event has prop 64 eligible and ineligible counts' do
       let(:event) do
-        prop64_eligible_count = build_court_count(code: 'HS', section: '11357')
-        prop64_ineligible_count = build_court_count(code: 'HS', section: '12345')
+        prop64_eligible_count = build_count(code: 'HS', section: '11357')
+        prop64_ineligible_count = build_count(code: 'HS', section: '12345')
         build_court_event(counts: [prop64_eligible_count, prop64_ineligible_count])
       end
 
@@ -60,8 +60,8 @@ describe EventWithEligibility do
 
     context 'there are dismissed counts' do
       let(:event) do
-        prop64_eligible_count = build_court_count(code: 'HS', section: '11357', disposition: build_disposition(type: 'convicted'))
-        prop64_ineligible_count = build_court_count(code: 'HS', section: '11360', disposition: build_disposition(type: 'dismissed'))
+        prop64_eligible_count = build_count(code: 'HS', section: '11357', disposition: build_disposition(type: 'convicted'))
+        prop64_ineligible_count = build_count(code: 'HS', section: '11360', disposition: build_disposition(type: 'dismissed'))
         build_court_event(counts: [prop64_eligible_count, prop64_ineligible_count])
       end
 
@@ -78,8 +78,8 @@ describe EventWithEligibility do
 
     context 'when event has prop 64 eligible and ineligible counts' do
       let(:event) do
-        prop64_eligible_count = build_court_count(code: 'HS', section: '11357')
-        prop64_ineligible_count = build_court_count(code: 'HS', section: '12345')
+        prop64_eligible_count = build_count(code: 'HS', section: '11357')
+        prop64_ineligible_count = build_count(code: 'HS', section: '12345')
         build_court_event(counts: [prop64_eligible_count, prop64_ineligible_count])
       end
 
@@ -91,8 +91,8 @@ describe EventWithEligibility do
 
     context 'there are dismissed counts' do
       let(:event) do
-        prop64_eligible_count = build_court_count(code: 'HS', section: '11357', disposition: build_disposition(type: 'convicted'))
-        prop64_ineligible_count = build_court_count(code: 'HS', section: '11360', disposition: build_disposition(type: 'dismissed'))
+        prop64_eligible_count = build_count(code: 'HS', section: '11357', disposition: build_disposition(type: 'convicted'))
+        prop64_ineligible_count = build_count(code: 'HS', section: '11360', disposition: build_disposition(type: 'dismissed'))
         build_court_event(counts: [prop64_eligible_count, prop64_ineligible_count])
       end
 

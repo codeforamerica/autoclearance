@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe CountWithEligibility do
-  let(:count) { build_court_count(code: code, section: section) }
+  let(:count) { build_count(code: code, section: section) }
 
   subject { described_class.new(count) }
 
@@ -76,7 +76,7 @@ describe CountWithEligibility do
 
   describe '#eligible?' do
     it 'returns true if prop64 conviction and no disqualifiers' do
-      eligible_count = build_court_count(code: 'HS', section: '11357')
+      eligible_count = build_count(code: 'HS', section: '11357')
 
       event = build_court_event(
         date: Time.zone.today - 7.days,
@@ -91,7 +91,7 @@ describe CountWithEligibility do
     end
 
     it 'returns false if rap sheet level disqualifiers' do
-      eligible_count = build_court_count(code: 'HS', section: '11357')
+      eligible_count = build_count(code: 'HS', section: '11357')
 
       event = build_court_event(counts: [eligible_count])
 
@@ -127,7 +127,7 @@ describe CountWithEligibility do
       end
 
       it 'returns false if it has 2 prop 64 priors' do
-        eligible_count = build_court_count(code: 'HS', section: '11358')
+        eligible_count = build_count(code: 'HS', section: '11358')
 
         event = build_court_event(counts: [eligible_count])
 
@@ -139,7 +139,7 @@ describe CountWithEligibility do
   end
 
   describe '#has_two_prop_64_priors?' do
-    let(:count) { build_court_count(code: 'HS', section: '11358') }
+    let(:count) { build_count(code: 'HS', section: '11358') }
     let(:event) { build_court_event(counts: [count]) }
     let(:rap_sheet_with_eligibility) { build_rap_sheet_with_eligibility(rap_sheet: build_rap_sheet(events: events)) }
     let(:result) { CountWithEligibility.new(count).has_two_prop_64_priors?(rap_sheet_with_eligibility) }
@@ -161,7 +161,7 @@ describe CountWithEligibility do
     end
 
     context 'if there 3 or more of a non-relevant code' do
-      let(:count) { build_court_count(code: 'HS', section: '11357') }
+      let(:count) { build_count(code: 'HS', section: '11357') }
       let(:events) { [event, event, event] }
 
       it 'returns false' do

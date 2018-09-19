@@ -10,9 +10,9 @@ RSpec.describe FillProp64Motion do
 
   let(:counts) {
     [
-      build_court_count(code: 'HS', section: '11357(a)'),
-      build_court_count(code: 'HS', section: '11357(a)'),
-      build_court_count(code: 'HS', section: '11359')
+      build_count(code: 'HS', section: '11357(a)'),
+      build_count(code: 'HS', section: '11357(a)'),
+      build_count(code: 'HS', section: '11359')
     ]
   }
 
@@ -60,9 +60,9 @@ RSpec.describe FillProp64Motion do
     let(:name_code) { '03' }
     let(:counts) {
       [
-        build_court_count(code: 'PC', section: '32'),
-        build_court_count(code: 'PC', section: '32'),
-        build_court_count(code: 'PC', section: '123')
+        build_count(code: 'PC', section: '32'),
+        build_count(code: 'PC', section: '32'),
+        build_count(code: 'PC', section: '123')
       ]
     }
 

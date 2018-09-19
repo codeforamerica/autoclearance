@@ -7,8 +7,8 @@ describe AnonEvent do
         date: Date.new(1991, 1, 5),
         courthouse: 'Some courthouse',
         counts: [
-          build_court_count(code: 'PC', section: '456'),
-          build_court_count(code: 'PC', section: '789')
+          build_count(code: 'PC', section: '456'),
+          build_count(code: 'PC', section: '789')
         ],
         name_code: nil
       )
@@ -34,7 +34,7 @@ describe AnonEvent do
     it 'only creates event properties if court event has convictions' do
       event = build_court_event(
         counts: [
-          build_court_count(disposition: build_disposition(type: 'dismissed'))
+          build_count(disposition: build_disposition(type: 'dismissed'))
         ]
       )
       rap_sheet = build_rap_sheet(events: [event])
@@ -43,7 +43,7 @@ describe AnonEvent do
     end
 
     it 'creates arrest event from parser output' do
-      count = build_court_count(
+      count = build_count(
         code: 'PC',
         section: '456'
       )

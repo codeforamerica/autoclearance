@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe EligibilityEstimate do
   it 'populates fields' do
-    count = build_court_count(code: 'HS', section: '11357')
+    count = build_count(code: 'HS', section: '11357')
     event = build_court_event(
       date: Date.new(2001, 1, 5),
       counts: [count]

@@ -3,7 +3,7 @@ require 'csv'
 
 describe SummaryCSV do
   let(:eligibility1) do
-    court_count1 = build_court_count(
+    court_count1 = build_count(
       code: 'HS',
       section: '11360',
       disposition: build_disposition(
@@ -28,7 +28,7 @@ describe SummaryCSV do
   end
 
   let(:eligibility2) do
-    court_count2 = build_court_count(
+    court_count2 = build_count(
       code: 'HS',
       section: '11357',
       disposition: build_disposition(
@@ -79,8 +79,8 @@ describe SummaryCSV do
   end
 
   it 'adds deceased events to single csv' do
-    deceased_event = build_other_event(header: 'deceased')
-    court_count = build_court_count(
+    deceased_event = build_other_event(event_type: 'deceased')
+    court_count = build_count(
       code: 'HS',
       section: '11360',
       disposition: build_disposition(

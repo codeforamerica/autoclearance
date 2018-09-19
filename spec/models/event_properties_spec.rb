@@ -9,8 +9,8 @@ describe EventProperties do
       event = build_court_event(
         date: Date.new(2001, 1, 5),
         counts: [
-          build_court_count(code: 'PC', section: '456'),
-          build_court_count(code: 'PC', section: '789', disposition: disposition)
+          build_count(code: 'PC', section: '456'),
+          build_count(code: 'PC', section: '789', disposition: disposition)
         ]
       )
       rap_sheet = build_rap_sheet(

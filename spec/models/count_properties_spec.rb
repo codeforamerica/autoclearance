@@ -3,7 +3,7 @@ require 'rails_helper'
 describe CountProperties do
   describe '#build' do
     it 'populates eligibility fields for prop 64 code sections' do
-      count = build_court_count(code: 'HS', section: '11357')
+      count = build_count(code: 'HS', section: '11357')
 
       event = build_court_event(
         date: Date.new(2001, 1, 5),
@@ -23,8 +23,8 @@ describe CountProperties do
     end
 
     it 'populates eligibility fields for plea bargained counts' do
-      arrest_count = build_court_count(code: 'HS', section: '11358')
-      bargain_count = build_court_count(code: 'PC', section: '32')
+      arrest_count = build_count(code: 'HS', section: '11358')
+      bargain_count = build_count(code: 'PC', section: '32')
 
       arrest_event = build_arrest_event(date: Date.new(2001, 11, 4), counts: [arrest_count])
       bargain_event = build_court_event(
@@ -44,9 +44,9 @@ describe CountProperties do
     end
 
     it 'populates eligibility fields for prop 64 code sections with two priors' do
-      count_1 = build_court_count(code: 'HS', section: '11358')
-      count_2 = build_court_count(code: 'HS', section: '11358')
-      count_3 = build_court_count(code: 'HS', section: '11358')
+      count_1 = build_count(code: 'HS', section: '11358')
+      count_2 = build_count(code: 'HS', section: '11358')
+      count_3 = build_count(code: 'HS', section: '11358')
 
       event_1 = build_court_event(
         date: Date.new(2001, 1, 5),

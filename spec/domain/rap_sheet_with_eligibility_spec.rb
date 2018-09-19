@@ -33,7 +33,7 @@ describe RapSheetWithEligibility do
       ineligible_event = build_court_event(
         courthouse: 'CASC San Francisco',
         counts: [
-          build_court_count(
+          build_count(
             updates: [
               RapSheetParser::Update.new(dispositions: [build_disposition(type: 'pc1203_dismissed')])
             ]
@@ -48,9 +48,9 @@ describe RapSheetWithEligibility do
 
   describe '#has_three_convictions_of_same_type?' do
     it 'returns true if rap sheet contains three convictions with the same code section' do
-      event1 = build_court_event(counts: [build_court_count(code: 'PC', section: '123')])
-      event2 = build_court_event(counts: [build_court_count(code: 'PC', section: '123')])
-      event3 = build_court_event(counts: [build_court_count(code: 'PC', section: '123')])
+      event1 = build_court_event(counts: [build_count(code: 'PC', section: '123')])
+      event2 = build_court_event(counts: [build_count(code: 'PC', section: '123')])
+      event3 = build_court_event(counts: [build_count(code: 'PC', section: '123')])
 
       rap_sheet = build_rap_sheet(events: [event1, event2, event3])
 
@@ -58,9 +58,9 @@ describe RapSheetWithEligibility do
     end
 
     it 'returns false if rap sheet does not contain two convictions and one dismissed count for the same code section' do
-      event1 = build_court_event(counts: [build_court_count(code: 'PC', section: '123', disposition: build_disposition(type: 'convicted'))])
-      event2 = build_court_event(counts: [build_court_count(code: 'PC', section: '123', disposition: build_disposition(type: 'convicted'))])
-      event3 = build_court_event(counts: [build_court_count(code: 'PC', section: '123', disposition: build_disposition(type: 'dismissed'))])
+      event1 = build_court_event(counts: [build_count(code: 'PC', section: '123', disposition: build_disposition(type: 'convicted'))])
+      event2 = build_court_event(counts: [build_count(code: 'PC', section: '123', disposition: build_disposition(type: 'convicted'))])
+      event3 = build_court_event(counts: [build_count(code: 'PC', section: '123', disposition: build_disposition(type: 'dismissed'))])
 
       rap_sheet = build_rap_sheet(events: [event1, event2, event3])
 
@@ -70,11 +70,11 @@ describe RapSheetWithEligibility do
     it 'returns false if rap sheet contains three convictions for the same code section in two events' do
       event1 = build_court_event(
         counts: [
-          build_court_count(code: 'PC', section: '123'),
-          build_court_count(code: 'PC', section: '123')
+          build_count(code: 'PC', section: '123'),
+          build_count(code: 'PC', section: '123')
         ]
       )
-      event2 = build_court_event(counts: [build_court_count(code: 'PC', section: '123')])
+      event2 = build_court_event(counts: [build_count(code: 'PC', section: '123')])
 
       rap_sheet = build_rap_sheet(events: [event1, event2])
 
@@ -84,7 +84,7 @@ describe RapSheetWithEligibility do
 
   context 'warnings for rap sheets with nothing potentially eligible' do
     it 'saves warnings for rap sheets that did not seem to have any potentially prop64 eligible counts' do
-      count = build_court_count(code: 'HS', section: '1234')
+      count = build_count(code: 'HS', section: '1234')
       events = [build_court_event(counts: [count], courthouse: 'CASC San Francisco')]
       rap_sheet = build_rap_sheet(events: events)
 
@@ -104,8 +104,8 @@ describe RapSheetWithEligibility do
       let(:events) do
         [
           build_other_event(
-            header: 'registration',
-            counts: [build_court_count(code: 'PC', section: '290')]
+            event_type: 'registration',
+            counts: [build_count(code: 'PC', section: '290')]
           )
         ]
       end
@@ -117,7 +117,7 @@ describe RapSheetWithEligibility do
 
     context 'superstrike on rap sheet' do
       let(:events) do
-        superstrike = build_court_count(code: 'PC', section: '187')
+        superstrike = build_count(code: 'PC', section: '187')
         [build_court_event(counts: [superstrike])]
       end
 
@@ -128,7 +128,7 @@ describe RapSheetWithEligibility do
 
     context 'none of the above' do
       let(:events) do
-        event1_count = build_court_count(code: 'HS', section: '11357')
+        event1_count = build_count(code: 'HS', section: '11357')
         [build_court_event(case_number: '111', counts: [event1_count])]
       end
 
@@ -141,7 +141,7 @@ describe RapSheetWithEligibility do
   describe '#has_deceased_event?' do
     it 'returns true if rap sheet contains a deceased event' do
       deceased_event = build_other_event(
-        header: 'deceased',
+        event_type: 'deceased',
         agency: 'CACO San Francisco'
       )
 
@@ -151,7 +151,7 @@ describe RapSheetWithEligibility do
     end
 
     it 'returns false if rap sheet does not contain deceased event' do
-      event1_count = build_court_count(code: 'HS', section: '11357')
+      event1_count = build_count(code: 'HS', section: '11357')
       event1 = build_court_event(case_number: '111', counts: [event1_count])
 
       rap_sheet = build_rap_sheet(events: [event1])
@@ -161,7 +161,7 @@ describe RapSheetWithEligibility do
 
     it 'memoizes the search for deceased events' do
       deceased_event = build_other_event(
-        header: 'deceased',
+        event_type: 'deceased',
         agency: 'CACO San Francisco'
       )
 
