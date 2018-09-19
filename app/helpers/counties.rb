@@ -30,7 +30,7 @@ module Counties
     ]
   }
   SAN_JOAQUIN = {
-    name: 'San Juaquin',
+    name: 'San Joaquin',
     courthouses: [
       'CAMC Lodi',
       'CAMC Stockton',
