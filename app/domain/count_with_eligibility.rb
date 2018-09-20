@@ -1,16 +1,23 @@
 class CountWithEligibility < SimpleDelegator
-  def potentially_eligible?(event)
-    prop64_conviction? || plea_bargain_classifier(event).possible_plea_bargain?
+  attr_reader :event
+
+  def initialize(count:, event:)
+    super(count)
+    @event = event
+  end
+
+  def potentially_eligible?
+    prop64_conviction? || plea_bargain_classifier.possible_plea_bargain?
   end
 
   def prop64_conviction?
     subsection_of?(dismissible_codes) && !subsection_of?(ineligible_codes)
   end
 
-  def eligible?(event, eligibility)
-    return 'no' unless potentially_eligible?(event) && !has_disqualifiers?(eligibility) && !has_two_prop_64_priors?(eligibility)
-    return 'yes' if plea_bargain_classifier(event).plea_bargain?
-    return 'maybe' if plea_bargain_classifier(event).possible_plea_bargain?
+  def eligible?(eligibility)
+    return 'no' unless potentially_eligible? && !has_disqualifiers?(eligibility) && !has_two_prop_64_priors?(eligibility)
+    return 'yes' if plea_bargain_classifier.plea_bargain?
+    return 'maybe' if plea_bargain_classifier.possible_plea_bargain?
     'yes'
   end
 
@@ -19,16 +26,16 @@ class CountWithEligibility < SimpleDelegator
     two_priors_codes.include?(code_section) && eligibility.has_three_convictions_of_same_type?(code_section)
   end
 
-  def plea_bargain(event)
-    return 'yes' if plea_bargain_classifier(event).plea_bargain?
-    return 'maybe' if plea_bargain_classifier(event).possible_plea_bargain?
+  def plea_bargain
+    return 'yes' if plea_bargain_classifier.plea_bargain?
+    return 'maybe' if plea_bargain_classifier.possible_plea_bargain?
     'no'
   end
 
   private
 
-  def plea_bargain_classifier(event)
-    PleaBargainClassifier.new(event: event, count: self)
+  def plea_bargain_classifier
+    PleaBargainClassifier.new(self)
   end
 
   def has_disqualifiers?(eligibility)

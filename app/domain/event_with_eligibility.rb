@@ -1,19 +1,19 @@
 class EventWithEligibility < SimpleDelegator
   def counts
-    super.map { |c| CountWithEligibility.new(c) }
+    super.map { |c| CountWithEligibility.new(count: c, event: self) }
   end
 
   def convicted_counts
-    super.map { |c| CountWithEligibility.new(c) }
+    super.map { |c| CountWithEligibility.new(count: c, event: self) }
   end
 
   def potentially_eligible_counts
-    convicted_counts.select { |count| count.potentially_eligible?(self) }
+    convicted_counts.select(&:potentially_eligible?)
   end
 
   def eligible_counts(eligibility)
     convicted_counts.select do |count|
-      %w[yes maybe].include?(count.eligible?(self, eligibility))
+      %w[yes maybe].include?(count.eligible?(eligibility))
     end
   end
 

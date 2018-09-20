@@ -1,7 +1,6 @@
 class PleaBargainClassifier
-  def initialize(count:, event:)
+  def initialize(count)
     @count = count
-    @event = event
   end
 
   def plea_bargain?
@@ -14,7 +13,7 @@ class PleaBargainClassifier
 
   private
 
-  attr_reader :count, :event
+  attr_reader :count
 
   def possible_plea_bargain_codes
     [
@@ -31,7 +30,7 @@ class PleaBargainClassifier
   end
 
   def unrejected_counts_for_event_cycle
-    event.cycle_events.flat_map do |event|
+    count.event.cycle_events.flat_map do |event|
       event.counts.reject do |count|
         count_prosecutor_rejected(count) || prosecutor_rejected_update(count)
       end

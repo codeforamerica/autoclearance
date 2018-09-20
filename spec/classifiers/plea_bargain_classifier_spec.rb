@@ -6,8 +6,8 @@ describe PleaBargainClassifier do
     eligibility = build_rap_sheet_with_eligibility(rap_sheet: rap_sheet)
     EventWithEligibility.new(eligibility.eligible_events[0])
   end
-  let(:count) { CountWithEligibility.new(event.counts[0]) }
-  let(:subject) { described_class.new(event: event, count: count) }
+  let(:count) { CountWithEligibility.new(count: event.counts[0], event: event) }
+  let(:subject) { described_class.new(count) }
 
   describe '#plea_bargain?' do
     context 'plea bargain from prop64 dismissable code' do
