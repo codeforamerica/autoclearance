@@ -2,11 +2,13 @@ require 'rails_helper'
 
 describe CountWithEligibility do
   let(:count) { build_count(code: code, section: section) }
-  let(:event) { EventWithEligibility.new(build_court_event(counts: [count])) }
+  let(:event) { build_court_event(counts: [count]) }
+  let(:event_with_eligibility) { EventWithEligibility.new(event: event, eligibility: eligibility) }
   let(:code) {}
   let(:section) {}
+  let(:eligibility) { build_rap_sheet_with_eligibility(rap_sheet: build_rap_sheet(events: [event])) }
 
-  subject { described_class.new(count: count, event: event) }
+  subject { described_class.new(count: count, event: event_with_eligibility, eligibility: eligibility) }
 
   describe '#potentially_eligible?' do
     context 'when the count is an eligible code' do
@@ -74,42 +76,40 @@ describe CountWithEligibility do
     let(:count) { build_count(code: 'HS', section: '11358') }
 
     it 'returns true if prop64 conviction and no disqualifiers' do
-      rap_sheet = build_rap_sheet(events: [event])
-      eligibility = build_rap_sheet_with_eligibility(rap_sheet: rap_sheet)
-
-      expect(subject.eligible?(eligibility)).to eq 'yes'
+      expect(subject.eligible?).to eq 'yes'
     end
 
-    it 'returns false if rap sheet level disqualifiers' do
-      eligibility = double(disqualifiers?: true)
-
-      expect(subject.eligible?(eligibility)).to eq 'no'
+    context 'rap sheet disqualifiers' do
+      let(:eligibility) { double(disqualifiers?: true) }
+      it 'returns false if rap sheet level disqualifiers' do
+        expect(subject.eligible?).to eq 'no'
+      end
     end
 
-    it 'returns false if it has 2 prop 64 priors' do
-      eligibility = double(has_three_convictions_of_same_type?: true, disqualifiers?: false)
-      expect(subject.eligible?(eligibility)).to eq 'no'
+    context '2 prop 64 priors' do
+      let(:eligibility) { double(has_three_convictions_of_same_type?: true, disqualifiers?: false) }
+      it 'returns false if rap sheet level disqualifiers' do
+        expect(subject.eligible?).to eq 'no'
+      end
     end
 
     context 'plea bargain detection' do
       it 'returns true if plea bargain' do
-        eligibility = build_rap_sheet_with_eligibility(rap_sheet: build_rap_sheet)
         plea_bargain_classifier = instance_double(PleaBargainClassifier, plea_bargain?: true, possible_plea_bargain?: true)
         allow(PleaBargainClassifier).to receive(:new)
           .with(subject)
           .and_return(plea_bargain_classifier)
 
-        expect(subject.eligible?(eligibility)).to eq('yes')
+        expect(subject.eligible?).to eq('yes')
       end
 
       it 'returns "maybe" if possible plea bargain only' do
-        eligibility = build_rap_sheet_with_eligibility(rap_sheet: build_rap_sheet)
         plea_bargain_classifier = instance_double(PleaBargainClassifier, plea_bargain?: false, possible_plea_bargain?: true)
         allow(PleaBargainClassifier).to receive(:new)
           .with(subject)
           .and_return(plea_bargain_classifier)
 
-        expect(subject.eligible?(eligibility)).to eq('maybe')
+        expect(subject.eligible?).to eq('maybe')
       end
     end
   end
@@ -117,8 +117,8 @@ describe CountWithEligibility do
   describe '#has_two_prop_64_priors?' do
     let(:code) { 'HS' }
     let(:section) { '11358' }
-    let(:rap_sheet_with_eligibility) { double(has_three_convictions_of_same_type?: has_three_convictions_of_same_type?) }
-    let(:result) { subject.has_two_prop_64_priors?(rap_sheet_with_eligibility) }
+    let(:eligibility) { double(has_three_convictions_of_same_type?: has_three_convictions_of_same_type?) }
+    let(:result) { subject.has_two_prop_64_priors? }
 
     context 'if there are fewer than 3 of a prop-64 two-priors relevant code' do
       let(:has_three_convictions_of_same_type?) { false }

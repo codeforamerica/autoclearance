@@ -4,9 +4,9 @@ describe PleaBargainClassifier do
   let(:event) do
     rap_sheet = RapSheetParser::Parser.new.parse(text)
     eligibility = build_rap_sheet_with_eligibility(rap_sheet: rap_sheet)
-    EventWithEligibility.new(eligibility.eligible_events[0])
+    eligibility.eligible_events[0]
   end
-  let(:count) { CountWithEligibility.new(count: event.counts[0], event: event) }
+  let(:count) { event.counts[0] }
   let(:subject) { described_class.new(count) }
 
   describe '#plea_bargain?' do

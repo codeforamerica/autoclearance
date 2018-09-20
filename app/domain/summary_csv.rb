@@ -52,7 +52,7 @@ class SummaryCSV
       eligibility.has_three_convictions_of_same_type?(count.code_section),
       eligibility.sex_offender_registration?,
       event.remedy,
-      count.eligible?(eligibility),
+      count.eligible?,
       eligibility.has_deceased_event?
     ]
   end

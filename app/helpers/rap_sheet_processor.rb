@@ -60,10 +60,10 @@ class RapSheetProcessor
     # Create a bunch of PDFs
     eligibility
       .eligible_events
-      .select { |event| event.eligible_counts(eligibility).any? }
+      .select { |event| event.eligible_counts.any? }
       .each_with_index do |event, index|
       file_name = "#{input_file.key.gsub('.pdf', '')}_motion_#{index}.pdf"
-      eligible_counts = event.eligible_counts(eligibility)
+      eligible_counts = event.eligible_counts
 
       @num_motions += 1
       output_directory.files.create(

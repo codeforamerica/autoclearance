@@ -1,9 +1,10 @@
 class CountWithEligibility < SimpleDelegator
-  attr_reader :event
+  attr_reader :event, :eligibility
 
-  def initialize(count:, event:)
+  def initialize(count:, event:, eligibility:)
     super(count)
     @event = event
+    @eligibility = eligibility
   end
 
   def potentially_eligible?
@@ -14,14 +15,14 @@ class CountWithEligibility < SimpleDelegator
     subsection_of?(dismissible_codes) && !subsection_of?(ineligible_codes)
   end
 
-  def eligible?(eligibility)
-    return 'no' unless potentially_eligible? && !has_disqualifiers?(eligibility) && !has_two_prop_64_priors?(eligibility)
+  def eligible?
+    return 'no' unless potentially_eligible? && !has_disqualifiers? && !has_two_prop_64_priors?
     return 'yes' if plea_bargain_classifier.plea_bargain?
     return 'maybe' if plea_bargain_classifier.possible_plea_bargain?
     'yes'
   end
 
-  def has_two_prop_64_priors?(eligibility)
+  def has_two_prop_64_priors?
     two_priors_codes = ['HS 11358', 'HS 11359', 'HS 11360']
     two_priors_codes.include?(code_section) && eligibility.has_three_convictions_of_same_type?(code_section)
   end
@@ -38,7 +39,7 @@ class CountWithEligibility < SimpleDelegator
     PleaBargainClassifier.new(self)
   end
 
-  def has_disqualifiers?(eligibility)
+  def has_disqualifiers?
     eligibility.disqualifiers?
   end
 

@@ -2,6 +2,9 @@ require 'rails_helper'
 require 'rap_sheet_parser'
 require_relative '../../app/domain/event_with_eligibility'
 describe EventWithEligibility do
+  let(:rap_sheet_with_eligibility) { build_rap_sheet_with_eligibility(rap_sheet: build_rap_sheet) }
+  subject { described_class.new(event: event, eligibility: rap_sheet_with_eligibility) }
+
   describe 'remedy' do
     let(:event) do
       build_court_event(
@@ -11,15 +14,13 @@ describe EventWithEligibility do
       )
     end
 
-    let(:event_with_eligibility) { described_class.new(event) }
-
     context 'when the sentence is still active' do
       let(:sentence) do
         RapSheetParser::ConvictionSentence.new(probation: 3.years)
       end
 
       it 'returns resentencing' do
-        expect(event_with_eligibility.remedy).to eq 'resentencing'
+        expect(subject.remedy).to eq 'resentencing'
       end
     end
 
@@ -29,7 +30,7 @@ describe EventWithEligibility do
       end
 
       it 'returns redesignation' do
-        expect(event_with_eligibility.remedy).to eq 'redesignation'
+        expect(subject.remedy).to eq 'redesignation'
       end
     end
 
@@ -37,14 +38,12 @@ describe EventWithEligibility do
       let(:sentence) { nil }
 
       it 'returns redisgnation' do
-        expect(event_with_eligibility.remedy).to eq 'redesignation'
+        expect(subject.remedy).to eq 'redesignation'
       end
     end
   end
 
   describe 'potentially_eligible_counts' do
-    let(:event_with_eligibility) { described_class.new(event) }
-
     context 'when event has prop 64 eligible and ineligible counts' do
       let(:event) do
         prop64_eligible_count = build_count(code: 'HS', section: '11357')
@@ -53,8 +52,8 @@ describe EventWithEligibility do
       end
 
       it 'filters out counts that are not prop 64 convictions' do
-        expect(event_with_eligibility.potentially_eligible_counts.length).to eq 1
-        expect(event_with_eligibility.potentially_eligible_counts[0].code_section).to eq 'HS 11357'
+        expect(subject.potentially_eligible_counts.length).to eq 1
+        expect(subject.potentially_eligible_counts[0].code_section).to eq 'HS 11357'
       end
     end
 
@@ -66,15 +65,14 @@ describe EventWithEligibility do
       end
 
       it 'filters out counts without convictions' do
-        expect(event_with_eligibility.potentially_eligible_counts.length).to eq 1
-        expect(event_with_eligibility.potentially_eligible_counts[0].code_section).to eq 'HS 11357'
+        expect(subject.potentially_eligible_counts.length).to eq 1
+        expect(subject.potentially_eligible_counts[0].code_section).to eq 'HS 11357'
       end
     end
   end
 
   describe 'eligible_counts' do
-    let(:eligible_counts) { described_class.new(event).eligible_counts(rap_sheet_with_eligibility) }
-    let(:rap_sheet_with_eligibility) { build_rap_sheet_with_eligibility(rap_sheet: build_rap_sheet) }
+    let(:eligible_counts) { subject.eligible_counts }
 
     context 'when event has prop 64 eligible and ineligible counts' do
       let(:event) do

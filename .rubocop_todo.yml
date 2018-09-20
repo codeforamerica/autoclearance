@@ -185,7 +185,6 @@ Style/StringLiterals:
     - 'db/schema.rb'
     - 'lib/tasks/rap_sheet.rake'
     - 'spec/lib/fill_misdemeanor_petitions_spec.rb'
-    - 'spec/lib/fill_prop64_motion_spec.rb'
     - 'spec/rails_helper.rb'
 
 # Offense count: 3
