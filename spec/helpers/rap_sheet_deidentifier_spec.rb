@@ -102,5 +102,41 @@ describe RapSheetDeidentifier do
       actual_text = File.read(output_text_files[0])
       expect(actual_text).not_to include('19910000')
     end
+
+    it 'removes addresses with arbitrary whitspace' do
+      File.open('/tmp/autoclearance-rap-sheet-inputs/example_rap_sheet.pdf', 'w')
+
+      rap_sheet_text = <<~TEXT
+        personal info
+        * * * *
+        COM: ADR-050404    (123, MAIN ST,    ,  , OAKLAND, CA, , )
+        * * * END OF MESSAGE * * *
+      TEXT
+
+      expect_any_instance_of(PDFReader).to receive(:text).and_return(rap_sheet_text)
+
+      described_class.new.run
+      actual_text = File.read(Dir['/tmp/autoclearance-outputs/*.txt'][0])
+      expect(actual_text).not_to include('123, MAIN ST')
+    end
+
+    it 'does not consume extra lines when stripping addresses' do
+      File.open('/tmp/autoclearance-rap-sheet-inputs/example_rap_sheet.pdf', 'w')
+
+      rap_sheet_text = <<~TEXT
+        personal info
+        * * * *
+        COM: ADR-050404    (123, MAIN ST,    ,  , OAKLAND, CA, , )
+        CNT:01      #12345
+        148(A)(1) PC-OBSTRUCT/ETC PUBLIC OFFICER/ETC
+        * * * END OF MESSAGE * * *
+      TEXT
+
+      expect_any_instance_of(PDFReader).to receive(:text).and_return(rap_sheet_text)
+
+      described_class.new.run
+      actual_text = File.read(Dir['/tmp/autoclearance-outputs/*.txt'][0])
+      expect(actual_text).to include('148(A)(1) PC-OBSTRUCT/ETC PUBLIC OFFICER/ETC')
+    end
   end
 end

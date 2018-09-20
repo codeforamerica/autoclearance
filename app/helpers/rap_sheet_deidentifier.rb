@@ -55,7 +55,7 @@ class RapSheetDeidentifier
   end
 
   def strip_addresses(text)
-    address_regex = /COM: ADR-[\d]{8} \(.*\)/m
+    address_regex = /COM:\s*ADR-[\d]{6,8}\s*\([^)]*\)/m
     text.gsub(address_regex, 'COM: [ADDRESS REDACTED]')
   end
 
