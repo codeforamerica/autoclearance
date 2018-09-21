@@ -43,6 +43,16 @@ describe CountWithEligibility do
       end
     end
 
+    context 'when excluding misdemeanors' do
+      let(:county) { build_county(misdemeanors: false) }
+      let(:eligibility) { build_rap_sheet_with_eligibility(rap_sheet: build_rap_sheet(events: [event]), county: county) }
+      let(:count) { build_count(code: 'HS', section: '11359', disposition: build_disposition(severity: 'M')) }
+
+      it 'returns false' do
+        expect(subject).not_to be_potentially_eligible
+      end
+    end
+
     context 'plea bargains' do
       context 'when the count is a possible plea bargain' do
         before do
@@ -73,21 +83,25 @@ describe CountWithEligibility do
   end
 
   describe '#eligible?' do
-    let(:count) { build_count(code: 'HS', section: '11358') }
+    let(:has_three_convictions_of_same_type?) { false }
+    let(:disqualifiers?) { false }
+    let(:code) { 'HS' }
+    let(:section) { '11358' }
+    let(:eligibility) { double(disqualifiers?: disqualifiers?, has_three_convictions_of_same_type?: has_three_convictions_of_same_type?, county: build_county) }
 
     it 'returns true if prop64 conviction and no disqualifiers' do
       expect(subject.eligible?).to eq 'yes'
     end
 
     context 'rap sheet disqualifiers' do
-      let(:eligibility) { double(disqualifiers?: true) }
+      let(:disqualifiers?) { true }
       it 'returns false if rap sheet level disqualifiers' do
         expect(subject.eligible?).to eq 'no'
       end
     end
 
     context '2 prop 64 priors' do
-      let(:eligibility) { double(has_three_convictions_of_same_type?: true, disqualifiers?: false) }
+      let(:has_three_convictions_of_same_type?) { true }
       it 'returns false if rap sheet level disqualifiers' do
         expect(subject.eligible?).to eq 'no'
       end

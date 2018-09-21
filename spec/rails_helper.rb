@@ -58,10 +58,18 @@ RSpec.configure do |config|
   # config.filter_gems_from_backtrace("gem name")
 end
 
-def build_rap_sheet_with_eligibility(rap_sheet:, courthouses: Counties::SAN_FRANCISCO[:courthouses], logger: Logger.new('/dev/null'))
+def build_rap_sheet_with_eligibility(rap_sheet:, county: build_county, logger: Logger.new('/dev/null'))
   RapSheetWithEligibility.new(
     rap_sheet: rap_sheet,
-    courthouses: courthouses,
+    county: county,
     logger: logger
   )
+end
+
+def build_county(courthouses: ['CASC GOTHAM CITY', 'CAMC METROPOLIS'], name: 'Gotham City', misdemeanors: true)
+  {
+    courthouses: courthouses,
+    name: name,
+    misdemeanors: misdemeanors
+  }
 end

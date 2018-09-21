@@ -22,7 +22,7 @@ describe PleaBargainClassifier do
             11360 HS-SELL/TRANSPORT/ETC MARIJUANA/HASH
           - - - -
           COURT:                NAM:01
-          19980101  CAMC SAN FRANCISCO
+          19980101  CAMC METROPOLIS
 
           CNT:01     #222
             32 PC-ACCESSORY
@@ -55,7 +55,7 @@ describe PleaBargainClassifier do
            DISPO:PROS REJ-OTHER
           - - - -
           COURT:                NAM:01
-          19980101  CAMC SAN FRANCISCO
+          19980101  CAMC METROPOLIS
 
           CNT:01     #222
             32 PC-ACCESSORY
@@ -90,7 +90,7 @@ describe PleaBargainClassifier do
             DISPO:PROS REJ-OTHER
           - - - -
           COURT:                NAM:01
-          19980101  CAMC SAN FRANCISCO
+          19980101  CAMC METROPOLIS
 
           CNT:01     #222
             32 PC-ACCESSORY
@@ -111,7 +111,7 @@ describe PleaBargainClassifier do
           NAM/01 LASTY, FIRSTY
           * * * *
           COURT:                NAM:01
-          19980101  CAMC SAN FRANCISCO
+          19980101  CAMC METROPOLIS
 
           CNT:01     #222
             32 PC-ACCESSORY
@@ -135,7 +135,7 @@ describe PleaBargainClassifier do
           NAM/01 LASTY, FIRSTY
           * * * *
           COURT:                NAM:01
-          19980101  CAMC SAN FRANCISCO
+          19980101  CAMC METROPOLIS
 
           CNT:01     #222
             32 PC-ACCESSORY
@@ -144,7 +144,7 @@ describe PleaBargainClassifier do
             SEN: 12 DAYS JAIL
           - - - -
           COURT:                NAM:01
-          19980101  CAMC SAN FRANCISCO
+          19980101  CAMC METROPOLIS
           CNT:01
             11357 HS-BLAH
           *DISPO:DISMISSED
@@ -179,7 +179,7 @@ describe PleaBargainClassifier do
             496 PC-RECEIVE/ETC KNOWN STOLEN PROPERTY
           - - - -
           COURT:                NAM:01
-          19980101  CAMC SAN FRANCISCO
+          19980101  CAMC METROPOLIS
 
           CNT:01     #222
             32 PC-ACCESSORY
@@ -212,7 +212,7 @@ describe PleaBargainClassifier do
             DISPO:PROS REJ-OTHER
           - - - -
           COURT:                NAM:01
-          19980101  CAMC SAN FRANCISCO
+          19980101  CAMC METROPOLIS
 
           CNT:01     #222
             32 PC-ACCESSORY
@@ -233,7 +233,7 @@ describe PleaBargainClassifier do
           NAM/01 LASTY, FIRSTY
           * * * *
           COURT:                NAM:01
-          19980101  CAMC SAN FRANCISCO
+          19980101  CAMC METROPOLIS
 
           CNT:01     #222
             32 PC-ACCESSORY
@@ -274,7 +274,7 @@ describe PleaBargainClassifier do
             496 PC-RECEIVE/ETC KNOWN STOLEN PROPERTY
           - - - -
           COURT:                NAM:01
-          19980101  CAMC SAN FRANCISCO
+          19980101  CAMC METROPOLIS
 
           CNT:01     #222
             32 PC-ACCESSORY
@@ -306,7 +306,7 @@ describe PleaBargainClassifier do
             DISPO:PROS REJ-OTHER
           - - - -
           COURT:                NAM:01
-          19980101  CAMC SAN FRANCISCO
+          19980101  CAMC METROPOLIS
 
           CNT:01     #222
             32 PC-ACCESSORY

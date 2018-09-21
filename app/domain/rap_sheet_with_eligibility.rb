@@ -1,7 +1,9 @@
 class RapSheetWithEligibility < SimpleDelegator
-  def initialize(rap_sheet:, courthouses:, logger:)
+  attr_reader :county
+
+  def initialize(rap_sheet:, county:, logger:)
     super(rap_sheet)
-    @courthouses = courthouses
+    @county = county
 
     unless potentially_eligible_counts?
       logger.warn('No eligible prop64 convictions found')
@@ -40,9 +42,7 @@ class RapSheetWithEligibility < SimpleDelegator
 
   private
 
-  attr_reader :courthouses
-
   def in_courthouses?(e)
-    courthouses.include? e.courthouse
+    county[:courthouses].include? e.courthouse
   end
 end

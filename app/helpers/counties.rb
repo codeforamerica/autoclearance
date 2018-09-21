@@ -1,7 +1,8 @@
 module Counties
   SAN_FRANCISCO = {
     name: 'San Francisco',
-    courthouses: ['CASC San Francisco', 'CASC San Francisco Co', 'CAMC San Francisco']
+    courthouses: ['CASC San Francisco', 'CASC San Francisco Co', 'CAMC San Francisco'],
+    misdemeanors: false
   }.freeze
   LOS_ANGELES = {
     name: 'Los Angeles',

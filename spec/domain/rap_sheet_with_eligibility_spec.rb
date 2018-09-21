@@ -20,18 +20,17 @@ describe RapSheetWithEligibility do
       )
       rap_sheet = build_rap_sheet(events: [eligible_event1, eligible_event2, ineligible_event])
 
-      subject = build_rap_sheet_with_eligibility(rap_sheet: rap_sheet, courthouses: ['Some courthouse', 'Another courthouse']).eligible_events
+      subject = build_rap_sheet_with_eligibility(
+        rap_sheet: rap_sheet, county: build_county(courthouses: ['Some courthouse', 'Another courthouse'])
+      ).eligible_events
       expect(subject.length).to eq 2
       expect(subject[0].case_number).to eq 'abc'
       expect(subject[1].case_number).to eq 'def'
     end
 
     it 'filters out events dismissed by PC1203' do
-      eligible_event = build_court_event(
-        courthouse: 'CASC San Francisco'
-      )
+      eligible_event = build_court_event
       ineligible_event = build_court_event(
-        courthouse: 'CASC San Francisco',
         counts: [
           build_count(
             updates: [

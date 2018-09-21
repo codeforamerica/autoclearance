@@ -15,7 +15,7 @@ describe SummaryCSV do
     eligible_event1 = build_court_event(
       date: Date.new(1994, 1, 2),
       case_number: 'DEF',
-      courthouse: 'CASC San Francisco',
+      courthouse: 'CAMC METROPOLIS',
       counts: [court_count1],
       name_code: '001'
     )
@@ -40,7 +40,7 @@ describe SummaryCSV do
     eligible_event2 = build_court_event(
       date: Date.new(1994, 1, 2),
       case_number: 'ABC',
-      courthouse: 'CASC San Francisco Co',
+      courthouse: 'CASC GOTHAM CITY',
       counts: [court_count2],
       name_code: '002'
     )
@@ -61,8 +61,8 @@ describe SummaryCSV do
 
     subject = summary_csv.text
 
-    expect(subject).to include 'filename1,defendant,1994-01-02,DEF,CASC San Francisco,HS 11360,M,2d jail,"",false,false,redesignation,yes,false'
-    expect(subject).to include 'filename2,n a m e,1994-01-02,ABC,CASC San Francisco Co,HS 11357,M,5d jail,"",false,false,redesignation,yes,false'
+    expect(subject).to include 'filename1,defendant,1994-01-02,DEF,CAMC METROPOLIS,HS 11360,M,2d jail,"",false,false,redesignation,yes,false'
+    expect(subject).to include 'filename2,n a m e,1994-01-02,ABC,CASC GOTHAM CITY,HS 11357,M,5d jail,"",false,false,redesignation,yes,false'
   end
 
   context 'missing personal info' do
@@ -74,7 +74,7 @@ describe SummaryCSV do
 
       subject = summary_csv.text
 
-      expect(subject).to include 'filename1,,1994-01-02,DEF,CASC San Francisco,HS 11360,M,2d jail,"",false,false,redesignation,yes,false'
+      expect(subject).to include 'filename1,,1994-01-02,DEF,CAMC METROPOLIS,HS 11360,M,2d jail,"",false,false,redesignation,yes,false'
     end
   end
 
@@ -92,7 +92,6 @@ describe SummaryCSV do
     eligible_event = build_court_event(
       date: Date.new(1994, 1, 2),
       case_number: 'DEF',
-      courthouse: 'CASC San Francisco',
       counts: [court_count],
       name_code: '001'
     )
@@ -104,6 +103,6 @@ describe SummaryCSV do
 
     subject = summary_csv.text
 
-    expect(subject).to include 'filename1,defendant,1994-01-02,DEF,CASC San Francisco,HS 11360,M,2d jail,"",false,false,redesignation,yes,true'
+    expect(subject).to include 'filename1,defendant,1994-01-02,DEF,CASC GOTHAM CITY,HS 11360,M,2d jail,"",false,false,redesignation,yes,true'
   end
 end

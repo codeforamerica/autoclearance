@@ -8,6 +8,8 @@ class CountWithEligibility < SimpleDelegator
   end
 
   def potentially_eligible?
+    return false if county_filtered
+
     prop64_conviction? || plea_bargain_classifier.possible_plea_bargain?
   end
 
@@ -34,6 +36,10 @@ class CountWithEligibility < SimpleDelegator
   end
 
   private
+
+  def county_filtered
+    eligibility.county[:misdemeanors] == false && disposition.severity == 'M'
+  end
 
   def plea_bargain_classifier
     PleaBargainClassifier.new(self)

@@ -5,7 +5,7 @@ class CountProperties < ApplicationRecord
   def self.build(count:, rap_sheet:, event:)
     rap_sheet_with_eligibility = RapSheetWithEligibility.new(
       rap_sheet: rap_sheet,
-      courthouses: [],
+      county: { courthouses: [] },
       logger: Logger.new('/dev/null')
     )
     event_with_eligibility = EventWithEligibility.new(

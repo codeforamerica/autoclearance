@@ -135,7 +135,7 @@ class RapSheetProcessor
 
     RapSheetWithEligibility.new(
       rap_sheet: rap_sheet,
-      courthouses: @county[:courthouses],
+      county: @county,
       logger: logger
     )
   end

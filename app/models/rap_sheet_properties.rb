@@ -4,7 +4,7 @@ class RapSheetProperties < ApplicationRecord
   def self.build(rap_sheet:)
     rap_sheet_with_eligibility = RapSheetWithEligibility.new(
       rap_sheet: rap_sheet,
-      courthouses: [],
+      county: { courthouses: [] },
       logger: Logger.new('/dev/null')
     )
 
