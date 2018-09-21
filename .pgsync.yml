@@ -18,6 +18,10 @@ groups:
   - anon_events
   - anon_counts
   - anon_dispositions
+  - rap_sheet_properties
+  - event_properties
+  - count_properties
+  - eligibility_estimates
 
 # exclude tables
 exclude:
