@@ -49,8 +49,8 @@ node_modules/
 
 # Terraform
 .terraform/
-terraform/varfile
-terraform/backend-config
+terraform/**/varfile
+terraform/**/backend-config
 *.tfstate
 *.tfstate.backup
 

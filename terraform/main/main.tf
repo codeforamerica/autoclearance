@@ -1,17 +1,3 @@
-terraform {
-  backend "s3" {
-    key = "terraform_state"
-    region = "us-gov-west-1"
-  }
-}
-
-# Specify the provider and access details
-provider "aws" {
-  access_key = "${var.aws_access_key}"
-  secret_key = "${var.aws_secret_key}"
-  region = "${var.aws_region}"
-}
-
 # Create a VPC to launch our instances into
 resource "aws_vpc" "default" {
   cidr_block = "10.0.0.0/16"
@@ -1090,7 +1076,7 @@ resource "aws_iam_role_policy_attachment" "config-attach" {
 
 resource "aws_iam_policy" "mfa_policy" {
   name = "mfa"
-  policy = "${file("policies/mfa_policy.json")}"
+  policy = "${file("../policies/mfa_policy.json")}"
 }
 
 resource "aws_iam_group_policy_attachment" "mfa_staff" {
@@ -1359,12 +1345,22 @@ resource "aws_cloudwatch_log_group" "management_logs" {
   name = "management_logs"
 }
 
-module "metabase" {
-  source = "./metabase"
+output "aws_vpc_default_id" {
+  value = "${aws_vpc.default.id}"
+}
 
-  vpc_id = "${aws_vpc.default.id}"
-  public_subnet_id = "${aws_subnet.public.id}"
-  private_subnet_id = "${aws_subnet.private.id}"
-  db_subnet_group_name = "${aws_db_subnet_group.default.name}"
-  beanstalk_role_name = "${aws_iam_role.beanstalk_role.name}"
+output "aws_subnet_public_id" {
+  value = "${aws_subnet.public.id}"
+}
+
+output "aws_subnet_private_id" {
+  value = "${aws_subnet.private.id}"
+}
+
+output "aws_db_subnet_group_default_name" {
+  value = "${aws_db_subnet_group.default.name}"
+}
+
+output "aws_iam_role_beanstalk_role_name" {
+  value = "${aws_iam_role.beanstalk_role.name}"
 }
