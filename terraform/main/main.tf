@@ -4,7 +4,7 @@ resource "aws_vpc" "default" {
   enable_dns_hostnames = true
 
   tags {
-    Name = "application_vpc"
+    Name = "${var.environment}_vpc"
   }
 }
 
@@ -761,6 +761,16 @@ resource "aws_db_subnet_group" "analysis_db" {
   }
 }
 
+resource "random_string" "rds_password" {
+  length = 30
+  special = false
+}
+
+resource "random_string" "analysis_rds_password" {
+  length = 30
+  special = false
+}
+
 resource "aws_db_instance" "db" {
   allocated_storage = 10
   availability_zone = "${var.aws_az1}"
@@ -770,7 +780,7 @@ resource "aws_db_instance" "db" {
   kms_key_id = "${aws_kms_key.k.arn}"
   name = "autoclearance"
   username = "${var.rds_username}"
-  password = "${var.rds_password}"
+  password = "${random_string.rds_password.result}"
   storage_encrypted = true
   storage_type = "gp2"
   vpc_security_group_ids = [
@@ -788,7 +798,7 @@ resource "aws_db_instance" "analysis_db" {
   kms_key_id = "${aws_kms_key.k.arn}"
   name = "analysis"
   username = "${var.analysis_rds_username}"
-  password = "${var.analysis_rds_password}"
+  password = "${random_string.analysis_rds_password.result}"
   publicly_accessible = true
   storage_encrypted = true
   storage_type = "gp2"
@@ -803,7 +813,7 @@ resource "aws_security_group" "elb_security" {
 }
 
 resource "aws_elastic_beanstalk_environment" "beanstalk_application_environment" {
-  name = "autoclearance-prod"
+  name = "autoclearance-${var.environment}"
   application = "${aws_elastic_beanstalk_application.ng_beanstalk_application.name}"
   solution_stack_name = "64bit Amazon Linux 2018.03 v2.8.3 running Ruby 2.5 (Puma)"
   tier = "WebServer"
@@ -891,7 +901,7 @@ resource "aws_elastic_beanstalk_environment" "beanstalk_application_environment"
   setting {
     namespace = "aws:elasticbeanstalk:application:environment"
     name = "RDS_PASSWORD"
-    value = "${var.rds_password}"
+    value = "${random_string.rds_password.result}"
   }
 
   setting {
@@ -1343,6 +1353,14 @@ resource "aws_cloudwatch_log_group" "log_access_logs" {
 
 resource "aws_cloudwatch_log_group" "management_logs" {
   name = "management_logs"
+}
+
+output "rds_password" {
+  value = "${random_string.rds_password.result}"
+}
+
+output "analysis_rds_password" {
+  value = "${random_string.analysis_rds_password.result}"
 }
 
 output "aws_vpc_default_id" {

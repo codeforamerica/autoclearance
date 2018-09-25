@@ -3,6 +3,7 @@ variable "public_subnet_id" {}
 variable "private_subnet_id" {}
 variable "db_subnet_group_name" {}
 variable "beanstalk_role_name" {}
+variable "metabase_url" {}
 
 data "aws_vpc" "host" {
   id = "${var.vpc_id}"
@@ -143,7 +144,7 @@ resource "aws_db_instance" "metabase_db" {
 }
 
 resource "aws_acm_certificate" "metabase_cert" {
-  domain_name       = "data.clearmyrecord.org"
+  domain_name       = "${var.metabase_url}"
   validation_method = "DNS"
 
   lifecycle {

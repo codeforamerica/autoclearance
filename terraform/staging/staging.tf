@@ -27,7 +27,6 @@ module "main" {
 
   key_name = "${var.key_name}"
   public_key = "${var.public_key}"
-
 }
 
 module "metabase" {
@@ -37,7 +36,7 @@ module "metabase" {
   private_subnet_id = "${module.main.aws_subnet_private_id}"
   db_subnet_group_name = "${module.main.aws_db_subnet_group_default_name}"
   beanstalk_role_name = "${module.main.aws_iam_role_beanstalk_role_name}"
-  metabase_url = "data.clearmyrecord.org"
+  metabase_url = "data.staging.clearmyrecord.org"
 }
 
 output "rds_password" {
