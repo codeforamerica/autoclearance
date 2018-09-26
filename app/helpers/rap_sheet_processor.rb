@@ -62,8 +62,9 @@ class RapSheetProcessor
       .eligible_events
       .select { |event| event.eligible_counts.any? }
       .each_with_index do |event, index|
+      eligible_counts = event.eligible_counts.select { |c| c.plea_bargain == 'no' }
+      next if eligible_counts.empty?
       file_name = "#{input_file.key.gsub('.pdf', '')}_motion_#{index}.pdf"
-      eligible_counts = event.eligible_counts
 
       @num_motions += 1
       output_directory.files.create(
