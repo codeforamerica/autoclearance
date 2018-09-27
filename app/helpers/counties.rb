@@ -2,7 +2,8 @@ module Counties
   SAN_FRANCISCO = {
     name: 'San Francisco',
     courthouses: ['CASC San Francisco', 'CASC San Francisco Co', 'CAMC San Francisco'],
-    misdemeanors: false
+    misdemeanors: false,
+    ada: { name: 'Sharon Woo', state_bar_number: '148139' }
   }.freeze
   LOS_ANGELES = {
     name: 'Los Angeles',

@@ -99,17 +99,6 @@ Style/BlockComments:
   Exclude:
     - 'spec/spec_helper.rb'
 
-# Offense count: 7
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, ProceduralMethods, FunctionalMethods, IgnoredMethods.
-# SupportedStyles: line_count_based, semantic, braces_for_chaining
-# ProceduralMethods: benchmark, bm, bmbm, create, each_with_object, measure, new, realtime, tap, with_object
-# FunctionalMethods: let, let!, subject, watch
-# IgnoredMethods: lambda, proc, it
-Style/BlockDelimiters:
-  Exclude:
-    - 'spec/lib/fill_prop64_motion_spec.rb'
-
 # Offense count: 37
 Style/Documentation:
   Enabled: false
@@ -155,7 +144,6 @@ Style/IfUnlessModifier:
 Style/NumericPredicate:
   Exclude:
     - 'spec/**/*'
-    - 'app/lib/fill_prop64_motion.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.
@@ -179,7 +167,6 @@ Style/StringLiterals:
   Exclude:
     - 'Brewfile'
     - 'app/lib/fill_misdemeanor_petitions.rb'
-    - 'app/lib/fill_prop64_motion.rb'
     - 'config/environments/production.rb'
     - 'config/puma.rb'
     - 'db/schema.rb'
@@ -193,14 +180,6 @@ Style/StringLiterals:
 # SupportedStyles: percent, brackets
 Style/SymbolArray:
   EnforcedStyle: brackets
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, AllowSafeAssignment.
-# SupportedStyles: require_parentheses, require_no_parentheses, require_parentheses_when_complex
-Style/TernaryParentheses:
-  Exclude:
-    - 'app/lib/fill_prop64_motion.rb'
 
 # Offense count: 228
 # Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.

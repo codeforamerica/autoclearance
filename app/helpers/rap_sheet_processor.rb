@@ -69,7 +69,7 @@ class RapSheetProcessor
       @num_motions += 1
       output_directory.files.create(
         key: file_name,
-        body: FillProp64Motion.new(eligible_counts, event, eligibility.personal_info).filled_motion,
+        body: FillProp64Motion.new(@county[:ada], eligible_counts, event, eligibility.personal_info).filled_motion,
         content_type: 'application/pdf'
       )
     end

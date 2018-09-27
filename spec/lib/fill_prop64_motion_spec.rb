@@ -1,37 +1,39 @@
 require 'rails_helper'
 
 RSpec.describe FillProp64Motion do
-  let(:personal_info) {
+  let(:personal_info) do
     build_personal_info(names: {
       '01' => 'SAYS, SIMON',
       '03' => 'DAVE'
     })
-  }
+  end
 
-  let(:counts) {
+  let(:counts) do
     [
       build_count(code: 'HS', section: '11357(a)'),
       build_count(code: 'HS', section: '11357(a)'),
       build_count(code: 'HS', section: '11359')
     ]
-  }
+  end
 
-  let(:event) {
+  let(:event) do
     build_court_event(
       name_code: name_code,
       case_number: 'MYCASE01',
       date: Date.new(1994, 1, 2)
     )
-  }
+  end
 
-  subject {
+  let(:ada) { { name: 'Some Attorney', state_bar_number: '8675309' } }
+
+  subject do
     eligibility = build_rap_sheet_with_eligibility(rap_sheet: build_rap_sheet)
     event_with_eligibility = EventWithEligibility.new(event: event, eligibility: eligibility)
 
-    file = described_class.new(counts, event_with_eligibility, personal_info).filled_motion
+    file = described_class.new(ada, counts, event_with_eligibility, personal_info).filled_motion
 
     get_fields_from_pdf(file)
-  }
+  end
 
   context 'rap sheet with name code different than the first' do
     let(:name_code) { '03' }
@@ -39,6 +41,8 @@ RSpec.describe FillProp64Motion do
     it 'fills out fields' do
       fields = subject
 
+      expect(fields['Assistant District Attorney']).to eq 'Some Attorney'
+      expect(fields['CA SB']).to eq '8675309'
       expect(fields['Defendant']).to eq 'SAYS, SIMON AKA DAVE'
       expect(fields['SCN']).to eq 'MYCASE01'
       expect(fields['FOR RESENTENCING OR DISMISSAL HS  113618b']).to eq 'Off'
@@ -59,13 +63,13 @@ RSpec.describe FillProp64Motion do
 
   context 'rap sheet with code sections not found on the checkboxes' do
     let(:name_code) { '03' }
-    let(:counts) {
+    let(:counts) do
       [
         build_count(code: 'PC', section: '32'),
         build_count(code: 'PC', section: '32'),
         build_count(code: 'PC', section: '123')
       ]
-    }
+    end
 
     it 'fills out the Other field with code_section' do
       fields = subject
