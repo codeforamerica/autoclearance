@@ -12,16 +12,16 @@ class CountProperties < ApplicationRecord
       event: event,
       eligibility: rap_sheet_with_eligibility
     )
-    count_with_eligibility = CountWithEligibility.new(
+    prop64_classifier = Prop64Classifier.new(
       count: count,
       event: event_with_eligibility,
       eligibility: rap_sheet_with_eligibility
     )
     CountProperties.new(
-      has_prop_64_code: count_with_eligibility.prop64_conviction?,
-      has_two_prop_64_priors: count_with_eligibility.has_two_prop_64_priors?,
-      prop_64_plea_bargain: count_with_eligibility.plea_bargain,
-      eligibility_estimate: EligibilityEstimate.build(count_with_eligibility)
+      has_prop_64_code: prop64_classifier.prop64_conviction?,
+      has_two_prop_64_priors: prop64_classifier.has_two_prop_64_priors?,
+      prop_64_plea_bargain: prop64_classifier.plea_bargain,
+      eligibility_estimate: EligibilityEstimate.build(prop64_classifier)
     )
   end
 end

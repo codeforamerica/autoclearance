@@ -10,9 +10,9 @@ describe EligibilityEstimate do
     rap_sheet = build_rap_sheet(events: [event])
     rap_sheet_with_eligibility = build_rap_sheet_with_eligibility(rap_sheet: rap_sheet)
     event_with_eligibility = EventWithEligibility.new(event: event, eligibility: rap_sheet_with_eligibility)
-    count_with_eligibility = CountWithEligibility.new(count: count, event: event_with_eligibility, eligibility: rap_sheet_with_eligibility)
+    prop64_classifier = Prop64Classifier.new(count: count, event: event_with_eligibility, eligibility: rap_sheet_with_eligibility)
 
-    eligibility_estimate = described_class.build(count_with_eligibility)
+    eligibility_estimate = described_class.build(prop64_classifier)
 
     expect(eligibility_estimate.prop_64_eligible).to eq 'yes'
   end

@@ -1,4 +1,4 @@
-class CountWithEligibility < SimpleDelegator
+class Prop64Classifier < SimpleDelegator
   attr_reader :event, :eligibility
 
   def initialize(count:, event:, eligibility:)

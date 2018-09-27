@@ -1,19 +1,19 @@
 class PleaBargainClassifier
-  def initialize(count)
-    @count = count
+  def initialize(prop64_classifier)
+    @prop64_classifier = prop64_classifier
   end
 
   def plea_bargain?
-    count.subsection_of?(possible_plea_bargain_codes) && code_sections_in_cycle_are_potentially_eligible
+    prop64_classifier.subsection_of?(possible_plea_bargain_codes) && code_sections_in_cycle_are_potentially_eligible
   end
 
   def possible_plea_bargain?
-    count.subsection_of?(possible_plea_bargain_codes) && cycle_contains_prop64_count
+    prop64_classifier.subsection_of?(possible_plea_bargain_codes) && cycle_contains_prop64_count
   end
 
   private
 
-  attr_reader :count
+  attr_reader :prop64_classifier
 
   def possible_plea_bargain_codes
     [
@@ -30,7 +30,7 @@ class PleaBargainClassifier
   end
 
   def unrejected_counts_for_event_cycle
-    count.event.cycle_events.flat_map do |event|
+    prop64_classifier.event.cycle_events.flat_map do |event|
       event.counts.reject do |count|
         count_prosecutor_rejected(count) || prosecutor_rejected_update(count)
       end

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe CountWithEligibility do
+describe Prop64Classifier do
   let(:count) { build_count(code: code, section: section) }
   let(:event) { build_court_event(counts: [count]) }
   let(:event_with_eligibility) { EventWithEligibility.new(event: event, eligibility: eligibility) }

@@ -6,11 +6,11 @@ class EventWithEligibility < SimpleDelegator
   end
 
   def counts
-    super.map { |c| CountWithEligibility.new(count: c, event: self, eligibility: eligibility) }
+    super.map { |c| Prop64Classifier.new(count: c, event: self, eligibility: eligibility) }
   end
 
   def convicted_counts
-    super.map { |c| CountWithEligibility.new(count: c, event: self, eligibility: eligibility) }
+    super.map { |c| Prop64Classifier.new(count: c, event: self, eligibility: eligibility) }
   end
 
   def potentially_eligible_counts
