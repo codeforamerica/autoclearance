@@ -25,7 +25,7 @@ class PleaBargainClassifier
 
   def code_sections_in_cycle_are_potentially_eligible
     unrejected_counts_for_event_cycle.all? do |count|
-      count.subsection_of?(possible_plea_bargain_codes) || count.prop64_conviction?
+      count.subsection_of?(possible_plea_bargain_codes) || prop64_conviction?(count)
     end
   end
 
@@ -38,7 +38,7 @@ class PleaBargainClassifier
   end
 
   def cycle_contains_prop64_count
-    unrejected_counts_for_event_cycle.any?(&:prop64_conviction?)
+    unrejected_counts_for_event_cycle.any? { |c| prop64_conviction?(c) }
   end
 
   def count_prosecutor_rejected(count)
@@ -51,5 +51,9 @@ class PleaBargainClassifier
         disposition.type == 'prosecutor_rejected'
       end
     end
+  end
+
+  def prop64_conviction?(count)
+    count.subsection_of?(CodeSections::PROP64_DISMISSIBLE) && !count.subsection_of?(CodeSections::PROP64_INELIGIBLE)
   end
 end

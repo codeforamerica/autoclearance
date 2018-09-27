@@ -14,7 +14,7 @@ class CountWithEligibility < SimpleDelegator
   end
 
   def prop64_conviction?
-    subsection_of?(dismissible_codes) && !subsection_of?(ineligible_codes)
+    subsection_of?(CodeSections::PROP64_DISMISSIBLE) && !subsection_of?(CodeSections::PROP64_INELIGIBLE)
   end
 
   def eligible?
@@ -47,23 +47,5 @@ class CountWithEligibility < SimpleDelegator
 
   def has_disqualifiers?
     eligibility.disqualifiers?
-  end
-
-  def dismissible_codes
-    [
-      'HS 11357', # simple possession
-      'HS 11358', # cultivation
-      'HS 11359', # possession for sale
-      'HS 11360', # transportation for sale
-    ]
-  end
-
-  def ineligible_codes
-    [
-      'HS 11359(c)(3)',
-      'HS 11359(d)',
-      'HS 11360(a)(3)(c)',
-      'HS 11360(a)(3)(d)'
-    ]
   end
 end
