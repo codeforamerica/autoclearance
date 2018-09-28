@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'csv'
 
 describe SummaryCSV do
-  let(:eligibility1) do
+  let(:prop64_classifier_1) do
     court_count1 = build_count(
       code: 'HS',
       section: '11360',
@@ -23,6 +23,8 @@ describe SummaryCSV do
       events: [eligible_event1],
       personal_info: personal_info
     )
+
+    CountWithEligibility.new
 
     build_rap_sheet_with_eligibility(rap_sheet: rap_sheet1)
   end

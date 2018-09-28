@@ -48,28 +48,38 @@ class RapSheetProcessor
       formatter: proc { |_severity, _datetime, _progname, msg| "[#{input_file.key}] #{msg}\n" }
     )
 
-    eligibility = rap_sheet_with_eligibility(input_file, warning_logger)
+    rap_sheet = rap_sheet(input_file, warning_logger)
 
-    unless eligibility.potentially_eligible_counts?
+    prop64_classifiers = RapSheetWithEligibility.new(rap_sheet: rap_sheet, county: @county, logger: warning_logger)
+      .eligible_events.flat_map do |event|
+      event.convicted_counts.map do |count|
+        Prop64Classifier.new(count: count, event: event, rap_sheet: rap_sheet, county: @county)
+      end
+    end
+
+    if prop64_classifiers.none?(&:potentially_eligible?)
+      puts ('No eligible prop64 convictions found')
       input_file.destroy
       return
     end
 
-    summary_csv.append(input_file.key, eligibility)
+    summary_csv.append(input_file.key, prop64_classifiers)
 
-    # Create a bunch of PDFs
-    eligibility
-      .eligible_events
-      .select { |event| event.eligible_counts.any? }
+    events = prop64_classifiers.select do |classifier|
+      %w[yes maybe].include?(classifier.eligible?)
+    end.group_by(&:event)
+
+    events
+      .keys
       .each_with_index do |event, index|
-      eligible_counts = event.eligible_counts.select { |c| c.plea_bargain == 'no' }
-      next if eligible_counts.empty?
+      eligible_classifiers = events[event].select { |classifier| classifier.plea_bargain == 'no' }
+      next if eligible_classifiers.empty?
       file_name = "#{input_file.key.gsub('.pdf', '')}_motion_#{index}.pdf"
 
       @num_motions += 1
       output_directory.files.create(
         key: file_name,
-        body: FillProp64Motion.new(@county[:ada], eligible_counts, event, eligibility.personal_info).filled_motion,
+        body: FillProp64Motion.new(@county[:ada], eligible_classifiers, event, rap_sheet.personal_info).filled_motion,
         content_type: 'application/pdf'
       )
     end
@@ -121,7 +131,7 @@ class RapSheetProcessor
     @connection ||= Fog::Storage.new(Rails.configuration.fog_params)
   end
 
-  def rap_sheet_with_eligibility(input_file, logger)
+  def rap_sheet(input_file, logger)
     text = PDFReader.new(input_file.body).text
 
     rap_sheet = RapSheetParser::Parser.new.parse(text, logger: logger)
@@ -134,10 +144,6 @@ class RapSheetProcessor
       rap_sheet: rap_sheet
     )
 
-    RapSheetWithEligibility.new(
-      rap_sheet: rap_sheet,
-      county: @county,
-      logger: logger
-    )
+    rap_sheet
   end
 end

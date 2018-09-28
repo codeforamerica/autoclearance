@@ -1,6 +1,5 @@
 require 'rails_helper'
 require 'rap_sheet_parser'
-require_relative '../../app/domain/event_with_eligibility'
 describe EventWithEligibility do
   let(:rap_sheet_with_eligibility) { build_rap_sheet_with_eligibility(rap_sheet: build_rap_sheet) }
   subject { described_class.new(event: event, eligibility: rap_sheet_with_eligibility) }

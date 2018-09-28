@@ -3,11 +3,11 @@ class SummaryCSV
     @rows = []
   end
 
-  def append(filename, eligibility)
-    eligibility.eligible_events.each do |event|
-      event.potentially_eligible_counts.each do |count|
-        rows << [filename] + count_data(count, event, eligibility)
-      end
+  def append(filename, prop64_classifiers)
+    prop64_classifiers
+      .select(&:potentially_eligible?)
+      .each do |classifier|
+      rows << [filename] + classifier_data(classifier)
     end
   end
 
@@ -39,21 +39,24 @@ class SummaryCSV
     ]
   end
 
-  def count_data(count, event, eligibility)
+  def classifier_data(classifier)
+    event = classifier.event
+    rap_sheet = classifier.rap_sheet
+
     [
-      name(event, eligibility.personal_info),
+      name(event, rap_sheet.personal_info),
       event.date,
       event.case_number,
       event.courthouse,
-      count.code_section,
-      count.disposition.severity,
+      classifier.code_section,
+      classifier.disposition.severity,
       event.sentence,
-      eligibility.superstrikes.map(&:code_section).join(', '),
-      eligibility.has_three_convictions_of_same_type?(count.code_section),
-      eligibility.sex_offender_registration?,
-      event.remedy,
-      count.eligible?,
-      eligibility.deceased_events.any?
+      rap_sheet.superstrikes.map(&:code_section).join(', '),
+      classifier.has_three_convictions_of_same_type?,
+      rap_sheet.sex_offender_registration?,
+      classifier.remedy,
+      classifier.eligible?,
+      rap_sheet.deceased_events.any?
     ]
   end
 

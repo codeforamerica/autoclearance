@@ -1,6 +1,5 @@
 require 'rails_helper'
 require 'rap_sheet_parser'
-require_relative '../../app/domain/event_with_eligibility'
 require_relative '../../app/domain/rap_sheet_with_eligibility'
 
 describe RapSheetWithEligibility do
