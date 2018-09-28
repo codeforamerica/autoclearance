@@ -35,11 +35,6 @@ class RapSheetWithEligibility < SimpleDelegator
     end.length >= 3
   end
 
-  def has_deceased_event?
-    return @has_deceased_events unless @has_deceased_events.nil?
-    @has_deceased_events = deceased_events.any?
-  end
-
   private
 
   def in_courthouses?(e)

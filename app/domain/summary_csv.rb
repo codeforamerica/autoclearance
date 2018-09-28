@@ -53,7 +53,7 @@ class SummaryCSV
       eligibility.sex_offender_registration?,
       event.remedy,
       count.eligible?,
-      eligibility.has_deceased_event?
+      eligibility.deceased_events.any?
     ]
   end
 
