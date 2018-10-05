@@ -139,7 +139,7 @@ GEM
     multi_json (1.13.1)
     multiprocessing (0.0.2)
     nio4r (2.3.1)
-    nokogiri (1.8.4)
+    nokogiri (1.8.5)
       mini_portile2 (~> 2.3.0)
     parallel (1.12.1)
     parser (2.5.1.2)
