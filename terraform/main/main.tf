@@ -788,6 +788,17 @@ resource "aws_db_instance" "db" {
   ]
 }
 
+resource "aws_db_parameter_group" "force_ssl" {
+  name   = "force-ssl"
+  family = "postgres9.6"
+
+  parameter {
+    name  = "rds.force_ssl"
+    value = "1"
+    apply_method = "pending-reboot"
+  }
+}
+
 resource "aws_db_instance" "analysis_db" {
   allocated_storage = 10
   availability_zone = "${var.aws_az1}"
@@ -798,6 +809,7 @@ resource "aws_db_instance" "analysis_db" {
   kms_key_id = "${aws_kms_key.k.arn}"
   name = "analysis"
   username = "${var.analysis_rds_username}"
+  parameter_group_name = "${aws_db_parameter_group.force_ssl.name}"
   password = "${random_string.analysis_rds_password.result}"
   publicly_accessible = true
   storage_encrypted = true
@@ -815,7 +827,7 @@ resource "aws_security_group" "elb_security" {
 resource "aws_elastic_beanstalk_environment" "beanstalk_application_environment" {
   name = "autoclearance-${var.environment}"
   application = "${aws_elastic_beanstalk_application.ng_beanstalk_application.name}"
-  solution_stack_name = "64bit Amazon Linux 2018.03 v2.8.3 running Ruby 2.5 (Puma)"
+  solution_stack_name = "64bit Amazon Linux 2018.03 v2.8.4 running Ruby 2.5 (Puma)"
   tier = "WebServer"
 
   setting {

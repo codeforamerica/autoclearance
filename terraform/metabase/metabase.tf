@@ -155,7 +155,7 @@ resource "aws_acm_certificate" "metabase_cert" {
 resource "aws_elastic_beanstalk_environment" "environment" {
   name = "metabase"
   application = "${aws_elastic_beanstalk_application.beanstalk_application.name}"
-  solution_stack_name = "64bit Amazon Linux 2018.03 v2.12.2 running Docker 18.03.1-ce"
+  solution_stack_name = "64bit Amazon Linux 2018.03 v2.12.3 running Docker 18.06.1-ce"
   tier = "WebServer"
 
   setting {
