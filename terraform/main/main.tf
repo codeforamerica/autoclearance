@@ -804,6 +804,7 @@ resource "aws_db_instance" "analysis_db" {
   availability_zone = "${var.aws_az1}"
   db_subnet_group_name = "${aws_db_subnet_group.analysis_db.name}"
   engine = "postgres"
+  engine_version = "9.6"
   identifier = "analysis"
   instance_class = "db.m3.medium"
   kms_key_id = "${aws_kms_key.k.arn}"
@@ -1012,7 +1013,7 @@ resource "aws_iam_role_policy_attachment" "a" {
 }
 
 resource "aws_s3_bucket" "config" {
-  bucket = "awsconfig-example"
+  bucket = "awsconfig-${var.environment}"
   force_destroy = true
   policy = <<POLICY
 {
@@ -1026,7 +1027,7 @@ resource "aws_s3_bucket" "config" {
         "AWS": "*"
       },
       "Action": "s3:*",
-      "Resource": "arn:aws-us-gov:s3:::awsconfig-example/*",
+      "Resource": "arn:aws-us-gov:s3:::awsconfig-${var.environment}/*",
       "Condition": {
         "Bool": {
           "aws:SecureTransport": "false"
@@ -1212,7 +1213,7 @@ resource "aws_cloudtrail" "management_logs" {
 }
 
 resource "aws_s3_bucket" "cloudtrail_s3_logs" {
-  bucket = "cloudtrail-s3-logs"
+  bucket = "cloudtrail-s3-logs-${var.environment}"
   policy = <<POLICY
 {
     "Version": "2012-10-17",
@@ -1224,7 +1225,7 @@ resource "aws_s3_bucket" "cloudtrail_s3_logs" {
                 "Service": "cloudtrail.amazonaws.com"
             },
             "Action": "s3:GetBucketAcl",
-            "Resource": "arn:aws-us-gov:s3:::cloudtrail-s3-logs"
+            "Resource": "arn:aws-us-gov:s3:::cloudtrail-s3-logs-${var.environment}"
         },
         {
             "Sid": "AWSCloudTrailWrite",
@@ -1233,7 +1234,7 @@ resource "aws_s3_bucket" "cloudtrail_s3_logs" {
                 "Service": "cloudtrail.amazonaws.com"
             },
             "Action": "s3:PutObject",
-            "Resource": "arn:aws-us-gov:s3:::cloudtrail-s3-logs/*",
+            "Resource": "arn:aws-us-gov:s3:::cloudtrail-s3-logs-${var.environment}/*",
             "Condition": {
                 "StringEquals": {
                     "s3:x-amz-acl": "bucket-owner-full-control"
@@ -1247,7 +1248,7 @@ resource "aws_s3_bucket" "cloudtrail_s3_logs" {
                 "AWS": "*"
             },
             "Action": "s3:*",
-            "Resource": "arn:aws-us-gov:s3:::cloudtrail-s3-logs/*",
+            "Resource": "arn:aws-us-gov:s3:::cloudtrail-s3-logs-${var.environment}/*",
             "Condition": {
                 "Bool": {
                    "aws:SecureTransport": "false"
@@ -1260,7 +1261,7 @@ POLICY
 }
 
 resource "aws_s3_bucket" "cloudtrail_log_access_logs" {
-  bucket = "cloudtrail-log-access-logs"
+  bucket = "cloudtrail-log-access-logs-${var.environment}"
   policy = <<POLICY
 {
     "Version": "2012-10-17",
@@ -1272,7 +1273,7 @@ resource "aws_s3_bucket" "cloudtrail_log_access_logs" {
                 "Service": "cloudtrail.amazonaws.com"
             },
             "Action": "s3:GetBucketAcl",
-            "Resource": "arn:aws-us-gov:s3:::cloudtrail-log-access-logs"
+            "Resource": "arn:aws-us-gov:s3:::cloudtrail-log-access-logs-${var.environment}"
         },
         {
             "Sid": "AWSCloudTrailWrite",
@@ -1281,7 +1282,7 @@ resource "aws_s3_bucket" "cloudtrail_log_access_logs" {
                 "Service": "cloudtrail.amazonaws.com"
             },
             "Action": "s3:PutObject",
-            "Resource": "arn:aws-us-gov:s3:::cloudtrail-log-access-logs/*",
+            "Resource": "arn:aws-us-gov:s3:::cloudtrail-log-access-logs-${var.environment}/*",
             "Condition": {
                 "StringEquals": {
                     "s3:x-amz-acl": "bucket-owner-full-control"
@@ -1295,7 +1296,7 @@ resource "aws_s3_bucket" "cloudtrail_log_access_logs" {
               "AWS": "*"
             },
             "Action": "s3:*",
-            "Resource": "arn:aws-us-gov:s3:::cloudtrail-log-access-logs/*",
+            "Resource": "arn:aws-us-gov:s3:::cloudtrail-log-access-logs-${var.environment}/*",
             "Condition": {
                 "Bool": {
                     "aws:SecureTransport": "false"
@@ -1308,7 +1309,7 @@ POLICY
 }
 
 resource "aws_s3_bucket" "cloudtrail_management_logs" {
-  bucket = "cloudtrail-management-logs"
+  bucket = "cloudtrail-management-logs-${var.environment}"
   policy = <<POLICY
 {
     "Version": "2012-10-17",
@@ -1320,7 +1321,7 @@ resource "aws_s3_bucket" "cloudtrail_management_logs" {
                 "Service": "cloudtrail.amazonaws.com"
             },
             "Action": "s3:GetBucketAcl",
-            "Resource": "arn:aws-us-gov:s3:::cloudtrail-management-logs"
+            "Resource": "arn:aws-us-gov:s3:::cloudtrail-management-logs-${var.environment}"
         },
         {
             "Sid": "AWSCloudTrailWrite",
@@ -1329,7 +1330,7 @@ resource "aws_s3_bucket" "cloudtrail_management_logs" {
                 "Service": "cloudtrail.amazonaws.com"
             },
             "Action": "s3:PutObject",
-            "Resource": "arn:aws-us-gov:s3:::cloudtrail-management-logs/*",
+            "Resource": "arn:aws-us-gov:s3:::cloudtrail-management-logs-${var.environment}/*",
             "Condition": {
                 "StringEquals": {
                     "s3:x-amz-acl": "bucket-owner-full-control"
@@ -1343,7 +1344,7 @@ resource "aws_s3_bucket" "cloudtrail_management_logs" {
                 "AWS": "*"
             },
             "Action": "s3:*",
-            "Resource": "arn:aws-us-gov:s3:::cloudtrail-management-logs/*",
+            "Resource": "arn:aws-us-gov:s3:::cloudtrail-management-logs-${var.environment}/*",
             "Condition": {
                 "Bool": {
                     "aws:SecureTransport": "false"
