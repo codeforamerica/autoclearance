@@ -1372,8 +1372,8 @@ output "rds_password" {
   value = "${random_string.rds_password.result}"
 }
 
-output "analysis_rds_password" {
-  value = "${random_string.analysis_rds_password.result}"
+output "database_url" {
+  value = "postgres://${var.analysis_rds_username}:${aws_db_instance.analysis_db.password}@${aws_db_instance.analysis_db.endpoint}/${aws_db_instance.analysis_db.name}"
 }
 
 output "aws_vpc_default_id" {

@@ -43,6 +43,6 @@ output "rds_password" {
   value = "${module.main.rds_password}"
 }
 
-output "analysis_rds_password" {
-  value = "${module.main.analysis_rds_password}"
+output "database_url" {
+  value = "${module.main.database_url}"
 }
