@@ -1372,7 +1372,7 @@ output "rds_password" {
   value = "${random_string.rds_password.result}"
 }
 
-output "database_url" {
+output "analysis_database_url" {
   value = "postgres://${var.analysis_rds_username}:${aws_db_instance.analysis_db.password}@${aws_db_instance.analysis_db.endpoint}/${aws_db_instance.analysis_db.name}"
 }
 
