@@ -828,7 +828,7 @@ resource "aws_security_group" "elb_security" {
 resource "aws_elastic_beanstalk_environment" "beanstalk_application_environment" {
   name = "autoclearance-${var.environment}"
   application = "${aws_elastic_beanstalk_application.ng_beanstalk_application.name}"
-  solution_stack_name = "64bit Amazon Linux 2018.03 v2.8.4 running Ruby 2.5 (Puma)"
+  solution_stack_name = "64bit Amazon Linux 2018.03 v2.8.5 running Ruby 2.5 (Puma)"
   tier = "WebServer"
 
   setting {
