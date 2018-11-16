@@ -56,30 +56,12 @@ jobs:
     # Save artifacts
     - store_test_results:
         path: /tmp/test-results
-  deploy:
-    docker:
-    - image: circleci/python:2.7
-
-    working_directory: ~/autoclearance
-
-    steps:
-    - checkout
-    - run: sudo pip install awsebcli
-    - run: bash ./scripts/setup_eb.sh
-    - run: eb deploy
 
 workflows:
   version: 2
   build-and-deploy:
     jobs:
     - build:
-        filters:
-          branches:
-            only:
-            - master
-    - deploy:
-        requires:
-        - build
         filters:
           branches:
             only:
