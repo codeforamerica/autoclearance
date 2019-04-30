@@ -6,7 +6,7 @@ git_source(:github) do |repo_name|
 end
 
 gem 'pg'
-gem 'rails', '~> 5.2.0'
+gem 'rails', '~> 5.2.2'
 # Use Puma as the app server
 gem 'puma', '~> 3.7'
 # Use SCSS for stylesheets
