@@ -491,7 +491,7 @@ resource "aws_security_group" "bastion_security" {
     to_port = 22
     protocol = "tcp"
     cidr_blocks = [
-      "69.12.169.82/32"
+      "136.24.30.138/32"
     ]
   }
 
