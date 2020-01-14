@@ -1,5 +1,5 @@
-resource "aws_iam_group" "staff" {
-  name = "staff"
+resource "aws_iam_group" "developers" {
+  name = "developers"
 }
 
 resource "aws_config_config_rule" "r" {
@@ -146,8 +146,8 @@ resource "aws_iam_policy" "mfa_policy" {
   policy = "${file("../policies/mfa_policy.json")}"
 }
 
-resource "aws_iam_group_policy_attachment" "mfa_staff" {
-  group = "${aws_iam_group.staff.name}"
+resource "aws_iam_group_policy_attachment" "mfa_developers" {
+  group = "${aws_iam_group.developers.name}"
   policy_arn = "${aws_iam_policy.mfa_policy.arn}"
 }
 
