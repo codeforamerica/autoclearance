@@ -622,6 +622,7 @@ resource "aws_db_instance" "db" {
   vpc_security_group_ids = [
     "${aws_security_group.rds_security.id}"
   ]
+  final_snapshot_identifier = "autoclearance-db-final"
 }
 
 resource "aws_db_parameter_group" "force_ssl" {
