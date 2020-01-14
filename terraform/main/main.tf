@@ -783,6 +783,7 @@ resource "aws_db_instance" "analysis_db" {
   vpc_security_group_ids = [
     "${aws_security_group.analysis_rds_security.id}"
   ]
+  final_snapshot_identifier = "analysis-db-final"
 }
 
 resource "aws_security_group" "elb_security" {
