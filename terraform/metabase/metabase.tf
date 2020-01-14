@@ -141,6 +141,7 @@ resource "aws_db_instance" "metabase_db" {
   vpc_security_group_ids = [
     "${aws_security_group.rds_security.id}"
   ]
+  final_snapshot_identifier = "metabase-db-final"
 }
 
 resource "aws_acm_certificate" "metabase_cert" {
