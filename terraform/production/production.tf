@@ -26,7 +26,3 @@ module "main" {
   key_name = "${var.key_name}"
   public_key = "${var.public_key}"
 }
-
-output "rds_password" {
-  value = "${module.main.rds_password}"
-}
