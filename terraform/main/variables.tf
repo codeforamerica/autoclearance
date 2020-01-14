@@ -10,8 +10,6 @@ variable "aws_az2" {
 
 variable "rds_username" {}
 
-variable "analysis_rds_username" {}
-
 variable "environment" {
   description = "environment name to append to s3 bucket names (e.g. staging, or prod)"
 }

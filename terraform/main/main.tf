@@ -13,14 +13,6 @@ resource "aws_subnet" "public" {
 
 }
 
-# Create a second public subnet for our analysis db
-resource "aws_subnet" "public_2" {
-  vpc_id = "${aws_vpc.default.id}"
-  cidr_block = "10.0.4.0/24"
-  availability_zone = "${var.aws_az2}"
-
-}
-
 # Create an internet gateway to give our subnet access to the outside world
 resource "aws_internet_gateway" "default" {
   vpc_id = "${aws_vpc.default.id}"
@@ -38,89 +30,6 @@ resource "aws_route_table" "internet_access" {
 resource "aws_route_table_association" "subnet_route_table" {
   subnet_id = "${aws_subnet.public.id}"
   route_table_id = "${aws_route_table.internet_access.id}"
-}
-
-resource "aws_route_table_association" "subnet_route_table_2" {
-  subnet_id = "${aws_subnet.public_2.id}"
-  route_table_id = "${aws_route_table.internet_access.id}"
-}
-
-resource "aws_network_acl" "public" {
-  vpc_id = "${aws_vpc.default.id}"
-  subnet_ids = [
-    "${aws_subnet.public.id}",
-    "${aws_subnet.public_2.id}"
-  ]
-  egress {
-    protocol = "-1"
-    rule_no = 100
-    action = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port = 0
-    to_port = 0
-  }
-
-  # SSH
-  ingress {
-    protocol = "tcp"
-    rule_no = 100
-    action = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port = 22
-    to_port = 22
-  }
-
-  # Ephemeral ports for response packets
-  ingress {
-    protocol = "tcp"
-    rule_no = 200
-    action = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port = 1024
-    to_port = 65535
-  }
-
-  # HTTP
-  ingress {
-    protocol = "tcp"
-    rule_no = 300
-    action = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port = 80
-    to_port = 80
-  }
-
-  # HTTPS
-  ingress {
-    protocol = "tcp"
-    rule_no = 400
-    action = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port = 443
-    to_port = 443
-  }
-
-  # Postgres
-  ingress {
-    protocol = "tcp"
-    rule_no = 500
-    action = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port = 5432
-    to_port = 5432
-  }
-
-  # Mailgun for Metabase
-  ingress {
-    protocol = "tcp"
-    rule_no = 600
-    action = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port = 587
-    to_port = 587
-  }
-
-
 }
 
 # Create a private subnet for our EC2 instance
@@ -545,30 +454,6 @@ resource "aws_security_group" "rds_security" {
   }
 }
 
-resource "aws_security_group" "analysis_rds_security" {
-  name = "analysis_rds_security"
-  vpc_id = "${aws_vpc.default.id}"
-
-  # psql access from CfA
-  ingress {
-    from_port = 5432
-    to_port = 5432
-    protocol = "tcp"
-    cidr_blocks = [
-      "0.0.0.0/0"
-    ]
-  }
-
-  egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    cidr_blocks = [
-      "0.0.0.0/0"
-    ]
-  }
-}
-
 resource "aws_instance" "bastion" {
   # The connection block tells our provisioner how to
   # communicate with the resource (instance)
@@ -717,21 +602,7 @@ resource "aws_db_subnet_group" "default" {
 
 }
 
-resource "aws_db_subnet_group" "analysis_db" {
-  name = "analysis_db"
-  subnet_ids = [
-    "${aws_subnet.public.id}",
-    "${aws_subnet.public_2.id}"
-  ]
-
-}
-
 resource "random_string" "rds_password" {
-  length = 30
-  special = false
-}
-
-resource "random_string" "analysis_rds_password" {
   length = 30
   special = false
 }
@@ -762,28 +633,6 @@ resource "aws_db_parameter_group" "force_ssl" {
     value = "1"
     apply_method = "pending-reboot"
   }
-}
-
-resource "aws_db_instance" "analysis_db" {
-  allocated_storage = 10
-  availability_zone = "${var.aws_az1}"
-  db_subnet_group_name = "${aws_db_subnet_group.analysis_db.name}"
-  engine = "postgres"
-  engine_version = "9.6"
-  identifier = "analysis"
-  instance_class = "db.m3.medium"
-  kms_key_id = "${aws_kms_key.k.arn}"
-  name = "analysis"
-  username = "${var.analysis_rds_username}"
-  parameter_group_name = "${aws_db_parameter_group.force_ssl.name}"
-  password = "${random_string.analysis_rds_password.result}"
-  publicly_accessible = true
-  storage_encrypted = true
-  storage_type = "gp2"
-  vpc_security_group_ids = [
-    "${aws_security_group.analysis_rds_security.id}"
-  ]
-  final_snapshot_identifier = "analysis-db-final"
 }
 
 resource "aws_security_group" "elb_security" {
@@ -1336,10 +1185,6 @@ resource "aws_cloudwatch_log_group" "management_logs" {
 
 output "rds_password" {
   value = "${random_string.rds_password.result}"
-}
-
-output "analysis_database_url" {
-  value = "postgres://${var.analysis_rds_username}:${aws_db_instance.analysis_db.password}@${aws_db_instance.analysis_db.endpoint}/${aws_db_instance.analysis_db.name}"
 }
 
 output "aws_vpc_default_id" {

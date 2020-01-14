@@ -20,8 +20,6 @@ module "main" {
 
   rds_username = "${var.rds_username}"
 
-  analysis_rds_username = "${var.analysis_rds_username}"
-
   environment = "${var.environment}"
   rails_secret_key_base = "${var.rails_secret_key_base}"
 
@@ -31,8 +29,4 @@ module "main" {
 
 output "rds_password" {
   value = "${module.main.rds_password}"
-}
-
-output "analysis_database_url" {
-  value = "${module.main.analysis_database_url}"
 }
