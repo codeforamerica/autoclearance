@@ -3,9 +3,6 @@ resource "aws_vpc" "default" {
   cidr_block = "10.0.0.0/16"
   enable_dns_hostnames = true
 
-  tags {
-    Name = "${var.environment}_vpc"
-  }
 }
 
 # Create a public subnet for our bastion
@@ -13,9 +10,7 @@ resource "aws_subnet" "public" {
   vpc_id = "${aws_vpc.default.id}"
   cidr_block = "10.0.0.0/24"
   availability_zone = "${var.aws_az1}"
-  tags {
-    Name = "public"
-  }
+
 }
 
 # Create a second public subnet for our analysis db
@@ -23,9 +18,7 @@ resource "aws_subnet" "public_2" {
   vpc_id = "${aws_vpc.default.id}"
   cidr_block = "10.0.4.0/24"
   availability_zone = "${var.aws_az2}"
-  tags {
-    Name = "public 2"
-  }
+
 }
 
 # Create an internet gateway to give our subnet access to the outside world
@@ -127,9 +120,7 @@ resource "aws_network_acl" "public" {
     to_port = 587
   }
 
-  tags {
-    Name = "public"
-  }
+
 }
 
 # Create a private subnet for our EC2 instance
@@ -137,9 +128,7 @@ resource "aws_subnet" "private" {
   vpc_id = "${aws_vpc.default.id}"
   cidr_block = "10.0.2.0/24"
   availability_zone = "${var.aws_az1}"
-  tags {
-    Name = "private"
-  }
+
 }
 
 # Create a second private subnet for our db
@@ -147,9 +136,7 @@ resource "aws_subnet" "private_2" {
   vpc_id = "${aws_vpc.default.id}"
   cidr_block = "10.0.3.0/24"
   availability_zone = "${var.aws_az2}"
-  tags {
-    Name = "private 2"
-  }
+
 }
 
 resource "aws_eip" "eip" {
@@ -167,9 +154,6 @@ resource "aws_nat_gateway" "gw" {
     "aws_internet_gateway.default"
   ]
 
-  tags {
-    Name = "NAT"
-  }
 }
 
 resource "aws_route_table" "private" {
@@ -242,9 +226,6 @@ resource "aws_network_acl" "private" {
     to_port = 443
   }
 
-  tags {
-    Name = "private"
-  }
 }
 
 resource "aws_kms_key" "k" {
@@ -259,9 +240,6 @@ resource "aws_kms_alias" "k" {
 resource "aws_s3_bucket" "rap_sheet_inputs" {
   bucket = "autoclearance-rap-sheet-inputs-${var.environment}"
 
-  tags {
-    Name = "Rap sheet inputs"
-  }
 
   server_side_encryption_configuration {
     rule {
@@ -299,9 +277,6 @@ POLICY
 resource "aws_s3_bucket" "autoclearance_outputs" {
   bucket = "autoclearance-outputs-${var.environment}"
 
-  tags {
-    Name = "Autoclearance Outputs"
-  }
 
   versioning {
     enabled = true
@@ -604,10 +579,6 @@ resource "aws_instance" "bastion" {
     # The connection will use the local SSH agent for authentication.
   }
 
-  tags {
-    Name = "bastion"
-  }
-
   instance_type = "t2.micro"
   ami = "ami-b2d056d3"
   # Amazon Linux AMI 2017.03.1 (HVM), SSD Volume Type
@@ -744,9 +715,6 @@ resource "aws_db_subnet_group" "default" {
     "${aws_subnet.private_2.id}"
   ]
 
-  tags {
-    Name = "DB Subnet"
-  }
 }
 
 resource "aws_db_subnet_group" "analysis_db" {
@@ -756,9 +724,6 @@ resource "aws_db_subnet_group" "analysis_db" {
     "${aws_subnet.public_2.id}"
   ]
 
-  tags {
-    Name = "Analysis DB Subnet"
-  }
 }
 
 resource "random_string" "rds_password" {
